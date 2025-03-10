@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeMount } from 'vue';
 import { createWorkflowEditor } from '../bpmn-workflow-editor/modeler';
 
 const workflowEditorCanvasRef = ref(null);
