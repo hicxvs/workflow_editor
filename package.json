@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest --environment jsdom --root src/",
-    "test:cov": "vitest run --environment jsdom --coverage"
+    "test:cov": "vitest run --environment jsdom --coverage",
+    "lint": "eslint --ext .js,.vue src",
+    "lint:fix": "eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.5.0",
@@ -22,11 +24,15 @@
     "vue-i18n": "^11.1.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.22.0",
     "@faker-js/faker": "^9.6.0",
     "@testing-library/vue": "^8.1.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/coverage-v8": "^3.0.8",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.22.0",
+    "eslint-plugin-vue": "^10.0.0",
+    "globals": "^16.0.0",
     "jsdom": "^26.0.0",
     "postcss": "^8.5.3",
     "sass": "^1.85.1",
