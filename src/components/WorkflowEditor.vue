@@ -1,6 +1,6 @@
 <template>
   <div data-testid="workflow-editor-container">
-    <div ref="workflowEditorCanvasRef" data-testid="workflow-editor-container" class="workflow-editor-canvas"></div>
+    <div ref="workflowEditorCanvasRef" data-testid="workflow-editor-container" class="workflow-editor-canvas full-height full-width"></div>
   </div>
 </template>
 
@@ -9,15 +9,22 @@ import { ref, onMounted } from 'vue';
 import { createWorkflowEditor } from '../bpmn-workflow-editor/modeler';
 
 const workflowEditorCanvasRef = ref(null);
+const modelerRef = ref(null);
+
+onBeforeMount(() => {
+  if(modelerRef.value) {
+    modelerRef.value.destroy();
+  }
+});
 
 onMounted(() => {
   if(!workflowEditorCanvasRef.value) {
     return; 
   }
 
-  const workflowEditor = createWorkflowEditor(workflowEditorCanvasRef.value);
-  console.log(workflowEditor);
-  //debugger;
+  const {modeler,canvas} = createWorkflowEditor(workflowEditorCanvasRef.value);
+  modelerRef.value = modeler;
+  canvas.zoom('fit-viewport');
 });
 
 </script>
