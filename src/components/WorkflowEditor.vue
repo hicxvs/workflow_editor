@@ -6,7 +6,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { createWorkflowEditorModeler } from '../bpmn-workflow-editor/modeler';
+import { createWorkflowEditor } from '../bpmn-workflow-editor/modeler';
 
 const workflowEditorCanvasRef = ref(null);
 
@@ -15,9 +15,9 @@ onMounted(() => {
     return; 
   }
 
-  const modeler = createWorkflowEditorModeler(workflowEditorCanvasRef.value);
-  console.log(modeler);
-  debugger;
+  const workflowEditor = createWorkflowEditor(workflowEditorCanvasRef.value);
+  console.log(workflowEditor);
+  //debugger;
 });
 
 </script>
