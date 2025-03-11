@@ -22,9 +22,8 @@ onMounted(() => {
     return; 
   }
 
-  const {modeler,canvas} = createWorkflowEditor(workflowEditorCanvasRef.value);
+  const {modeler} = createWorkflowEditor(workflowEditorCanvasRef.value);
   modelerRef.value = modeler;
-  canvas.zoom('fit-viewport');
 });
 
 </script>

@@ -1,3 +1,5 @@
+import 'bpmn-js/dist/assets/diagram-js.css';
+
 import PaletteProvider from 'bpmn-js/lib/features/palette/PaletteProvider';
 
 function WorkflowEditorPaletteProvider(palette, create, elementFactory, spaceTool, lassoTool, handTool, globalConnect, translate ) {
@@ -7,11 +9,11 @@ function WorkflowEditorPaletteProvider(palette, create, elementFactory, spaceToo
     );
   
     this.getPaletteEntries = function() {
+      // Retrieve and modify the palette entries from the parent class
       const entries = PaletteProvider.prototype.getPaletteEntries.call(this);
   
-      // Example: Remove existing entries
-      delete entries['create.data-store'];
-      delete entries['create.data-object'];
+      // Remove specific entries
+      ['create.data-store', 'create.data-object'].forEach(entry => delete entries[entry]);
     
       return entries;
     };

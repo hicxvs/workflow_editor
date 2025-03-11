@@ -1,22 +1,21 @@
-import BpmnModeler from 'bpmn-js/lib/Modeler';
+import 'bpmn-js/dist/assets/bpmn-js.css';
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
+import BpmnModeler  from 'bpmn-js/lib/Modeler';
 import activitiModelDefinitions from '../activiti-model-definitions';
 import WorkflowEditorPaletteProvider from '../workflow-editor-palette-provider';
 import defaultDiagram from '../diagrams/default-diagram';
 
 export function createWorkflowEditor(container) {
 
-    const engine = new BpmnModeler({
-        container: container,
-        moddleExtensions: {
-            activiti: activitiModelDefinitions
-        },
-        additionalModules: ['type', WorkflowEditorPaletteProvider]
-    });
+    const engine = createWorkflowEditor(container);
+
+    if(defaultDiagram) {
+        importDiagram(defaultDiagram);
+    }
 
     const canvas = engine.get('canvas');
     const workflowEventBus = engine.get('eventBus');
-    const factory = engine.get('bpmnFactory');
-
+    const factory = engine.get('bpmnFactory'); 
 
     async function importDiagram(xmlDiagram) {
         if(isDiagramValid(xmlDiagram)) {
@@ -48,8 +47,21 @@ export function createWorkflowEditor(container) {
         return true;
     }
 
-    if(defaultDiagram) {
-        importDiagram(defaultDiagram);
+    function createWorkflowEditor(container){
+        try {
+            return new BpmnModeler({
+                container: container,
+                moddleExtensions: {
+                    activiti: activitiModelDefinitions
+                },
+                additionalModules: [{
+                    paletteProvider: ['type', WorkflowEditorPaletteProvider]
+                }]
+            });
+        } catch (error) {
+            console.error("Error during workflow editor initialization:", error);
+            throw error;
+        }
     }
 
     return {
