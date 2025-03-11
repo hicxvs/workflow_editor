@@ -4,23 +4,29 @@ import BpmnModeler  from 'bpmn-js/lib/Modeler';
 import activitiModelDefinitions from '../activiti-model-definitions';
 import WorkflowEditorPaletteProvider from '../workflow-editor-palette-provider';
 import defaultDiagram from '../diagrams/default-diagram';
+import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
+import { workflowEditorSelectionEventsHandler } from './eventHandlers/workflowEditorSelectionEventsHandler';
+import { workflowElementEventsHandler } from './eventHandlers/workflowElementEventsHandler';
+import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workflowSubprocessNavigationEventsHandler';
+
 
 export function createWorkflowEditor(container) {
 
-    const engine = createWorkflowEditor(container);
+    const modeler = createWorkflowEditor(container);
+    modelerEventsHandler(modeler);
+    workflowEditorSelectionEventsHandler(modeler);
+    workflowElementEventsHandler(modeler);
+    workflowSubprocessNavigationEventsHandler(modeler);
+    
 
     if(defaultDiagram) {
         importDiagram(defaultDiagram);
-    }
-
-    const canvas = engine.get('canvas');
-    const workflowEventBus = engine.get('eventBus');
-    const factory = engine.get('bpmnFactory'); 
+    }    
 
     async function importDiagram(xmlDiagram) {
         if(isDiagramValid(xmlDiagram)) {
             try {
-                return await engine.importXML(xmlDiagram);
+                return await modeler.importXML(xmlDiagram);
             } catch (error) {
                 console.error("Error during diagram import:", error);
                 throw error;
@@ -31,7 +37,7 @@ export function createWorkflowEditor(container) {
     async function saveDiagram(xmlDiagram) {
         if(isDiagramValid(xmlDiagram)) {
             try {
-                return await engine.saveXML(xmlDiagram);
+                return await modeler.saveXML(xmlDiagram);
             } catch (error) {
                 console.error("Error during diagram save:", error);
                 throw error;
@@ -65,10 +71,7 @@ export function createWorkflowEditor(container) {
     }
 
     return {
-        modeler: engine,
-        canvas,
-        factory,
-        workflowEventBus,
+        modeler,
         importDiagram,
         saveDiagram     
     };

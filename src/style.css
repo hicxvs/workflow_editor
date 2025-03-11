@@ -17,14 +17,6 @@
   box-sizing: border-box;
 }
 
-.full-height {
-  height: 100vh;
-} 
-
-.full-width {
-  width: 100vw;
-} 
-
 /* BPMN.js font icons */
 @font-face {
   font-family: 'bpmn';
@@ -46,8 +38,4 @@
   font-variant: normal;
   text-transform: none;
   line-height: 1em;
-}
-
-a.bjs-powered-by {
-  display: none;
 }
