@@ -1,6 +1,6 @@
 <template>
   <div data-testid="workflow-editor-container">
-    <div ref="workflowEditorCanvasRef" data-testid="workflow-editor-canvas" class="workflow-editor-canvas full-height"></div>
+    <div ref="workflowEditorCanvasRef" data-testid="workflow-editor-canvas" class="workflow-editor-canvas"></div>
   </div>
 </template>
 
@@ -57,6 +57,14 @@ function unregisterWorkflowEditorEventHandlers() {
 </script>
 
 <style scoped>
+.workflow-editor-canvas {
+  height: 98vh;
+  border:1 px solid #e0e0e0;
+}
+
+.djs-palette.two-column.open {
+  width: 45px !important
+}
 
 
 </style>

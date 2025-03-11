@@ -107,4 +107,14 @@ function startResizing(event) {
   position: relative;
   z-index: 1;
 }
+
+.resizer:hover,
+.resizer:active {
+  background-color: #0d6efd;
+}
+
+.main-content.resizing {
+  user-select: none;
+}
+
 </style>
