@@ -1,11 +1,39 @@
+import { EVENT_TYPE } from '../eventTypes';
+import EventBus from '../../../eventbus';
+
 export function workflowEditorSelectionEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
 
     workflowEventBus.on('selection.changed', (event) => {
-        console.log('selection.changed', event);
+
+        const selectedElement = event.newSelection[0];
+
+        if(!selectedElement) {
+            console.log('No element selected');
+            return;
+        }
+
+        if(selectedElement.type === 'bpmn:ServiceTask') {
+            handleServiceTaskSelection(selectedElement);
+        }
+
+        EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT, selectedElement);
     });
 
     workflowEventBus.on('selection.cleared', (event) => {
         console.log('selection.cleared', event);
     });
+
+    function handleServiceTaskSelection(selectedElement) {
+
+        const expressionTypes = ['expression', 'delegateExpression', 'class'];
+        const { properties } = selectedElement;        
+
+        for (const type of expressionTypes) {
+            if (type in properties) {
+                properties.serviceTaskExpressionType = type;
+                break;
+            }
+        }      
+    }
 }
