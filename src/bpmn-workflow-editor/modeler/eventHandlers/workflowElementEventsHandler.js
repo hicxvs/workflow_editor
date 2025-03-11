@@ -9,14 +9,14 @@ export function workflowElementEventsHandler(modeler) {
     });
 
     workflowEventBus.on('element.add', (event) => {
-        console.log('element.add', event);
+        EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT, event.element);
     });
 
     workflowEventBus.on('element.added', (event) => {
-        console.log('element.added', event);
+        throw('element.added handler not implemented:', event);
     });
 
     workflowEventBus.on('element.removed', (event) => {
-        console.log('element.removed', event);
+        throw('element.removed handler not implemented:', event);
     });       
 }

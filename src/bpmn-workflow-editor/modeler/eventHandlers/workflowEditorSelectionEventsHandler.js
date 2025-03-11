@@ -21,7 +21,7 @@ export function workflowEditorSelectionEventsHandler(modeler) {
     });
 
     workflowEventBus.on('selection.cleared', (event) => {
-        console.log('selection.cleared', event);
+        throw('selection.cleared handler not implemented:', event);
     });
 
     function handleServiceTaskSelection(selectedElement) {

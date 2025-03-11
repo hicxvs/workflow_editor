@@ -5,15 +5,15 @@ export function workflowSubprocessNavigationEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
 
     workflowEventBus.on('subprocess.expanded', (event) => {
-        console.log('subprocess.expanded', event);
+        throw('subprocess.expanded handler not implemented:', event);
     });
 
     workflowEventBus.on('subprocess.collapsed', (event) => {
-        console.log('subprocess.collapsed', event);
+        throw('subprocess.collapsed handler not implemented:', event);
     });
 
     workflowEventBus.on('subprocess.clicked', (event) => {
-        console.log('subprocess.clicked', event);
+        throw('subprocess.clicked handler not implemented:', event);
     }); 
 
     workflowEventBus.on('root.set', (event) => {
@@ -28,11 +28,11 @@ export function workflowSubprocessNavigationEventsHandler(modeler) {
     }); 
 
     workflowEventBus.on('root.unset', (event) => {
-        console.log('root.unset', event);
+        throw('root.unset handler not implemented:', event);
     }); 
 
     workflowEventBus.on('root.changed', (event) => {
-        console.log('root.changed', event);
+        throw('root.changed handler not implemented:', event);
     });      
 
     function handleSubprocessNavigation(rootElement) {
