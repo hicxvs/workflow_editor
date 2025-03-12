@@ -10,6 +10,7 @@ export function WorkflowEditorStore() {
     const currentModeler = ref(null);
     const currentWorkingElement = ref(null);
     const currentNavigationPath = ref(null);
+    const currentDiagram = ref(null);
 
     function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -50,6 +51,21 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
     }
+
+    function clearDiagram() {        
+        currentModeler.value.clearDiagram();
+        currentDiagram.value = null;
+    }
+
+    async function generateDiagram() {
+        if(currentDiagram.value) {
+            clearDiagram();
+        }
+
+        currentDiagram.value = await currentModeler.value.generateDiagram();
+    }
+
+   
         
     return {
         modeler: currentModeler,
@@ -58,6 +74,8 @@ export function WorkflowEditorStore() {
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,
-        unregisterWorkflowEditorEventHandlers
+        unregisterWorkflowEditorEventHandlers,
+        generateDiagram,
+        clearDiagram
     };
 }   

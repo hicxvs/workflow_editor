@@ -34,15 +34,33 @@ export function createWorkflowEditor(container) {
         }        
     }
 
+    async function generateDiagram() {
+        try {
+            return await modeler.saveXML({format: true});
+        } catch (error) {
+            console.error("Error during generating the XML Diagram:", error);
+            throw error;
+        }   
+    }
+
     async function saveDiagram(xmlDiagram) {
         if(isDiagramValid(xmlDiagram)) {
             try {
-                return await modeler.saveXML(xmlDiagram);
+                return await modeler.saveXML(xmlDiagram, {format: true});
             } catch (error) {
-                console.error("Error during diagram save:", error);
+                console.error("Error during saving the XML diagram:", error);
                 throw error;
             }   
         }   
+    }
+
+    function clearDiagram() {
+        try {
+            modeler.clear();
+        } catch (error) {
+            console.error("Error during clearing the diagram:", error);
+            throw error;
+        }
     }
 
     function isDiagramValid(xmlDiagram) {
@@ -73,6 +91,8 @@ export function createWorkflowEditor(container) {
     return {
         modeler,
         importDiagram,
-        saveDiagram     
+        generateDiagram,
+        saveDiagram,
+        clearDiagram     
     };
 }
