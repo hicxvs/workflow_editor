@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Properties Panel</h1>
+    <h1>Workflow Toolbar</h1>
   </div>
 </template>
 
@@ -9,5 +9,7 @@
 </script>
 
 <style scoped>
+
 </style>
+
 
