@@ -78,10 +78,10 @@ export function WorkflowEditorStore() {
     }
   
     return {
-        modeler: currentModeler.value,
-        currentWorkingElement: currentWorkingElement.value,
-        currentNavigationPath: currentNavigationPath.value,
-        currentProcessDefinition: currentProcessDefinition.value,
+        currentModeler,
+        currentWorkingElement,
+        currentNavigationPath,
+        currentProcessDefinition,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

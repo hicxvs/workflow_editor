@@ -1,7 +1,7 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
     <ActionButtonGroup />
-    <ProcessDefinition />
+    <ProcessDefinition :processDefinition="currentProcessDefinition" />
   </div>
 </template>
 
@@ -12,9 +12,13 @@ import ProcessDefinition from "../components/properties-panel-components/Process
 import { EVENT_TYPE } from "../bpmn-workflow-editor/modeler/eventTypes";
 import EventBus from "../eventbus";
 import StateManager from "../state-manager";
+import { storeToRefs } from "pinia";
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
+const { currentProcessDefinition } = storeToRefs(workflowEditorStore);
+
 const { generateDiagram, clearDiagram } = workflowEditorStore;
+
 
 onMounted(() => {
   registerDiagramEventHandlers();
