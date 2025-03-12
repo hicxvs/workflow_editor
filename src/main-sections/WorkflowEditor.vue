@@ -5,8 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount } from 'vue';
-
+import { ref, onMounted, onUnmounted } from 'vue';
 import StateManager from '../state-manager';
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
@@ -18,14 +17,14 @@ const { unregisterWorkflowEditorEventHandlers,
 
 const workflowEditorCanvasRef = ref(null);
 
-onBeforeMount(() => {
-  unregisterWorkflowEditorEventHandlers();
-  destroyWorkflowEditor();
-});
-
 onMounted(() => {
   initializeWorkflowEditor(workflowEditorCanvasRef.value);
   registerWorkflowEditorEventHandlers();  
+});
+
+onUnmounted(() => {
+  unregisterWorkflowEditorEventHandlers();
+  destroyWorkflowEditor();
 });
 
 </script>

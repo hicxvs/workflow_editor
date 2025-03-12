@@ -64,9 +64,7 @@ export function WorkflowEditorStore() {
 
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
-
-   
-        
+  
     return {
         modeler: currentModeler,
         currentWorkingElement,

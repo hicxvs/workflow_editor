@@ -14,7 +14,7 @@ const props = defineProps({
     buttonColor: {
         type: String,
         required: false,
-        default: "primary"
+        default: ""
     },
     clickHandler: {
         type: Function,
