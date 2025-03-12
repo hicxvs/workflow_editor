@@ -15,14 +15,22 @@ const workflowEditorStore = StateManager.useWorkflowEditorStore();
 const { generateDiagram, clearDiagram } = workflowEditorStore;
 
 onMounted(() => {
-  EventBus.on(EVENT_TYPE.GENERATE_DIAGRAM, () => generateDiagram()); 
-  EventBus.on(EVENT_TYPE.CLEAR_DIAGRAM, () => clearDiagram());
+  registerDiagramEventHandlers();
 });
 
 onUnmounted(() => {
+  unregisterDiagramEventHandlers();
+});
+
+function registerDiagramEventHandlers() {
+  EventBus.on(EVENT_TYPE.GENERATE_DIAGRAM, () => generateDiagram()); 
+  EventBus.on(EVENT_TYPE.CLEAR_DIAGRAM, () => clearDiagram());
+}
+
+function unregisterDiagramEventHandlers() {
   EventBus.off(EVENT_TYPE.GENERATE_DIAGRAM);
   EventBus.off(EVENT_TYPE.CLEAR_DIAGRAM);
-});
+}
 </script>
 
 <style scoped>
