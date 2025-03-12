@@ -21,9 +21,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import WorkflowToolbar from '../main-sections/workflow-toobar/WorkflowToolbar.vue';
-import WorkflowEditor from '../main-sections/workflow-editor/WorkflowEditor.vue';
-import WorkflowPropertiesPanel from '../main-sections/workflow-properties-panel/WorkflowPropertiesPanel.vue';
+import WorkflowToolbar from '../main-sections/WorkflowToolbar.vue';
+import WorkflowEditor from '../main-sections/WorkflowEditor.vue';
+import WorkflowPropertiesPanel from '../main-sections/WorkflowPropertiesPanel.vue';
 
 const workflowEditorFlex = ref(3); // Initial flex ratio for the workflow editor
 const propertiesPanelFlex = ref(2); // Initial flex ratio for the properties panel
