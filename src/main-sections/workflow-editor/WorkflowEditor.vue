@@ -6,9 +6,9 @@
 
 <script setup>
 import { ref, onMounted, onBeforeMount } from 'vue';
-import { createWorkflowEditor } from '../bpmn-workflow-editor/modeler';
-import EventBus from '../eventbus';
-import { EVENT_TYPE } from '../bpmn-workflow-editor/modeler/eventTypes';
+import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
+import EventBus from '../../eventbus';
+import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 const workflowEditorCanvasRef = ref(null);
 const modelerRef = ref(null);
@@ -65,6 +65,4 @@ function unregisterWorkflowEditorEventHandlers() {
 .djs-palette.two-column.open {
   width: 45px !important
 }
-
-
 </style>
