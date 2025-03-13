@@ -9,7 +9,6 @@ export function workflowEditorSelectionEventsHandler(modeler) {
         const selectedElement = event.newSelection[0];
 
         if(!selectedElement) {
-            console.log('No element selected');
             return;
         }
 
