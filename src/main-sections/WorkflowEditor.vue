@@ -12,14 +12,14 @@ const workflowEditorStore = StateManager.useWorkflowEditorStore();
 const { unregisterWorkflowEditorEventHandlers,
         destroyWorkflowEditor,
         initializeWorkflowEditor,
-        registerWorkflowEditorEventHandlers,
+        registerWorkflowEditorEventHandlers
       } = workflowEditorStore;
 
 const workflowEditorCanvasRef = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
   initializeWorkflowEditor(workflowEditorCanvasRef.value);
-  registerWorkflowEditorEventHandlers();  
+  registerWorkflowEditorEventHandlers();
 });
 
 onUnmounted(() => {
@@ -31,7 +31,7 @@ onUnmounted(() => {
 
 <style scoped>
 .workflow-editor-canvas {
-  height: 98vh;
+  height: 96vh;
   border:1 px solid #e0e0e0;
 }
 

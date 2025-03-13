@@ -3,7 +3,6 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import BpmnModeler  from 'bpmn-js/lib/Modeler';
 import activitiModelDefinitions from '../activiti-model-definitions';
 import WorkflowEditorPaletteProvider from '../workflow-editor-palette-provider';
-import defaultDiagram from '../diagrams/default-diagram';
 import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
 import { workflowEditorSelectionEventsHandler } from './eventHandlers/workflowEditorSelectionEventsHandler';
 import { workflowElementEventsHandler } from './eventHandlers/workflowElementEventsHandler';
@@ -17,11 +16,6 @@ export function createWorkflowEditor(container) {
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
     workflowSubprocessNavigationEventsHandler(modeler);
-    
-
-    if(defaultDiagram) {
-        importDiagram(defaultDiagram);
-    }    
 
     async function importDiagram(xmlDiagram) {
         if(isDiagramValid(xmlDiagram)) {
@@ -88,11 +82,32 @@ export function createWorkflowEditor(container) {
         }
     }
 
+    function getProcessDefinition() {
+        if(!modeler) {
+            console.error("Error: Workflow editor is not initialized.");
+            return null;
+        }
+
+        const elementRegistry = modeler.get('elementRegistry');
+        const elements = elementRegistry.getAll();
+
+        for(let i = 0; i < elements.length; i++) {
+            const tempElement = elements[i];
+            if(tempElement.type === 'bpmn:Process') {
+                return tempElement.businessObject;
+            }
+        }
+
+        console.warn("WARNING: Workflow editor process definition not found.");
+        return null;
+    }
+
     return {
         modeler,
         importDiagram,
         generateDiagram,
         saveDiagram,
-        clearDiagram     
+        clearDiagram,
+        getProcessDefinition
     };
 }
