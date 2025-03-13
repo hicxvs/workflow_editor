@@ -2,8 +2,8 @@
   <div class="property-editor-container" data-testid="property-editor-container">
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
-          <div class="property-editor-content">
-            {{ model }}
+          <div class="property-editor-content" data-testid="property-editor-content">
+            <GeneralPropertiesEditor v-model="model" />
           </div>
         </template>
     </Card>
@@ -12,6 +12,7 @@
 
 <script setup>
 import Card from "../generic/Card.vue";
+import GeneralPropertiesEditor from "./property-editor-sub-components/GeneralPropertiesEditor.vue";
 
 const model = defineModel();
 
@@ -28,7 +29,6 @@ const cardProps = {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 0 16px;
 }
 </style>
 
