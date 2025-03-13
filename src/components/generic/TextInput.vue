@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['update:modelValue']);
 const model = defineModel();
 const props = defineProps({
     label: {
@@ -18,8 +19,8 @@ const props = defineProps({
     }
 });
 
-function update(event) {
-    console.log(event);
+function update() {
+    emit('update:modelValue', model.value);
 }
 
 </script>
