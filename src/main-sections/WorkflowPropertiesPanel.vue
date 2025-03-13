@@ -1,6 +1,6 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
-    <ActionButtonGroup />
+    <ActionButtonGroup class="mb-6"/>
     <ProcessDefinition v-model="currentProcessDefinition" />
   </div>
 </template>
@@ -42,6 +42,7 @@ function unregisterDiagramEventHandlers() {
 <style scoped>
 .properties-panel {
   padding: 0 16px;
+  width: 98%;
 }
 </style>
 

@@ -1,12 +1,12 @@
 <template>
   <div class="process-definition-container" data-testid="process-definition-container">
 
-    <Card title="Process Definition" subtitle="Process Definition" text="Process Definition">
+    <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
       <template #content>
         <div class="input-group">
-          <TextInput v-if="model" label="Process ID" v-model="model.id" />
-          <TextInput v-if="model" label="Process Name" v-model="model.name" />
-          <TextInput v-if="model" label="Is Executable" v-model="model.isExecutable" />
+          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
+          <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
+          <Checkbox v-if="model" :label="inputLabel.isExecutable" v-model="model.isExecutable" />
         </div>
       </template>
     </Card>
@@ -17,7 +17,21 @@
 <script setup>
 import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
+import Checkbox from "../generic/Checkbox.vue";
+
 const model = defineModel();
+
+const cardProps = {
+  title: "Process Definition",
+  subtitle: "",
+  text: ""
+};
+
+const inputLabel = {
+  id: "Process ID",
+  name: "Process Name",
+  isExecutable: "Is Executable"
+};
 
 </script>
 

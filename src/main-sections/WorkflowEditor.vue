@@ -31,7 +31,7 @@ onUnmounted(() => {
 
 <style scoped>
 .workflow-editor-canvas {
-  height: 98vh;
+  height: 96vh;
   border:1 px solid #e0e0e0;
 }
 
