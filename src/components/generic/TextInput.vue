@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 function update(event) {
-    debugger;
+    console.log(event);
 }
 
 </script>

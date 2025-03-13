@@ -1,16 +1,21 @@
 <template>
   <div class="process-definition-container" data-testid="process-definition-container">
-    <h1>Process Definition</h1>
 
-    <div class="input-group">
-      <TextInput v-if="model?.id" label="Process ID" v-model="model.id" />
-      <TextInput v-if="model?.name" label="Process Name" v-model="model.name" />
-      <TextInput v-if="model?.isExecutable" label="Is Executable" v-model="model.isExecutable" />
-    </div>
+    <Card title="Process Definition" subtitle="Process Definition" text="Process Definition">
+      <template #content>
+        <div class="input-group">
+          <TextInput v-if="model" label="Process ID" v-model="model.id" />
+          <TextInput v-if="model" label="Process Name" v-model="model.name" />
+          <TextInput v-if="model" label="Is Executable" v-model="model.isExecutable" />
+        </div>
+      </template>
+    </Card>
+
   </div>
 </template>
 
 <script setup>
+import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
 const model = defineModel();
 
@@ -27,6 +32,7 @@ const model = defineModel();
   flex-wrap: wrap;
   gap: 10px; 
   justify-content: space-between;
+  padding: 0 16px;
 }
 
 .input-group > * {

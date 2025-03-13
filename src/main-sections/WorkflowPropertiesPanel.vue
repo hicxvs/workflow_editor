@@ -40,5 +40,8 @@ function unregisterDiagramEventHandlers() {
 </script>
 
 <style scoped>
+.properties-panel {
+  padding: 0 16px;
+}
 </style>
 
