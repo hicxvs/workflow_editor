@@ -44,9 +44,22 @@ const buttonClickHandlers = {
 
 <style scoped>
 .action-button-group {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; 
+  justify-content: flex-start; 
 }
-</style>    
+
+.action-button-group > * {
+  flex: 0 1 auto; 
+  min-width: 100px;
+}
+
+@media (max-width: 600px) { 
+  .action-button-group {
+    flex-direction: column; 
+    align-items: stretch;
+  }
+}
+</style>
 
