@@ -10,6 +10,7 @@ export function WorkflowEditorStore() {
 
     const currentModeler = ref(null);
     const currentWorkingElement = ref(null);
+    const currentWorkingElementProperties = ref(null);
     const currentProcessDefinition = ref(null);
     const currentNavigationPath = ref(null);
     const currentDiagram = ref(null);
@@ -34,7 +35,15 @@ export function WorkflowEditorStore() {
     function registerWorkflowEditorEventHandlers() {
 
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, (element) => {
+            
+            if(!element) {
+                currentWorkingElement.value = null;
+                currentWorkingElementProperties.value = null;
+                return;
+            }
+
             currentWorkingElement.value = element;
+            currentWorkingElementProperties.value = element?.businessObject || null;
         });
     
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, (navigationPath) => {
@@ -80,6 +89,7 @@ export function WorkflowEditorStore() {
     return {
         currentModeler,
         currentWorkingElement,
+        currentWorkingElementProperties,
         currentNavigationPath,
         currentProcessDefinition,
         initializeWorkflowEditor,

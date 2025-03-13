@@ -9,6 +9,7 @@ export function workflowEditorSelectionEventsHandler(modeler) {
         const selectedElement = event.newSelection[0];
 
         if(!selectedElement) {
+            EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT, null);
             return;
         }
 
