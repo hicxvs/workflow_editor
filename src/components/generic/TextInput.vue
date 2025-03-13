@@ -1,6 +1,7 @@
 <template>
     <div class="text-input-container" data-testid="text-input-container">
-        <v-text-field 
+        <v-text-field
+            :clearable="clearable"
             :label="label" 
             v-model="model" 
             @input="update" 
@@ -16,6 +17,11 @@ const props = defineProps({
         type: String,
         required: false,
         default: "Default label"
+    },
+    clearable: {
+        type: Boolean,
+        required: false,
+        default: true
     }
 });
 
