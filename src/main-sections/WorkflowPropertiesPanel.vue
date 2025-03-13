@@ -43,7 +43,7 @@ function unregisterDiagramEventHandlers() {
 .properties-panel {
   padding: 0 16px;
   width: 98%;
-  height: 98%;
+  height: 96vh;
 }
 </style>
 

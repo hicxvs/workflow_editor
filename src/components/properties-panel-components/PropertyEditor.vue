@@ -3,7 +3,9 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
           <div class="property-editor-content" data-testid="property-editor-content">
-            <GeneralPropertiesEditor v-model="model" />
+            <GeneralPropertiesEditor v-model="model"/>
+            <MainConfigEditor v-model="model" />
+            <DocumentationEditor v-model="model" />
           </div>
         </template>
     </Card>
@@ -13,6 +15,8 @@
 <script setup>
 import Card from "../generic/Card.vue";
 import GeneralPropertiesEditor from "./property-editor-sub-components/GeneralPropertiesEditor.vue";
+import MainConfigEditor from "./property-editor-sub-components/MainConfigEditor.vue";
+import DocumentationEditor from "./property-editor-sub-components/DocumentationEditor.vue";
 
 const model = defineModel();
 
@@ -29,6 +33,8 @@ const cardProps = {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 </style>
 

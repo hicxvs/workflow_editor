@@ -1,10 +1,10 @@
 <template>
-    <div class="text-input-container" data-testid="text-input-container">
-        <v-text-field
+    <div class="text-area-container" data-testid="text-area-container">
+        <v-textarea 
             :clearable="clearable"
-            :label="label" 
             v-model="model" 
-            @input="update" 
+            :label="label" 
+            @update:modelValue="update" 
         />
     </div>
 </template>
@@ -25,11 +25,10 @@ const props = defineProps({
     }
 });
 
-function update() {
-    emit('update:modelValue', model.value);
+function update(value) {
+    emit('update:modelValue', value);
 }
-
 </script>
 
-<style scoped> 
+<style scoped>
 </style>
