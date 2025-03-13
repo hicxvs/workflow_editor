@@ -1,7 +1,7 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
     <ActionButtonGroup />
-    <ProcessDefinition :processDefinition="currentProcessDefinition" />
+    <ProcessDefinition v-model="currentProcessDefinition" />
   </div>
 </template>
 

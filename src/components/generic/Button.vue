@@ -1,7 +1,9 @@
 <template>
-    <v-btn :color="buttonColor" @click="clickHandler" variant="flat">
-        {{ label }}
-    </v-btn>
+    <div class="button-container" data-testid="button-container">
+        <v-btn :color="buttonColor" @click="clickHandler" variant="flat">
+            {{ label }}
+        </v-btn>
+    </div>    
 </template>
 
 <script setup>
