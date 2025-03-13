@@ -33,7 +33,7 @@ const cardProps = {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 65vh;
+  max-height: 70vh;
   overflow-y: auto;
 }
 </style>
