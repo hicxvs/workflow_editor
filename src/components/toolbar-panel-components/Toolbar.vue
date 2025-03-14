@@ -14,7 +14,7 @@
 
 <script setup>
 import EventBus from "../../eventbus";
-import { FILE_INPUT_EVENT_TYPE } from "../singleton-components/file-input-component/file-input-event-type";
+import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 
 const buttonLabels = {
     loadDiagramFromFile: "Load Diagram from File",
@@ -27,7 +27,7 @@ const buttonLabels = {
 const buttonClickHandlers = {
     loadDiagramFromFile: () => {
         const fileTypes = ".bpmn,.xml";
-        EventBus.emit(FILE_INPUT_EVENT_TYPE.LOAD_FILE, fileTypes);
+        EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
     },
     loadDiagramFromSystem: () => {
         console.log("Load Diagram from System");
