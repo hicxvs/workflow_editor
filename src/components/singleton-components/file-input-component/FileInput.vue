@@ -28,10 +28,6 @@ onUnmounted(() => {
 
 async function loadFile(event) {
     try {
-        if (!props.acceptedFiles.includes(file.type)) {
-            throw new Error("File type not supported");
-        }
-
         const file = event.target.files[0];
 
         if (!file) {
