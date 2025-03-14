@@ -39,8 +39,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, (element) => {
             
             if(!element) {
-                currentWorkingElement.value = null;
-                currentWorkingElementProperties.value = null;
+                clearCurrentWorkingElement();
                 return;
             }
 
@@ -50,12 +49,12 @@ export function WorkflowEditorStore() {
     
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, (navigationPath) => {
             if(!navigationPath) {
-                currentNavigationPath.value = null;
+                clearNavigationPath();
                 return;
             }
 
             if(!currentNavigationPath.value || currentNavigationPath.value.length > 0) {
-                currentNavigationPath.value = null;
+                clearNavigationPath();
             }
 
             currentNavigationPath.value = [navigationPath];
@@ -71,16 +70,12 @@ export function WorkflowEditorStore() {
     }
 
     async function importAndProcessDiagram(diagramContent) {
-        if(!diagramContent) {
-            return;
-        }
-
-        if(!currentModeler.value) {
+        if(!diagramContent || !currentModeler.value) {
             return;
         }
 
         if(currentDiagram.value) {
-            clearDiagram();
+            clearWorkflowEditor();
         }
 
         if(currentImportDiagramResults.value) {
@@ -103,6 +98,21 @@ export function WorkflowEditorStore() {
         currentDiagram.value = null;
     }
 
+    function clearCurrentWorkingElement() {
+        currentWorkingElement.value = null;
+        currentWorkingElementProperties.value = null;
+    }
+
+    function clearNavigationPath() {
+        currentNavigationPath.value = null;
+    }
+
+    function clearWorkflowEditor() {
+        clearDiagram();
+        clearCurrentWorkingElement();
+        clearNavigationPath();
+    }
+
     async function generateDiagram() {
         if(currentDiagram.value) {
             clearDiagram();
@@ -123,6 +133,6 @@ export function WorkflowEditorStore() {
         registerWorkflowEditorEventHandlers,
         unregisterWorkflowEditorEventHandlers,
         generateDiagram,
-        clearDiagram,
+        clearWorkflowEditor
     };
 }   
