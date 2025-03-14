@@ -3,8 +3,7 @@
         <input type="file" 
             class="file-input"
             ref="fileInput" 
-            @change="loadFile" 
-            :accept="acceptedFiles" 
+            @change="loadFile"
         />
     </div>
 </template>
@@ -15,16 +14,9 @@ import EventBus from "../../../eventbus";
 import { FILE_INPUT_EVENT_TYPE } from "./file-input-event-type";
 const fileInput = ref(null);
 
-const props = defineProps({
-    acceptedFiles: {
-        type: String,
-        required: false,
-        default: ".bpmn,.xml"
-    }
-});
-
 onMounted(() => {
-    EventBus.on(FILE_INPUT_EVENT_TYPE.LOAD_FILE, () => {
+    EventBus.on(FILE_INPUT_EVENT_TYPE.LOAD_FILE, (fileTypes) => {
+        fileInput.value.accept = fileTypes;
         fileInput.value.click();
     });
 });
@@ -64,6 +56,7 @@ async function loadFile(event) {
 
 function clearFile() {
     fileInput.value.value = null;
+    fileInput.value.accept = '';
 }
 
 </script>
