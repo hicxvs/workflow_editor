@@ -10,19 +10,19 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import EventBus from "../../../eventbus";
-import { FILE_INPUT_EVENT_TYPE } from "./file-input-event-type";
+import EventBus from "../../eventbus";
+import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 const fileInput = ref(null);
 
 onMounted(() => {
-    EventBus.on(FILE_INPUT_EVENT_TYPE.LOAD_FILE, (fileTypes) => {
+    EventBus.on(EVENT_TYPE.LOAD_FILE, (fileTypes) => {
         fileInput.value.accept = fileTypes;
         fileInput.value.click();
     });
 });
 
 onUnmounted(() => {
-    EventBus.off(FILE_INPUT_EVENT_TYPE.LOAD_FILE);
+    EventBus.off(EVENT_TYPE.LOAD_FILE);
 });
 
 
@@ -36,7 +36,7 @@ async function loadFile(event) {
 
         const content = await file.text();
 
-        EventBus.emit(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS, {
+        EventBus.emit(EVENT_TYPE.LOAD_FILE_SUCCESS, {
             file,
             content
         });
@@ -44,7 +44,7 @@ async function loadFile(event) {
         clearFile();
     } catch (error) {
 
-        EventBus.emit(FILE_INPUT_EVENT_TYPE.LOAD_FILE_ERROR, error);
+        EventBus.emit(EVENT_TYPE.LOAD_FILE_ERROR, error);
         clearFile();
         throw new Error("Error loading file", error);
     }
