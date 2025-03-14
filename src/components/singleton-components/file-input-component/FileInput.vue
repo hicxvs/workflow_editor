@@ -10,6 +10,7 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import EventBus from "../../../eventbus";
 import { FILE_INPUT_EVENT_TYPE } from "./file-input-event-type";
 const fileInput = ref(null);
@@ -19,11 +20,6 @@ const props = defineProps({
         type: String,
         required: false,
         default: ".bpmn,.xml"
-    },
-    callbackHandler: {
-        type: Function,
-        required: false,
-        default: () => { console.warn("No callback handler provided"); }
     }
 });
 
@@ -52,12 +48,15 @@ async function loadFile(event) {
 
         const content = await file.text();
 
-        props.callbackHandler({
+        EventBus.emit(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS, {
             file,
             content
         });
+
         clearFile();
     } catch (error) {
+
+        EventBus.emit(FILE_INPUT_EVENT_TYPE.LOAD_FILE_ERROR, error);
         clearFile();
         throw new Error("Error loading file", error);
     }
