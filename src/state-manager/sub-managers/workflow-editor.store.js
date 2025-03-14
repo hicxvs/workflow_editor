@@ -1,7 +1,9 @@
 import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
-import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { FILE_INPUT_EVENT_TYPE } from '../../components/singleton-components/file-input-component/file-input-event-type';
+
+import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
@@ -14,6 +16,7 @@ export function WorkflowEditorStore() {
     const currentProcessDefinition = ref(null);
     const currentNavigationPath = ref(null);
     const currentDiagram = ref(null);
+    const currentImportDiagramResults = ref(null);
 
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -21,8 +24,7 @@ export function WorkflowEditorStore() {
         }
 
         currentModeler.value = createWorkflowEditor(canvas);
-        await currentModeler.value.importDiagram(defaultDiagram);
-        getWorkflowEditorProcessDefinition();
+        await importAndProcessDiagram(defaultDiagram);
     }
 
     function destroyWorkflowEditor() {
@@ -37,8 +39,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, (element) => {
             
             if(!element) {
-                currentWorkingElement.value = null;
-                currentWorkingElementProperties.value = null;
+                clearCurrentWorkingElement();
                 return;
             }
 
@@ -48,26 +49,68 @@ export function WorkflowEditorStore() {
     
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, (navigationPath) => {
             if(!navigationPath) {
-                currentNavigationPath.value = null;
+                clearNavigationPath();
                 return;
             }
 
             if(!currentNavigationPath.value || currentNavigationPath.value.length > 0) {
-                currentNavigationPath.value = null;
+                clearNavigationPath();
             }
 
             currentNavigationPath.value = [navigationPath];
         });
+
+        EventBus.on(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS, async (fileData) => {
+            if(!fileData || !fileData.content) {
+                return;
+            }          
+
+            await importAndProcessDiagram(fileData.content);
+        });
     }
-    
+
+    async function importAndProcessDiagram(diagramContent) {
+        if(!diagramContent || !currentModeler.value) {
+            return;
+        }
+
+        if(currentDiagram.value) {
+            clearWorkflowEditor();
+        }
+
+        if(currentImportDiagramResults.value) {
+            currentImportDiagramResults.value = null;
+        }
+
+        currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
+        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentModeler.value.fitCanvasToDiagram();
+    }
+
     function unregisterWorkflowEditorEventHandlers() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
+        EventBus.off(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS);
     }
 
     function clearDiagram() {        
         currentModeler.value.clearDiagram();
         currentDiagram.value = null;
+    }
+
+    function clearCurrentWorkingElement() {
+        currentWorkingElement.value = null;
+        currentWorkingElementProperties.value = null;
+    }
+
+    function clearNavigationPath() {
+        currentNavigationPath.value = null;
+    }
+
+    function clearWorkflowEditor() {
+        clearDiagram();
+        clearCurrentWorkingElement();
+        clearNavigationPath();
     }
 
     async function generateDiagram() {
@@ -78,13 +121,6 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
-    function getWorkflowEditorProcessDefinition() {
-        if(!currentModeler.value) {
-            return null;
-        }
-
-        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
-    }
   
     return {
         currentModeler,
@@ -97,7 +133,6 @@ export function WorkflowEditorStore() {
         registerWorkflowEditorEventHandlers,
         unregisterWorkflowEditorEventHandlers,
         generateDiagram,
-        clearDiagram,
-        getWorkflowEditorProcessDefinition
+        clearWorkflowEditor
     };
 }   

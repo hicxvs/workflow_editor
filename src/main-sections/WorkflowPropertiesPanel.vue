@@ -18,7 +18,7 @@ import { storeToRefs } from "pinia";
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
 const { currentProcessDefinition, currentWorkingElementProperties } = storeToRefs(workflowEditorStore);
-const { generateDiagram, clearDiagram } = workflowEditorStore;
+const { generateDiagram, clearWorkflowEditor } = workflowEditorStore;
 
 onMounted(() => {
   registerDiagramEventHandlers();
@@ -30,7 +30,7 @@ onUnmounted(() => {
 
 function registerDiagramEventHandlers() {
   EventBus.on(EVENT_TYPE.GENERATE_DIAGRAM, () => generateDiagram()); 
-  EventBus.on(EVENT_TYPE.CLEAR_DIAGRAM, () => clearDiagram());
+  EventBus.on(EVENT_TYPE.CLEAR_DIAGRAM, () => clearWorkflowEditor());
 }
 
 function unregisterDiagramEventHandlers() {

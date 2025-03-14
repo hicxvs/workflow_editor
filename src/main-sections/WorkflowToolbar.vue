@@ -11,5 +11,3 @@ import Toolbar from "../components/toolbar-panel-components/Toolbar.vue";
 
 <style scoped>
 </style>
-
-

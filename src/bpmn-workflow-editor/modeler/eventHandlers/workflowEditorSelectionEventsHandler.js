@@ -26,8 +26,12 @@ export function workflowEditorSelectionEventsHandler(modeler) {
 
     function handleServiceTaskSelection(selectedElement) {
 
+        if(selectedElement.type !== 'bpmn:ServiceTask') {
+            return;
+        }
+
         const expressionTypes = ['expression', 'delegateExpression', 'class'];
-        const { properties } = selectedElement;        
+        const properties = selectedElement.businessObject;        
 
         for (const type of expressionTypes) {
             if (type in properties) {
