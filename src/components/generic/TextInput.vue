@@ -1,5 +1,8 @@
 <template>
     <div class="text-input-container" data-testid="text-input-container">
+
+        {{ model }}
+
         <v-text-field
             :clearable="clearable"
             :label="label" 
