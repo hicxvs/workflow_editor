@@ -1,15 +1,15 @@
 <template>
-  <div>
-    <h1>Workflow Toolbar</h1>
+  <div class="workflow-toolbar-container" data-testid="workflow-toolbar-container">
+    <Toolbar />
   </div>
 </template>
 
 <script setup>
+import Toolbar from "../components/toolbar-panel-components/Toolbar.vue";
 
 </script>
 
 <style scoped>
-
 </style>
 
 
