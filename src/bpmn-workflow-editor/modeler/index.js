@@ -12,6 +12,15 @@ import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workf
 export function createWorkflowEditor(container) {
 
     const modeler = createWorkflowEditor(container);
+    const elementRegistry = modeler.get('elementRegistry');
+    const canvas = modeler.get('canvas');
+    const palette = modeler.get('palette');
+    const translate = modeler.get('translate');
+    const moddle = modeler.get('moddle');
+    const factory = modeler.get('bpmnFactory');
+    const modeling = modeler.get('modeling');
+    const rules = modeler.get('bpmnRules');
+
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
@@ -102,12 +111,30 @@ export function createWorkflowEditor(container) {
         return null;
     }
 
+    function fitCanvasToDiagram() {
+        if(!modeler) {
+            console.error("Error: Workflow editor is not initialized.");
+            return null;
+        }
+
+        canvas.zoom('fit-viewport');
+    }
+
     return {
         modeler,
+        elementRegistry,
+        canvas,
+        palette,
+        translate,
+        moddle,
+        factory,
+        modeling,
+        rules,
         importDiagram,
         generateDiagram,
         saveDiagram,
         clearDiagram,
-        getProcessDefinition
+        getProcessDefinition,
+        fitCanvasToDiagram
     };
 }
