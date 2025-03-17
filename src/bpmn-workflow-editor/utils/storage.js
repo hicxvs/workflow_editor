@@ -36,6 +36,15 @@ export function Storage() {
         return apiKey;
     }
 
+    function clearAPIKey() {
+        if(!isLocalStorageSupported()) {
+            console.error("Local storage not supported.");
+            return;
+        }
+        localStorage.removeItem(storageKey);
+        EventBus.emit(EVENT_TYPE.API_KEY_CLEARED);
+    }
+
     function isLocalStorageSupported() {
         if(!localStorage) {
             console.error("Local storage not supported.");
@@ -46,6 +55,7 @@ export function Storage() {
     
     return {
         saveAPIKey,
-        loadAPIKey
+        loadAPIKey,
+        clearAPIKey
     };
 }

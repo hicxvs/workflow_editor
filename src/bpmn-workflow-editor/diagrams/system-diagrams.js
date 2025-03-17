@@ -72,6 +72,7 @@ export function SystemDiagrams() {
 
     return {
         getAllSystemDiagrams,
-        getSystemDiagramByName
+        getSystemDiagramByName,
+        isApiKeyValid
     };
 }

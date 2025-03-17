@@ -9,8 +9,8 @@ import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
-const { saveAPIKey, loadAPIKey } = Storage();
-const { getAllSystemDiagrams } = SystemDiagrams();
+const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
+const { getAllSystemDiagrams, isApiKeyValid } = SystemDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -71,6 +71,12 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
 
         EventBus.on(EVENT_TYPE.SET_API_KEY, (apiKey) => {
+            if(!isApiKeyValid(apiKey)) {
+                console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
+                clearAPIKey();
+                return;
+            }
+
             currentApiKey.value = apiKey;
             saveAPIKey(apiKey);
         });
