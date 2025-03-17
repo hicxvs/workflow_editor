@@ -18,6 +18,7 @@
                         flat
                         hide-details
                         single-line
+                        type="password"
                         v-model="apiKey" 
                         @update:modelValue="update"
                         class="api-key-input"
