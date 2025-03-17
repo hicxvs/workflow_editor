@@ -68,6 +68,10 @@ function update() {
     EventBus.emit(EVENT_TYPE.SET_API_KEY, apiKey.value);
 }
 
+EventBus.on(EVENT_TYPE.API_KEY_LOADED, (loadedApiKey) => {
+    apiKey.value = loadedApiKey;
+});
+
 </script>
 
 <style scoped>

@@ -5,8 +5,10 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
+import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
+const { saveAPIKey, loadAPIKey } = Storage();
 
 export function WorkflowEditorStore() {
 
@@ -26,6 +28,7 @@ export function WorkflowEditorStore() {
 
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
+        currentApiKey.value = loadAPIKey();
     }
 
     function registerWorkflowEditorEventHandlers() {
@@ -66,6 +69,7 @@ export function WorkflowEditorStore() {
 
         EventBus.on(EVENT_TYPE.SET_API_KEY, (apiKey) => {
             currentApiKey.value = apiKey;
+            saveAPIKey(apiKey);
         });
 
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
@@ -76,7 +80,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
-    }
+    }    
 
     async function loadDiagramFromSystem() {
         if(!currentApiKey.value) {

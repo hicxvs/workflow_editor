@@ -8,5 +8,7 @@ export const EVENT_TYPE = Object.freeze({
     LOAD_FILE_SUCCESS: 'load-file-success',
     LOAD_FILE_ERROR: 'load-file-error',
     CLEAR_FILE: 'clear-file',
-    SET_API_KEY: 'set-api-key'
+    SET_API_KEY: 'set-api-key',
+    API_KEY_LOADED: 'api-key-loaded',
+    API_KEY_SAVED: 'api-key-saved'
 });
