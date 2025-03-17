@@ -71,6 +71,12 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
 
         EventBus.on(EVENT_TYPE.SET_API_KEY, (apiKey) => {
+            if(!apiKey) {
+                currentApiKey.value = null;
+                clearAPIKey();
+                return;
+            }
+
             if(!isApiKeyValid(apiKey)) {
                 console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
                 clearAPIKey();
