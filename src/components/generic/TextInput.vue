@@ -4,7 +4,7 @@
             :clearable="clearable"
             :label="label" 
             v-model="model" 
-            @input="update" 
+            @update:modelValue="update" 
         />
     </div>
 </template>
