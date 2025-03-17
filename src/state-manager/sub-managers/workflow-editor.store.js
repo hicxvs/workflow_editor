@@ -1,10 +1,10 @@
 import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
-import { FILE_INPUT_EVENT_TYPE } from '../../components/singleton-components/file-input-component/file-input-event-type';
 
 import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
+import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 
@@ -60,13 +60,15 @@ export function WorkflowEditorStore() {
             currentNavigationPath.value = [navigationPath];
         });
 
-        EventBus.on(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS, async (fileData) => {
+        EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, async (fileData) => {
             if(!fileData || !fileData.content) {
                 return;
             }          
 
             await importAndProcessDiagram(fileData.content);
         });
+
+        EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
     }
 
     async function importAndProcessDiagram(diagramContent) {
@@ -84,13 +86,12 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
-        currentModeler.value.fitCanvasToDiagram();
     }
 
     function unregisterWorkflowEditorEventHandlers() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
-        EventBus.off(FILE_INPUT_EVENT_TYPE.LOAD_FILE_SUCCESS);
+        EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
     }
 
     function clearDiagram() {        
@@ -121,6 +122,12 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
+    async function saveDiagram() { 
+        const fileName = 'diagram';
+        const diagramXMLContent = await currentModeler.value.saveDiagram();
+        downloadDiagram(fileName, diagramXMLContent);
+    }
+
   
     return {
         currentModeler,
@@ -133,6 +140,7 @@ export function WorkflowEditorStore() {
         registerWorkflowEditorEventHandlers,
         unregisterWorkflowEditorEventHandlers,
         generateDiagram,
-        clearWorkflowEditor
+        clearWorkflowEditor,
+        saveDiagram
     };
 }   
