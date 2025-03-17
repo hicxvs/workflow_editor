@@ -4,6 +4,7 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
+import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 
@@ -66,6 +67,8 @@ export function WorkflowEditorStore() {
 
             await importAndProcessDiagram(fileData.content);
         });
+
+        EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
     }
 
     async function importAndProcessDiagram(diagramContent) {
@@ -83,7 +86,6 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
-        //currentModeler.value.fitCanvasToDiagram();
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -120,6 +122,12 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
+    async function saveDiagram() { 
+        const fileName = 'diagram';
+        const diagramXMLContent = await currentModeler.value.saveDiagram();
+        downloadDiagram(fileName, diagramXMLContent);
+    }
+
   
     return {
         currentModeler,
@@ -132,6 +140,7 @@ export function WorkflowEditorStore() {
         registerWorkflowEditorEventHandlers,
         unregisterWorkflowEditorEventHandlers,
         generateDiagram,
-        clearWorkflowEditor
+        clearWorkflowEditor,
+        saveDiagram
     };
 }   

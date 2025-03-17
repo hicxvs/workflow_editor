@@ -27,14 +27,17 @@ export function createWorkflowEditor(container) {
     workflowSubprocessNavigationEventsHandler(modeler);
 
     async function importDiagram(xmlDiagram) {
-        if(isDiagramValid(xmlDiagram)) {
-            try {
-                return await modeler.importXML(xmlDiagram);
-            } catch (error) {
-                console.error("Error during diagram import:", error);
-                throw error;
-            }
-        }        
+        if(!xmlDiagram) {
+            console.error("Error: XML diagram is not provided or is undefined.");
+            return false;
+        }
+
+        try {
+            return await modeler.importXML(xmlDiagram);
+        } catch (error) {
+            console.error("Error during diagram import:", error);
+            throw error;
+        }       
     }
 
     async function generateDiagram() {
@@ -46,15 +49,13 @@ export function createWorkflowEditor(container) {
         }   
     }
 
-    async function saveDiagram(xmlDiagram) {
-        if(isDiagramValid(xmlDiagram)) {
-            try {
-                return await modeler.saveXML(xmlDiagram, {format: true});
-            } catch (error) {
-                console.error("Error during saving the XML diagram:", error);
-                throw error;
-            }   
-        }   
+    async function saveDiagram() {
+        try {
+            return await modeler.saveXML({format: true});
+        } catch (error) {
+            console.error("Error during saving the XML diagram:", error);
+            throw error;
+        }    
     }
 
     function clearDiagram() {
@@ -64,14 +65,6 @@ export function createWorkflowEditor(container) {
             console.error("Error during clearing the diagram:", error);
             throw error;
         }
-    }
-
-    function isDiagramValid(xmlDiagram) {
-        if(!xmlDiagram) {
-            console.error("Error: XML diagram is not provided or is undefined.");
-            return false;
-        }        
-        return true;
     }
 
     function createWorkflowEditor(container){

@@ -33,7 +33,7 @@ const buttonClickHandlers = {
         console.log("Load Diagram from System");
     },
     saveDiagram: () => {
-        console.log("Save Diagram");
+        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
     },
     logElements: () => {
         console.log("Log Elements");
