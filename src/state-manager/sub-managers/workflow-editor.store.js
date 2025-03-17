@@ -6,9 +6,11 @@ import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
+import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey } = Storage();
+const { getAllSystemDiagrams } = SystemDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -20,6 +22,7 @@ export function WorkflowEditorStore() {
     const currentDiagram = ref(null);
     const currentImportDiagramResults = ref(null);
     const currentApiKey = ref(null);
+    const currentSystemDiagrams = ref(null);
 
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -72,7 +75,7 @@ export function WorkflowEditorStore() {
             saveAPIKey(apiKey);
         });
 
-        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadDiagramFromSystem);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -80,6 +83,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
     }    
 
     async function loadDiagramFromSystem() {
@@ -88,7 +92,8 @@ export function WorkflowEditorStore() {
             return;
         }
 
-        throw new Error("Not implemented");
+        currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
+        console.log(currentSystemDiagrams.value);
     }
 
     async function importAndProcessDiagram(diagramContent) {
@@ -157,6 +162,7 @@ export function WorkflowEditorStore() {
         currentNavigationPath,
         currentProcessDefinition,
         currentApiKey,
+        currentSystemDiagrams,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

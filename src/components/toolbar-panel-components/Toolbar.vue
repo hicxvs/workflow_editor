@@ -51,7 +51,7 @@ const buttonClickHandlers = {
         EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
     },
     loadDiagramFromSystem: () => {
-        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
+        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
     },
     saveDiagram: () => {
         EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);

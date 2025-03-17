@@ -10,5 +10,6 @@ export const EVENT_TYPE = Object.freeze({
     CLEAR_FILE: 'clear-file',
     SET_API_KEY: 'set-api-key',
     API_KEY_LOADED: 'api-key-loaded',
-    API_KEY_SAVED: 'api-key-saved'
+    API_KEY_SAVED: 'api-key-saved',
+    LOAD_DIAGRAMS_FROM_SYSTEM: 'load-diagrams-from-system',
 });
