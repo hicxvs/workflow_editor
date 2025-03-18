@@ -5,8 +5,12 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../eventbus';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
+import { Storage } from '../../bpmn-workflow-editor/utils/storage';
+import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
+const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
+const { getAllSystemDiagrams, isApiKeyValid } = SystemDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -17,6 +21,8 @@ export function WorkflowEditorStore() {
     const currentNavigationPath = ref(null);
     const currentDiagram = ref(null);
     const currentImportDiagramResults = ref(null);
+    const currentApiKey = ref(null);
+    const currentSystemDiagrams = ref(null);
 
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -25,13 +31,7 @@ export function WorkflowEditorStore() {
 
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
-    }
-
-    function destroyWorkflowEditor() {
-        if(currentModeler.value) {
-            currentModeler.value.modeler.destroy();
-            currentModeler.value = null;
-        }        
+        currentApiKey.value = loadAPIKey();
     }
 
     function registerWorkflowEditorEventHandlers() {
@@ -69,6 +69,43 @@ export function WorkflowEditorStore() {
         });
 
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
+
+        EventBus.on(EVENT_TYPE.SET_API_KEY, (apiKey) => {
+            if(!apiKey) {
+                currentApiKey.value = null;
+                clearAPIKey();
+                return;
+            }
+
+            if(!isApiKeyValid(apiKey)) {
+                console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
+                clearAPIKey();
+                return;
+            }
+
+            currentApiKey.value = apiKey;
+            saveAPIKey(apiKey);
+        });
+
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadDiagramFromSystem);
+    }
+
+    function unregisterWorkflowEditorEventHandlers() {
+        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
+        EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
+        EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
+        EventBus.off(EVENT_TYPE.SET_API_KEY);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
+    }    
+
+    async function loadDiagramFromSystem() {
+        if(!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return;
+        }
+
+        currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
+        console.log(currentSystemDiagrams.value);
     }
 
     async function importAndProcessDiagram(diagramContent) {
@@ -86,12 +123,13 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
-    }
+    }   
 
-    function unregisterWorkflowEditorEventHandlers() {
-        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
-        EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
-        EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
+    function destroyWorkflowEditor() {
+        if(currentModeler.value) {
+            currentModeler.value.modeler.destroy();
+            currentModeler.value = null;
+        }        
     }
 
     function clearDiagram() {        
@@ -135,6 +173,8 @@ export function WorkflowEditorStore() {
         currentWorkingElementProperties,
         currentNavigationPath,
         currentProcessDefinition,
+        currentApiKey,
+        currentSystemDiagrams,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

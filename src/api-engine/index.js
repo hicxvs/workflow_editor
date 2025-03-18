@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ApiEngineEventTypes } from './api-engine-event-types';
-import Eventbus from './event-bus';
+import Eventbus from '../eventbus';
 
-export function ApiEngine(baseURL) {
+export default function ApiEngine(baseURL) {
 
     const engine = axios.create({
         baseURL: baseURL,
