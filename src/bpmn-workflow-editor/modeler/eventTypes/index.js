@@ -13,4 +13,9 @@ export const EVENT_TYPE = Object.freeze({
     API_KEY_SAVED: 'api-key-saved',
     API_KEY_CLEARED: 'api-key-cleared',
     LOAD_DIAGRAMS_FROM_SYSTEM: 'load-diagrams-from-system',
+    OPEN_MODAL: 'open-modal',
+    CLOSE_MODAL: 'close-modal',
+    MODAL_CLOSED: 'modal-closed'
 });
+
+

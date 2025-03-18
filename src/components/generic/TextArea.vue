@@ -25,7 +25,7 @@ const props = defineProps({
     }
 });
 
-function update(value) {
+function update() {
     emit('update:modelValue', model.value);
 }
 </script>
