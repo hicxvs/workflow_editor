@@ -1,34 +1,29 @@
 <template>
     <div class="text-input-container" data-testid="text-input-container">
         <v-text-field
-            :clearable="clearable"
+            clearable
             :label="label" 
-            v-model="model" 
-            @update:modelValue="update" 
+            v-model="model"
+            @click:clear="clearHandler"
         />
     </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue']);
+import { defineModel } from 'vue';
+
 const model = defineModel();
 const props = defineProps({
     label: {
         type: String,
-        required: false,
-        default: "Default label"
+        required: false
     },
-    clearable: {
-        type: Boolean,
+    clearHandler: {
+        type: Function,
         required: false,
-        default: true
+        default: () => {}
     }
 });
-
-function update() {
-    emit('update:modelValue', model.value);
-}
-
 </script>
 
 <style scoped> 
