@@ -105,7 +105,7 @@ export function WorkflowEditorStore() {
         }
 
         currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
-        console.log(currentSystemDiagrams.value);
+        EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
     }
 
     async function importAndProcessDiagram(diagramContent) {

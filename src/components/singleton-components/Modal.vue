@@ -1,6 +1,6 @@
 <template>
     <div class="modal-container" data-testid="modal-container">
-        <v-dialog v-model="showModal" min-width="30%" max-width="80%">
+        <v-dialog v-model="showModal" min-width="20%" max-width="80%">
             <v-card>
                 <v-card-title>
                     <slot name="title">This is modal's default title</slot>                    
@@ -16,7 +16,7 @@
 
                 <v-card-actions>
                     <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" @click="saveButtonClickHandler"></Button>
-                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelButtonClickHandler"></Button>                    
+                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelModal"></Button>                    
                     <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" @click="closeModal"></Button>
                 </v-card-actions>          
             </v-card>       
@@ -77,6 +77,12 @@ function closeModal() {
     showModal.value = false;
     EventBus.emit(EVENT_TYPE.MODAL_CLOSED); 
 }
+
+function cancelModal() {
+    props.cancelButtonClickHandler();
+    closeModal();
+}
+
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.OPEN_MODAL, () => {
