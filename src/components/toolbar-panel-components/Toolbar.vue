@@ -84,7 +84,7 @@ EventBus.on(EVENT_TYPE.API_KEY_LOADED, (loadedApiKey) => {
 
 .api-key-input-container {
     margin-left: 16px;
-    width: 100%;
+    width: 20%;
 }
 </style>
 

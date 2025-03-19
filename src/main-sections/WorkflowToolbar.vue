@@ -11,6 +11,6 @@ import Toolbar from "../components/toolbar-panel-components/Toolbar.vue";
 
 <style scoped>
 .workflow-toolbar-container {
-  width: 98vw;
+  width: 100vw;
 }
 </style>
