@@ -4,13 +4,13 @@
             <template #content>
                 <div class="main-config-editor-content">
                     <TextInput v-if="model" :label="inputLabel.assignee" :model="model.assignee" />
-                    <TextInput v-if="model":label="inputLabel.candidateUsers" :model="model.candidateUsers" />
-                    <TextInput v-if="model":label="inputLabel.candidateGroups" :model="model.candidateGroups" />
-                    <TextInput v-if="model":label="inputLabel.formKey" :model="model.formKey" />
-                    <TextInput v-if="model":label="inputLabel.dueDate" :model="model.dueDate" />
-                    <TextInput v-if="model":label="inputLabel.priority" :model="model.priority" />
-                    <TextInput v-if="model":label="inputLabel.category" :model="model.category" />         
-                    <TextInput v-if="model":label="inputLabel.skipExpression" :model="model.skipExpression" />
+                    <TextInput v-if="model" :label="inputLabel.candidateUsers" :model="model.candidateUsers" />
+                    <TextInput v-if="model" :label="inputLabel.candidateGroups" :model="model.candidateGroups" />
+                    <TextInput v-if="model" :label="inputLabel.formKey" :model="model.formKey" />
+                    <TextInput v-if="model" :label="inputLabel.dueDate" :model="model.dueDate" />
+                    <TextInput v-if="model" :label="inputLabel.priority" :model="model.priority" />
+                    <TextInput v-if="model" :label="inputLabel.category" :model="model.category" />         
+                    <TextInput v-if="model" :label="inputLabel.skipExpression" :model="model.skipExpression" />
                 </div>
                 
             </template>

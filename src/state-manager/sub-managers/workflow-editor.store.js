@@ -10,7 +10,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
-const { getAllSystemDiagrams, isApiKeyValid } = SystemDiagrams();
+const { getAllSystemDiagrams, getSystemDiagramByName, isApiKeyValid } = SystemDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -35,59 +35,13 @@ export function WorkflowEditorStore() {
     }
 
     function registerWorkflowEditorEventHandlers() {
-
-        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, (element) => {
-            
-            if(!element) {
-                clearCurrentWorkingElement();
-                return;
-            }
-
-            currentWorkingElement.value = element;
-            currentWorkingElementProperties.value = element?.businessObject || null;
-        });
-    
-        EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, (navigationPath) => {
-            if(!navigationPath) {
-                clearNavigationPath();
-                return;
-            }
-
-            if(!currentNavigationPath.value || currentNavigationPath.value.length > 0) {
-                clearNavigationPath();
-            }
-
-            currentNavigationPath.value = [navigationPath];
-        });
-
-        EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, async (fileData) => {
-            if(!fileData || !fileData.content) {
-                return;
-            }          
-
-            await importAndProcessDiagram(fileData.content);
-        });
-
+        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, updateElement);    
+        EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
+        EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
-
-        EventBus.on(EVENT_TYPE.SET_API_KEY, (apiKey) => {
-            if(!apiKey) {
-                currentApiKey.value = null;
-                clearAPIKey();
-                return;
-            }
-
-            if(!isApiKeyValid(apiKey)) {
-                console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
-                clearAPIKey();
-                return;
-            }
-
-            currentApiKey.value = apiKey;
-            saveAPIKey(apiKey);
-        });
-
-        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadDiagramFromSystem);
+        EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -96,9 +50,58 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
-    }    
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
+    }
 
-    async function loadDiagramFromSystem() {
+    function updateElement(element) {                    
+        if(!element) {
+            clearCurrentWorkingElement();
+            return;
+        }
+
+        currentWorkingElement.value = element;
+        currentWorkingElementProperties.value = element?.businessObject || null;
+    }
+
+    function updateNavigationPath(navigationPath) {
+        if(!navigationPath) {
+            clearNavigationPath();
+            return;
+        }
+
+        if(!currentNavigationPath.value || currentNavigationPath.value.length > 0) {
+            clearNavigationPath();
+        }
+
+        currentNavigationPath.value = [navigationPath];
+    }
+    
+    function setApiKey(apiKey) {
+        if(!apiKey) {
+            currentApiKey.value = null;
+            clearAPIKey();
+            return;
+        }
+
+        if(!isApiKeyValid(apiKey)) {
+            console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
+            clearAPIKey();
+            return;
+        }
+
+        currentApiKey.value = apiKey;
+        saveAPIKey(apiKey);
+    }
+
+    async function loadDiagramFromLocalFileSystem(fileData) {
+        if(!fileData || !fileData.content) {
+            return;
+        }
+
+        await importAndProcessDiagram(fileData.content);
+    }
+
+    async function loadAllDiagramsFromSystem() {
         if(!currentApiKey.value) {
             console.error("No API key provided. Please provide an API key to load a diagram from the system.");
             return;
@@ -107,6 +110,22 @@ export function WorkflowEditorStore() {
         currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
         EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
     }
+
+    async function loadDiagramFromSystem(diagram) {
+        if(!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return;
+        }
+
+        if(!diagram || !diagram.name) {
+            console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
+            return;
+        }
+
+       const loadedDiagramContent = await getSystemDiagramByName(currentApiKey.value, diagram.name);
+       await importAndProcessDiagram(loadedDiagramContent);
+       EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
+    } 
 
     async function importAndProcessDiagram(diagramContent) {
         if(!diagramContent || !currentModeler.value) {
@@ -123,6 +142,7 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentModeler.value.fitCanvasToDiagram();
     }   
 
     function destroyWorkflowEditor() {
@@ -165,7 +185,6 @@ export function WorkflowEditorStore() {
         const diagramXMLContent = await currentModeler.value.saveDiagram();
         downloadDiagram(fileName, diagramXMLContent);
     }
-
   
     return {
         currentModeler,

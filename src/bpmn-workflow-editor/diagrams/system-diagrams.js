@@ -27,7 +27,7 @@ export function SystemDiagrams() {
             checkApiKey(apiKey);
             const requestPayload = generateRequestPayload(name);
             const response = await apiEngine.post(`${API_RESOURCE_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
-            return response?.data?.entity?.data?.bpmn_details?.content;
+            return atob(response?.data?.entity?.data?.bpmn_details?.content);
         } catch (error) {
             console.error('Error loading system diagram by name', error);
             throw error;

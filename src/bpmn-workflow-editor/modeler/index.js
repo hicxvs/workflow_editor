@@ -110,7 +110,14 @@ export function createWorkflowEditor(container) {
             return null;
         }
 
-        canvas.zoom('fit-viewport');
+        const { inner } = canvas.viewbox();
+
+        const center = {
+            x: inner.x + inner.width / 2,
+            y: inner.y + inner.height / 2
+        };
+
+        canvas.zoom("fit-viewport", center);
     }
 
     return {
