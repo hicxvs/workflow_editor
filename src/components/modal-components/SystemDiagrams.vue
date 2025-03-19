@@ -11,17 +11,17 @@
 
             <template #content>
                 <TextInput :label="inputLabel" @input="filterDiagrams" :clearHandler="filterDiagrams"/>
-                <p class="text-right"> {{ found }} {{ filteredDiagrams?.length || 0 }} {{ matchingFiles }}</p>
-                
-                <v-table>
-                    <thead>
+                <p class="text-right"> {{ found }} {{ filteredDiagrams?.length || 0 }} {{ searched }} {{ matchingFiles }}</p>
+ 
+                <Table>
+                    <template #head-content>
                         <tr>
                             <th class="text-left">{{ tableHeader.processName }}</th>
                             <th class="text-left">{{ tableHeader.processVersion }}</th>
                             <th class="text-left">{{ tableHeader.processAction }}</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                    </template>
+                    <template #body-content>
                         <tr
                             v-if="filteredDiagrams && filteredDiagrams.length"
                             v-for="diagram in filteredDiagrams"
@@ -29,7 +29,7 @@
                         >
                             <td>{{ diagram.name }}</td>
                             <td>{{ diagram.version }}</td>
-                            <td>
+                            <td class="text-right">
                                 <Button 
                                     :buttonColor="buttonColor"
                                     :label="buttonLabel"
@@ -37,14 +37,12 @@
                                 />
                             </td>
                         </tr>
-                    </tbody>
-                </v-table>
+                    </template>
+                </Table>
 
                 <p class="text-right" > {{ foundedTotalOf }} {{ systemDiagrams.length }} {{ matchingFiles }}</p>
-            </template>
-            
-        </Modal>
-        
+            </template>            
+        </Modal>        
     </div>
 </template>
 
@@ -52,7 +50,8 @@
 import {ref, onMounted, onUnmounted} from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
-import Modal from '../singleton-components/Modal.vue';
+import Modal from '../generic/Modal.vue';
+import Table from '../generic/Table.vue';
 import TextInput from '../generic/TextInput.vue';
 import Button from '../generic/Button.vue';
 
@@ -70,7 +69,8 @@ const tableHeader = {
 
 const foundedTotalOf = 'Found a total of ';
 const found = 'Found: ';
-const matchingFiles = 'matching files.';
+const matchingFiles = 'matching file(s).';
+const searched = 'searched';
 
 const buttonColor = 'green';
 const buttonLabel = 'Load Diagram';

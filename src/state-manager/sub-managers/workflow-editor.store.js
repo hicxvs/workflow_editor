@@ -88,6 +88,10 @@ export function WorkflowEditorStore() {
         });
 
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadDiagramFromSystem);
+
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, (diagram) => {
+            console.log(diagram);
+        });
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -96,6 +100,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
     }    
 
     async function loadDiagramFromSystem() {
