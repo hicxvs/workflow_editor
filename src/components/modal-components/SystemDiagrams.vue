@@ -11,7 +11,7 @@
 
             <template #content>
                 <TextInput :label="inputLabel" @input="filterDiagrams" :clearHandler="filterDiagrams"/>
-                <p class="text-right"> {{ found }} {{ filteredDiagrams?.length || 0 }} {{ searched }} {{ matchingFiles }}</p>
+                <p class="text-right"> {{ found }} {{ filteredDiagrams?.length || 0 }} {{ searchedMatchingFiles }}</p>
  
                 <Table>
                     <template #head-content>
@@ -70,7 +70,7 @@ const tableHeader = {
 const foundedTotalOf = 'Found a total of ';
 const found = 'Found: ';
 const matchingFiles = 'matching file(s).';
-const searched = 'searched';
+const searchedMatchingFiles = 'searched matching file(s).';
 
 const buttonColor = 'green';
 const buttonLabel = 'Load Diagram';

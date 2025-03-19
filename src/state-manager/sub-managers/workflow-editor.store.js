@@ -10,7 +10,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
-const { getAllSystemDiagrams, isApiKeyValid } = SystemDiagrams();
+const { getAllSystemDiagrams, getSystemDiagramByName, isApiKeyValid } = SystemDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -87,11 +87,8 @@ export function WorkflowEditorStore() {
             saveAPIKey(apiKey);
         });
 
-        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadDiagramFromSystem);
-
-        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, (diagram) => {
-            console.log(diagram);
-        });
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -103,7 +100,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
     }    
 
-    async function loadDiagramFromSystem() {
+    async function loadAllDiagramsFromSystem() {
         if(!currentApiKey.value) {
             console.error("No API key provided. Please provide an API key to load a diagram from the system.");
             return;
@@ -112,6 +109,22 @@ export function WorkflowEditorStore() {
         currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
         EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
     }
+
+    async function loadDiagramFromSystem(diagram) {
+        if(!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return;
+        }
+
+        if(!diagram || !diagram.name) {
+            console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
+            return;
+        }
+
+       const loadedDiagramContent = await getSystemDiagramByName(currentApiKey.value, diagram.name);
+       await importAndProcessDiagram(loadedDiagramContent);
+       EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
+    } 
 
     async function importAndProcessDiagram(diagramContent) {
         if(!diagramContent || !currentModeler.value) {
@@ -128,6 +141,7 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentModeler.value.fitCanvasToDiagram();
     }   
 
     function destroyWorkflowEditor() {
