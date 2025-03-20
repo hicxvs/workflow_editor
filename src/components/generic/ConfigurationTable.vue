@@ -1,5 +1,5 @@
 <template>
-    <div class="configuration-table" data-testid="configuration-table" @click="handleParentClick">
+    <div class="configuration-table-container" data-testid="configuration-table-container" @click="handleParentClick">
 
         <p class="v-card-title">{{ title }}</p>
 
@@ -65,6 +65,20 @@ const props = defineProps({
         type: Array,
         required: false,
         default: []
+    },
+    createNewListenerHandler: {
+        type: Function,
+        required: false,
+        default: () => {
+            console.warn("No create new handler provided for the button. Please provide a handler to handle the create new click event.");
+        }
+    },
+    editListenerHandler: {
+        type: Function,
+        required: false,
+        default: (item) => {
+            console.warn("No edit handler provided for the button. Please provide a handler to handle the edit click event.", item);
+        }
     }
 });
 
@@ -86,16 +100,14 @@ const buttonColors = {
 const buttonClickHandlers = {
     create: () => {
         clearSelectedItem();
-
-        console.log('Lets open the modal and create a new listener');
+        props.createNewListenerHandler();
     },
     edit: () => {
         if(!items.value || !selectedItem.value ) {
             return;
         }
 
-        console.log(selectedItem.value);
-        console.log('Lets open the modal and edit the listener');
+        props.editListenerHandler(selectedItem.value);
     },
     remove: () => {
         if(!items.value || !selectedItem.value ) {
@@ -174,8 +186,8 @@ function handleParentClick(event) {
 }
 
 .active-row {
-    background-color: #f5f5f5; /* Adjust to your desired active color */
-    color: #000; /* Optional: Change text color for better contrast */
+    background-color: #f5f5f5;
+    color: #000; 
 }
 
 @media (max-width: 100%) { 

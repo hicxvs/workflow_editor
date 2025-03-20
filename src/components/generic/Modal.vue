@@ -1,6 +1,6 @@
 <template>
     <div class="modal-container" data-testid="modal-container">
-        <v-dialog v-model="showModal" min-width="20%" max-width="80%">
+        <v-dialog v-model="model" min-width="20%" max-width="80%">
             <v-card>
                 <v-card-title>
                     <slot name="title">This is modal's default title</slot>                    
@@ -15,9 +15,9 @@
                 <v-divider></v-divider>
 
                 <v-card-actions>
-                    <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" @click="saveButtonClickHandler"></Button>
-                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelModal"></Button>                    
-                    <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" @click="closeModal"></Button>
+                    <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" :clickHandler="saveButtonClickHandler" ></Button>
+                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" :clickHandler="cancelModal"></Button>                    
+                    <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" :clickHandler="closeModal"></Button>
                 </v-card-actions>          
             </v-card>       
         </v-dialog>
@@ -25,12 +25,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import Button from '../generic/Button.vue';
 import EventBus from '../../eventbus';
-import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes'; 
+import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
-const showModal = ref(false);   
+const model = defineModel();
 
 const props = defineProps({
     showSaveButton: {
@@ -57,7 +57,7 @@ const props = defineProps({
         type: Function,
         required: false,
         default: () => { console.warn('cancelButtonClickHandler is not defined'); }
-    }    
+    }  
 });
 
 
@@ -74,8 +74,7 @@ const buttonColors = {
 };
 
 function closeModal() {
-    showModal.value = false;
-    EventBus.emit(EVENT_TYPE.MODAL_CLOSED); 
+    model.value = false;
 }
 
 function cancelModal() {
@@ -83,19 +82,11 @@ function cancelModal() {
     closeModal();
 }
 
-
 onMounted(() => {
-    EventBus.on(EVENT_TYPE.OPEN_MODAL, () => {
-        showModal.value = true;
-    });
-
-    EventBus.on(EVENT_TYPE.CLOSE_MODAL, () => {
-        showModal.value = false;
-    });
+    EventBus.on(EVENT_TYPE.CLOSE_MODAL, closeModal);
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.OPEN_MODAL);
     EventBus.off(EVENT_TYPE.CLOSE_MODAL);
 });
 

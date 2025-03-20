@@ -4,6 +4,7 @@
             :showCloseButton = "showButton"
             :showSaveButton = "!showButton"
             :showCancelButton = "!showButton"
+            v-model="showModal"
         >
             <template #title>
                 {{ modalTitle }}
@@ -40,7 +41,7 @@
                     </template>
                 </Table>
 
-                <p class="text-right" > {{ foundedTotalOf }} {{ systemDiagrams.length }} {{ matchingFiles }}</p>
+                <p class="text-right" > {{ foundedTotalOf }} {{ systemDiagrams?.length }} {{ matchingFiles }}</p>
             </template>            
         </Modal>        
     </div>
@@ -58,6 +59,7 @@ import Button from '../generic/Button.vue';
 const systemDiagrams = ref(null);
 const filteredDiagrams = ref(null);
 const showButton = ref(true);
+const showModal = ref(false);  
 
 const modalTitle = "Workflow Search";
 const inputLabel = "Search process name";
@@ -79,7 +81,7 @@ onMounted(() => {
     EventBus.on(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, (diagrams) => {
         systemDiagrams.value = diagrams;
         filteredDiagrams.value = diagrams;
-        EventBus.emit(EVENT_TYPE.OPEN_MODAL);
+        showModal.value = true;
     });
 });
 

@@ -1,3 +1,5 @@
+export const TaskListenerType = 'TaskListener';
+
 export default {
     name: 'TaskListener',
     superClass: ['Element'],

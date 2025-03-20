@@ -1,3 +1,5 @@
+export const ExecutionListenerType = 'ExecutionListener';
+
 export default {
     name: 'ExecutionListener',
     superClass: ['Element'],
