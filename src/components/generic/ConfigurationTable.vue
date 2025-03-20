@@ -26,7 +26,7 @@
                     <td>{{ item?.class }}</td>
                     <td>{{ item?.$type }}</td>
                     <td>{{ item?.event }}</td>
-                    <td>ask about this!!</td>
+                    <td>{{ item?.fields?.length }}</td>
                 </tr>
                 <tr v-else>
                     <td colspan="4" class="text-center">No items available</td>
@@ -139,8 +139,6 @@ const buttonClickHandlers = {
 watch(
   () => model, 
   () => {
-    console.log('here');
-    console.log(model.value);
     items.value = model.value;
   },
   { deep: true }
