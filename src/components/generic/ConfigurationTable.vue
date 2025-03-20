@@ -1,7 +1,7 @@
 <template>
     <div class="configuration-table" data-testid="configuration-table" @click="handleParentClick">
 
-        <p>{{ title }}</p>
+        <p class="v-card-title">{{ title }}</p>
 
         <Table>
             <template #head-content>
@@ -27,6 +27,9 @@
                     <td>{{ item }}</td>
                     <td>{{ item }}</td>
                     <td>{{ item }}</td>
+                </tr>
+                <tr v-else>
+                    <td colspan="4" class="text-center">No items available</td>
                 </tr>
             </template>
         </Table>

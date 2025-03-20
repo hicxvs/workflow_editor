@@ -1,13 +1,19 @@
 <template>
     <div class="listeners-editor" data-testid="listeners-editor">
-        Listeners editor here!!
+        <p class="v-card-title">{{ title }}</p>
 
         {{ model }}
 
         <ConfigurationTable
             :title="taskListenersTitle"
             :headers="listnersHeaders"
-            :listeners="fakeTaskListeners"
+            :listeners="emptyListners"
+        />
+
+        <ConfigurationTable
+            :title="executionListenersTitle"
+            :headers="listnersHeaders"
+            :listeners="emptyListners"
         />
     </div>
 </template>
@@ -16,6 +22,7 @@
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
 const model = defineModel();
+const title = 'Listeners';
 
 const listnersHeaders = [
     'Listener implementation',
@@ -24,14 +31,30 @@ const listnersHeaders = [
     'Fields'
 ];
 
+const emptyListners = [];
+
 const taskListenersTitle = 'Task Listeners';
 const fakeTaskListeners = [
-    { implementation: 'fake implemetation 1' },
-    { implementation: 'fake implemetation 2' },
-    { implementation: 'fake implemetation 3' },
-    { implementation: 'fake implemetation 4' },
-    { implementation: 'fake implemetation 5' },
+    { implementation: 'fake task implemetation 1' },
+    { implementation: 'fake task implemetation 2' },
+    { implementation: 'fake task implemetation 3' },
+    { implementation: 'fake task implemetation 4' },
+    { implementation: 'fake task implemetation 5' },
 ];
+
+const executionListenersTitle = 'Execution Listeners';
+const fakeExecutionListeners = [
+    { implementation: 'fake execution implemetation 1' },
+    { implementation: 'fake execution implemetation 2' },
+    { implementation: 'fake execution implemetation 3' },
+    { implementation: 'fake execution implemetation 4' },
+    { implementation: 'fake execution implemetation 5' },
+];
+
+
+
+
+
 
 </script>
 
