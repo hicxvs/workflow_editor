@@ -7,7 +7,7 @@
         <ConfigurationTable
             :title="taskListenersTitle"
             :headers="listnersHeaders"
-            :listeners="emptyListners"
+            :listeners="fakeTaskListeners"
             :createNewListenerHandler="taskListenersHandlers.create"
             :editListenerHandler="taskListenersHandlers.edit"
         />

@@ -35,11 +35,11 @@
         </Table>
 
         <div class="configuration-table-action-group">
-            <Button :label="buttonLabels.new" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.create" />
-            <Button :label="buttonLabels.edit" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.edit" :disabled="!selectedItem" />
-            <Button :label="buttonLabels.remove" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.remove" :disabled="!selectedItem" />
-            <Button :label="buttonLabels.up" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.moveUp" :disabled="!selectedItem" />
-            <Button :label="buttonLabels.down" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.moveDown" :disabled="!selectedItem" />
+            <Button :label="buttonLabels.new" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.create" />
+            <Button :label="buttonLabels.edit" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.edit" :disabled="!selectedItem" />
+            <Button :label="buttonLabels.remove" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.remove" :disabled="!selectedItem" />
+            <Button :label="buttonLabels.up" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.moveUp" :disabled="!selectedItem" />
+            <Button :label="buttonLabels.down" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.moveDown" :disabled="!selectedItem" />
         </div>      
         
     </div>
@@ -94,7 +94,7 @@ const buttonLabels = {
 };
 
 const buttonColors = {
-    primary: 'cyan'
+    grey: 'grey'
 };
 
 const buttonClickHandlers = {
