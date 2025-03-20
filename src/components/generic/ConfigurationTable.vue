@@ -23,10 +23,10 @@
                     :class="{'active-row': selectedItem?.index === index}"
                     @click="setSelectedItem(item, index)"
                 >
-                    <td>{{ item }}</td>
-                    <td>{{ item }}</td>
-                    <td>{{ item }}</td>
-                    <td>{{ item }}</td>
+                    <td>{{ item?.class }}</td>
+                    <td>{{ item?.$type }}</td>
+                    <td>{{ item?.event }}</td>
+                    <td>ask about this!!</td>
                 </tr>
                 <tr v-else>
                     <td colspan="4" class="text-center">No items available</td>
@@ -46,9 +46,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Table from './Table.vue';
 import Button from './Button.vue';
+
+const model = defineModel({
+    listeners: {
+        type: Array,
+        required: false,
+        default: []
+    },
+});
 
 const props = defineProps({
     title: {
@@ -57,11 +65,6 @@ const props = defineProps({
         default: 'Default title for configuration table'
     },
     headers: {
-        type: Array,
-        required: false,
-        default: []
-    },
-    listeners: {
         type: Array,
         required: false,
         default: []
@@ -82,7 +85,7 @@ const props = defineProps({
     }
 });
 
-const items = ref(props.listeners || []);
+const items = ref(null);
 const selectedItem = ref(null);
 
 const buttonLabels = {
@@ -132,6 +135,16 @@ const buttonClickHandlers = {
         move('down', 1, selectedItem.value?.index);
     },
 };
+
+watch(
+  () => model, 
+  () => {
+    console.log('here');
+    console.log(model.value);
+    items.value = model.value;
+  },
+  { deep: true }
+);
 
 function clearSelectedItem() {
     if(selectedItem.value) {

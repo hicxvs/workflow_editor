@@ -2,12 +2,10 @@
     <div class="listeners-editor-container" data-testid="listeners-editor-container">
         <p class="v-card-title">{{ title }}</p>
 
-        {{ model }}
-
         <ConfigurationTable
             :title="taskListenersTitle"
             :headers="listnersHeaders"
-            :listeners="fakeTaskListeners"
+            v-model="taskListeners"
             :createNewListenerHandler="taskListenersHandlers.create"
             :editListenerHandler="taskListenersHandlers.edit"
         />
@@ -15,7 +13,7 @@
         <ConfigurationTable
             :title="executionListenersTitle"
             :headers="listnersHeaders"
-            :listeners="emptyListners"
+            v-model="executionListeners"
             :createNewListenerHandler="executionListenersHandlers.create"
             :editListenerHandler="executionListenersHandlers.edit"
         />
@@ -23,6 +21,7 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 import { TaskListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/task-listener';
 import { ExecutionListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/execution-listener';
@@ -30,7 +29,10 @@ import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
 const model = defineModel();
+
 const title = 'Listeners';
+const taskListeners = ref(null);
+const executionListeners = ref(null);
 
 const listnersHeaders = [
     'Listener implementation',
@@ -39,11 +41,8 @@ const listnersHeaders = [
     'Fields'
 ];
 
-const emptyListners = [];
-
 const taskListenersTitle = 'Task Listeners';
 const executionListenersTitle = 'Execution Listeners';
-
 
 const taskListenersHandlers = {
     create: () => {
@@ -63,18 +62,32 @@ const executionListenersHandlers = {
     }
 };
 
+function getListeners(listenerType) {
+    if(!model.value || !listenerType) {
+        return;
+    }
 
-const fakeTaskListeners = [
-    { implementation: 'fake task implemetation 1' },
-    { implementation: 'fake task implemetation 2' },
-    { implementation: 'fake task implemetation 3' },
-    { implementation: 'fake task implemetation 4' },
-    { implementation: 'fake task implemetation 5' },
-];
+    const extensionElements = model.value.get('extensionElements');
+    if(!extensionElements) {
+        return [];
+    }
 
+    const values = extensionElements.get('values');
+    if(!values || !Array.isArray(values) || !values.length) {
+        return [];
+    }
 
+    return values.filter(element => element?.$type === `activiti:${listenerType}`);
+}
 
-
+watch(
+  () => model, 
+  () => {
+    taskListeners.value = getListeners(TaskListenerType);
+    executionListeners.value = getListeners(ExecutionListenerType);
+  },
+  { deep: true }
+);
 
 </script>
 
