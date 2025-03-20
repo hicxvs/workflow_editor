@@ -1,12 +1,19 @@
 export function createDeepCopy(originalObject) {
-    try {
-        return {
-            original: originalObject,
-            copy: JSON.parse(JSON.stringify(originalObject))
-        };
-    } catch (error) {
-        console.error('Error creating deep copy:', error);
-        throw error;
+    if (originalObject === null || typeof originalObject !== 'object') {
+        return originalObject;
     }
+
+    if (Array.isArray(originalObject)) {
+        return originalObject.map(createDeepCopy);
+    }
+
+    const copy = {};
+    for (const key in originalObject) {
+        if (originalObject.hasOwnProperty(key)) {
+            copy[key] = createDeepCopy(originalObject[key]);
+        }
+    }
+
+    return copy;
 }
 
