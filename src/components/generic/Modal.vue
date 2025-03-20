@@ -15,9 +15,9 @@
                 <v-divider></v-divider>
 
                 <v-card-actions>
-                    <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" :clickHandler="saveButtonClickHandler" ></Button>
-                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" :clickHandler="cancelModal"></Button>                    
-                    <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" :clickHandler="closeModal"></Button>
+                    <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" @click="save" ></Button>
+                    <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelModal"></Button>                    
+                    <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" @click="closeModal"></Button>
                 </v-card-actions>          
             </v-card>       
         </v-dialog>
@@ -75,6 +75,10 @@ const buttonColors = {
 
 function closeModal() {
     model.value = false;
+}
+
+function save() {
+    props.saveButtonClickHandler();
 }
 
 function cancelModal() {

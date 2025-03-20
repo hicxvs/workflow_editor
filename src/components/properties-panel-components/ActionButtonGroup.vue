@@ -1,9 +1,9 @@
 <template>
     <div class="action-button-group" data-testid="action-button-group">
-        <Button :label="buttonLabels.generateXML" :buttonColor="buttonColors.primary" :clickHandler="buttonClickHandlers.generateXML" />
-        <Button :label="buttonLabels.clearXML" :buttonColor="buttonColors.grey" :clickHandler="buttonClickHandlers.clearXML" />
-        <Button v-if="!isExpanded" :label="buttonLabels.expandPanel" :buttonColor="buttonColors.cyan" :clickHandler="buttonClickHandlers.expandPanel" />
-        <Button v-else :label="buttonLabels.collapsePanel" :buttonColor="buttonColors.cyan" :clickHandler="buttonClickHandlers.collapsePanel" />
+        <Button :label="buttonLabels.generateXML" :buttonColor="buttonColors.primary" @click="buttonClickHandlers.generateXML" />
+        <Button :label="buttonLabels.clearXML" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.clearXML" />
+        <Button v-if="!isExpanded" :label="buttonLabels.expandPanel" :buttonColor="buttonColors.cyan" @click="buttonClickHandlers.expandPanel" />
+        <Button v-else :label="buttonLabels.collapsePanel" :buttonColor="buttonColors.cyan" @click="buttonClickHandlers.collapsePanel" />
     </div>
 </template>
 

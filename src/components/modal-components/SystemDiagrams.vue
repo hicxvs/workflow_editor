@@ -34,7 +34,7 @@
                                 <Button 
                                     :buttonColor="buttonColor"
                                     :label="buttonLabel"
-                                    :clickHandler="() => { EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram); }"
+                                    @click="() => { EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram); }"
                                 />
                             </td>
                         </tr>
