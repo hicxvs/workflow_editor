@@ -1,6 +1,6 @@
 <template>
     <div class="button-container" data-testid="button-container">
-        <v-btn :color="buttonColor" @click="clickHandler" variant="flat">
+        <v-btn :color="buttonColor" variant="flat" :disabled="disabled">
             {{ label }}
         </v-btn>
     </div>    
@@ -18,12 +18,10 @@ const props = defineProps({
         required: false,
         default: ""
     },
-    clickHandler: {
-        type: Function,
+    disabled: {
+        type: Boolean,
         required: false,
-        default: () => {
-            console.warn("No click handler provided for the button. Please provide a click handler to handle the button click event.");
-        }
+        default: false
     }
 });
 </script>

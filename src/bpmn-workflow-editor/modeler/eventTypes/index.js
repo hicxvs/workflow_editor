@@ -17,7 +17,10 @@ export const EVENT_TYPE = Object.freeze({
     SHOW_DIAGRAMS_FROM_SYSTEM: 'show-diagrams-from-system',
     OPEN_MODAL: 'open-modal',
     CLOSE_MODAL: 'close-modal',
-    MODAL_CLOSED: 'modal-closed'
+    MODAL_CLOSED: 'modal-closed',
+    CREATE_LISTENER: 'create-listener',
+    EDIT_LISTENER: 'edit-listener',
+    REMOVE_LISTENER: 'remove-listener'
 });
 
 
