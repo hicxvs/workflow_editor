@@ -13,8 +13,7 @@
             </template>
 
             <template #content>
-                SOON...
-
+                {{ listenerCopy }}
             </template>
         </Modal>
     </div>
@@ -30,35 +29,31 @@ import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-cop
 const showButton = ref(true);
 const showModal = ref(false);
 const modalTitle = "Listener Configuration";
-const currentListener = ref(null);
-const currentListenerCopy = ref(null);
+const originalListener = ref(null);
+const listenerCopy = ref(null);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
-        setCurrentListener(listener);
+        clearListensers();
+        setListeners(listener);        
         showModal.value = true;
     });
 
     EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
-        setCurrentListener(listener);
-        currentListenerCopy.value = null;
-        currentListenerCopy.value = createDeepCopy(listener);
-        
-        console.log('ORIGINAL HERE:::', currentListener.value);
-        console.log('COPY HERE:::',currentListenerCopy.value);
-
-        console.log( currentListener.value === currentListenerCopy.value );
-
+        clearListensers();
+        setListeners(listener);        
         showModal.value = true;
     });
 });
 
-function setCurrentListener(listener){
-    if(currentListener.value) {
-        currentListener.value = null;
-    }
+function setListeners(listener){
+    originalListener.value = listener;
+    listenerCopy.value = createDeepCopy(listener);
+}
 
-    currentListener.value = listener
+function clearListensers() {
+    listenerCopy.value = null;
+    originalListener.value = null;
 }
 
 onUnmounted(() => {
@@ -68,10 +63,12 @@ onUnmounted(() => {
 
 function save() {
     console.log('ready to save listener');
+    clearListensers();
 }
 
 function cancel() {
     console.log('cancel everything');
+    clearListensers();
 }
 
 </script>
