@@ -2,12 +2,11 @@
   <div class="general-properties-editor" data-testid="general-properties-editor">
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
-
             <div class="general-properties-editor-content" data-testid="general-properties-editor-content">
                 <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
                 <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
-                <Checkbox v-if="model" :label="inputLabel.asynchronous" v-model="model.asynchronous" />
-                <Checkbox v-if="model" :label="inputLabel.exclusive" v-model="model.exclusive" />
+                <Checkbox v-if="model" :label="inputLabel.asynchronous" v-model="model.async" />
+                <Checkbox v-if="model" :label="inputLabel.exclusive" v-model="model.$parent.exclusive" />
                 <Select v-if="selectedTaskType" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes"/>
                 <Select v-if="selectedGatewayType" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes"/>
             </div>
@@ -106,6 +105,9 @@ onUnmounted(() => {
 watch(
   () => model, 
   () => {
+
+    debugger;
+
     updateSelectedType(model.value, taskTypes, selectedTaskType, 'task');
     updateSelectedType(model.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
