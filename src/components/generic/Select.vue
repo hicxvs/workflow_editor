@@ -1,8 +1,5 @@
 <template>
     <div class="select-container" data-testid="select-container">
-
-        {{ model }}
-
         <v-select
             :clearable="props.clearable"
             :chips="props.chips"
@@ -20,7 +17,6 @@ import { VSelect } from "vuetify/components";
 
 const model = defineModel();
 const itemsLabels = ref(null);
-const selectedItem = ref(null);
 
 const props = defineProps({
     label: {

@@ -2,15 +2,12 @@
   <div class="general-properties-editor" data-testid="general-properties-editor">
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
-
-            {{ model }}
-
             <div class="general-properties-editor-content" data-testid="general-properties-editor-content">
                 <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
                 <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
                 <Checkbox v-if="model" :label="inputLabel.asynchronous" v-model="model.asynchronous" />
                 <Checkbox v-if="model" :label="inputLabel.exclusive" v-model="model.exclusive" />
-                <Select v-if="model" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes"/>
+                <Select v-if="selectedTaskType" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes"/>
             </div>
         </template>
     </Card> 
@@ -44,7 +41,6 @@ const inputLabel = {
     taskType: "Task Type"
 };
 
-
 onMounted(() => {
     Eventbus.on(EVENT_TYPE.TASK_TYPES_READY, processTaskTypes);
 });
@@ -73,13 +69,19 @@ function processTaskTypes(types) {
 watch(
   () => model, 
   () => {
-    
-    debugger;
+    if (!model.value || !model.value.$type?.toLowerCase()?.includes('task') || !taskTypes.value) {
+        selectedTaskType.value = null;
+        return;
+    }
+
+    const tempSelectedTaskType = taskTypes.value.find(taskType => 
+        taskType.value.toLowerCase() === model.value.$type.toLowerCase()
+    );
+
+    selectedTaskType.value = tempSelectedTaskType ? tempSelectedTaskType.label : null;
   },
   { deep: true }
 );
-
-
 </script>
 
 <style scoped>
