@@ -105,9 +105,6 @@ onUnmounted(() => {
 watch(
   () => model, 
   () => {
-
-    debugger;
-
     updateSelectedType(model.value, taskTypes, selectedTaskType, 'task');
     updateSelectedType(model.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
