@@ -20,7 +20,9 @@ export const EVENT_TYPE = Object.freeze({
     MODAL_CLOSED: 'modal-closed',
     CREATE_LISTENER: 'create-listener',
     EDIT_LISTENER: 'edit-listener',
-    REMOVE_LISTENER: 'remove-listener'
+    REMOVE_LISTENER: 'remove-listener',
+    TASK_TYPES_READY: 'task-types-ready',
+    GATEWAY_TYPES_READY: 'gateway-types-ready'
 });
 
 

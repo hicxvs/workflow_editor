@@ -13,7 +13,17 @@
             </template>
 
             <template #content>
+                Listeners Copy
                 {{ listenerCopy }}
+                <br />
+                <br />
+                Listeners Event: {{ listenerCopy?.item?.event }}
+                <br />
+                Listeners Type: {{ listenerCopy?.item?.$type }}
+                <br />
+                Listeners Class: {{ listenerCopy?.item?.class }}
+                <br />
+                Listeners Fields: {{ listenerCopy?.item?.fields }}
             </template>
         </Modal>
     </div>
@@ -46,9 +56,9 @@ onMounted(() => {
     });
 });
 
-function setListeners(listener){
+function setListeners(listener){    
     originalListener.value = listener;
-    listenerCopy.value = createDeepCopy(listener);
+    listenerCopy.value = createDeepCopy(listener?.item);
 }
 
 function clearListensers() {

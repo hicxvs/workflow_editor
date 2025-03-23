@@ -2,12 +2,15 @@
   <div class="general-properties-editor" data-testid="general-properties-editor">
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
+
+            {{ model }}
+
             <div class="general-properties-editor-content" data-testid="general-properties-editor-content">
                 <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
                 <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
                 <Checkbox v-if="model" :label="inputLabel.asynchronous" v-model="model.asynchronous" />
                 <Checkbox v-if="model" :label="inputLabel.exclusive" v-model="model.exclusive" />
-                <Select v-if="model?.taskType" :label="inputLabel.taskType" :items="model.taskType" />
+                <Select v-if="model" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes"/>
             </div>
         </template>
     </Card> 
@@ -15,40 +18,17 @@
 </template>
 
 <script setup>
+import {ref, onMounted, onUnmounted, watch} from "vue";
 import Card from "../../generic/Card.vue";
 import TextInput from "../../generic/TextInput.vue";
 import Checkbox from "../../generic/Checkbox.vue";
 import Select from "../../generic/Select.vue";
+import Eventbus from "../../../eventbus";
+import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
 
-const model = defineModel({
-    id: {
-        type: String,
-        required: false,
-        default: "" 
-    },
-    name: {
-        type: String,
-        required: false,
-        default: ""
-    },
-    asynchronous: {
-        type: Boolean,
-        required: false,
-        default: false
-    },
-    exclusive: {
-        type: Boolean,
-        required: false,
-        default: false
-    },
-    taskType: {
-        type: Array,
-        required: false,
-        default: ['Default task type item 1', 'Default task type item 2', 'Default task type item 3']
-    }
-});
-
-//TODO: Handle taskType change
+const model = defineModel();
+const taskTypes = ref(null);
+const selectedTaskType = ref(null);
 
 const cardProps = {
     title: "Properties",
@@ -63,6 +43,42 @@ const inputLabel = {
     exclusive: "Exclusive",
     taskType: "Task Type"
 };
+
+
+onMounted(() => {
+    Eventbus.on(EVENT_TYPE.TASK_TYPES_READY, processTaskTypes);
+});
+
+onUnmounted(() => {
+    Eventbus.off(EVENT_TYPE.TASK_TYPES_READY);
+});
+
+function processTaskTypes(types) {
+    if(Object.keys(types).length === 0) {
+        taskTypes.value = null;
+        return;
+    }
+
+    taskTypes.value = Object.entries(types).map(([key, value]) => ({
+        value: value,
+        label: key
+            .replace(/_/g, " ")
+            .toLowerCase()
+            .replace(/^\w/, c => c.toUpperCase())
+            .replace("Business rule task", "Business Rule Task")
+            .replace("User task", "User Task") 
+    }));
+}
+
+watch(
+  () => model, 
+  () => {
+    
+    debugger;
+  },
+  { deep: true }
+);
+
 
 </script>
 
