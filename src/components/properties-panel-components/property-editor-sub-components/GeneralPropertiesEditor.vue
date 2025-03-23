@@ -2,12 +2,14 @@
   <div class="general-properties-editor" data-testid="general-properties-editor">
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
+
             <div class="general-properties-editor-content" data-testid="general-properties-editor-content">
                 <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
                 <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
                 <Checkbox v-if="model" :label="inputLabel.asynchronous" v-model="model.asynchronous" />
                 <Checkbox v-if="model" :label="inputLabel.exclusive" v-model="model.exclusive" />
                 <Select v-if="selectedTaskType" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes"/>
+                <Select v-if="selectedGatewayType" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes"/>
             </div>
         </template>
     </Card> 
@@ -25,7 +27,9 @@ import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
 
 const model = defineModel();
 const taskTypes = ref(null);
+const gatewayTypes = ref(null);
 const selectedTaskType = ref(null);
+const selectedGatewayType = ref(null);
 
 const cardProps = {
     title: "Properties",
@@ -38,50 +42,77 @@ const inputLabel = {
     name: "Name",
     asynchronous: "Asynchronous",
     exclusive: "Exclusive",
-    taskType: "Task Type"
+    taskType: "Task Type",
+    gatewayType: 'Gateway Type'
 };
 
+function processTypes(types, targetRef, customLabelTransform) {
+    if (Object.keys(types).length === 0) {
+        targetRef.value = null;
+        return;
+    }
+
+    targetRef.value = Object.entries(types).map(([key, value]) => ({
+        value: value,
+        label: transformLabel(key, customLabelTransform),
+    }));
+}
+
+function transformLabel(key, customTransform = null) {
+    let label = key
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/^\w/, c => c.toUpperCase());
+    
+    if (customTransform) {
+        label = customTransform(label);
+    }
+    
+    return label;
+}
+
+function updateSelectedType(modelValue, types, selectedType, typeCheck) {
+    if (!modelValue || !modelValue.$type?.toLowerCase()?.includes(typeCheck) || !types.value) {
+        selectedType.value = null;
+        return;
+    }
+
+    const tempSelectedType = types.value.find(type => 
+        type.value.toLowerCase() === modelValue.$type.toLowerCase()
+    );
+
+    selectedType.value = tempSelectedType ? tempSelectedType.label : null;
+}
+
 onMounted(() => {
-    Eventbus.on(EVENT_TYPE.TASK_TYPES_READY, processTaskTypes);
+    Eventbus.on(EVENT_TYPE.TASK_TYPES_READY, (types) => {
+        processTypes(types, taskTypes, (label) =>
+            label
+                .replace("Business rule task", "Business Rule Task")
+                .replace("User task", "User Task")
+        );
+
+    });
+    Eventbus.on(EVENT_TYPE.GATEWAY_TYPES_READY, (types) => {
+        processTypes(types, gatewayTypes);
+    });
 });
 
 onUnmounted(() => {
     Eventbus.off(EVENT_TYPE.TASK_TYPES_READY);
+    Eventbus.off(EVENT_TYPE.GATEWAY_TYPES_READY);
 });
-
-function processTaskTypes(types) {
-    if(Object.keys(types).length === 0) {
-        taskTypes.value = null;
-        return;
-    }
-
-    taskTypes.value = Object.entries(types).map(([key, value]) => ({
-        value: value,
-        label: key
-            .replace(/_/g, " ")
-            .toLowerCase()
-            .replace(/^\w/, c => c.toUpperCase())
-            .replace("Business rule task", "Business Rule Task")
-            .replace("User task", "User Task") 
-    }));
-}
 
 watch(
   () => model, 
   () => {
-    if (!model.value || !model.value.$type?.toLowerCase()?.includes('task') || !taskTypes.value) {
-        selectedTaskType.value = null;
-        return;
-    }
-
-    const tempSelectedTaskType = taskTypes.value.find(taskType => 
-        taskType.value.toLowerCase() === model.value.$type.toLowerCase()
-    );
-
-    selectedTaskType.value = tempSelectedTaskType ? tempSelectedTaskType.label : null;
+    updateSelectedType(model.value, taskTypes, selectedTaskType, 'task');
+    updateSelectedType(model.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
   { deep: true }
 );
+
+
 </script>
 
 <style scoped>
