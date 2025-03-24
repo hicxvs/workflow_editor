@@ -49,7 +49,7 @@ const props = defineProps({
 watch(
     () => props.selectOptionItems,
     (newSelectOptionItems) => {
-        itemsLabels.value = newSelectOptionItems.map(item => item.label);
+        itemsLabels.value = newSelectOptionItems?.map(item => item.label);
     },
     { immediate: true, deep: true }
 );
