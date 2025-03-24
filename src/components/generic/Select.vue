@@ -4,24 +4,21 @@
             :clearable="props.clearable"
             :chips="props.chips"
             :label="props.label"
-            :items="props.items"
+            :items="itemsLabels"
             :multiple="props.multiple"
-            @update:modelValue="update"
+            v-model="model"
         ></v-select>
     </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 import { VSelect } from "vuetify/components";
 
-const emit = defineEmits(['update:modelValue']);
+const model = defineModel();
+const itemsLabels = ref(null);
 
 const props = defineProps({
-    items: {
-        type: Array,
-        required: false,
-        default: []
-    },
     label: {
         type: String,
         required: false,
@@ -41,12 +38,21 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false
+    },
+    selectOptionItems: {
+        type: Array,
+        required: false,
+        default: []
     }
 });
 
-function update(value) {
-    emit('update:modelValue', value);
-}
+watch(
+    () => props.selectOptionItems,
+    (newSelectOptionItems) => {
+        itemsLabels.value = newSelectOptionItems.map(item => item.label);
+    },
+    { immediate: true, deep: true }
+);
 
 </script>
 

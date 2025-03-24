@@ -7,6 +7,8 @@ import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram'
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
+import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
+import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -24,6 +26,7 @@ export function WorkflowEditorStore() {
     const currentApiKey = ref(null);
     const currentSystemDiagrams = ref(null);
 
+
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
             return;
@@ -32,6 +35,8 @@ export function WorkflowEditorStore() {
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
+        EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
+        EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
     }
 
     function registerWorkflowEditorEventHandlers() {
