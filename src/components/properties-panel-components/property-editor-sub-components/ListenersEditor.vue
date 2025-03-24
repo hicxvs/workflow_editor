@@ -8,7 +8,14 @@
             v-model="taskListeners"
             :createNewListenerHandler="taskListenersHandlers.create"
             :editListenerHandler="taskListenersHandlers.edit"
-        />
+        >
+            <template #row="{ item }">
+                <td>{{ item?.class }}</td>
+                <td>{{ item?.$type }}</td>
+                <td>{{ item?.event }}</td>
+                <td>{{ item?.fields?.length || 0 }}</td>
+            </template>
+        </ConfigurationTable>
 
         <ConfigurationTable
             :title="executionListenersTitle"
@@ -16,7 +23,14 @@
             v-model="executionListeners"
             :createNewListenerHandler="executionListenersHandlers.create"
             :editListenerHandler="executionListenersHandlers.edit"
-        />
+        >
+            <template #row="{ item }">
+                <td>{{ item?.class }}</td>
+                <td>{{ item?.$type }}</td>
+                <td>{{ item?.event }}</td>
+                <td>{{ item?.fields?.length || 0 }}</td>
+            </template>
+        </ConfigurationTable>
     </div>
 </template>
 

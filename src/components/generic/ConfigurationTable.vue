@@ -23,10 +23,7 @@
                     :class="{'active-row': selectedItem?.index === index}"
                     @click="setSelectedItem(item, index)"
                 >
-                    <td>{{ item?.class }}</td>
-                    <td>{{ item?.$type }}</td>
-                    <td>{{ item?.event }}</td>
-                    <td>{{ item?.fields?.length }}</td>
+                    <slot name="row" :item="item"></slot>
                 </tr>
                 <tr v-else>
                     <td colspan="4" class="text-center">No items available</td>
@@ -40,8 +37,7 @@
             <Button :label="buttonLabels.remove" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.remove" :disabled="!selectedItem" />
             <Button :label="buttonLabels.up" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.moveUp" :disabled="!selectedItem" />
             <Button :label="buttonLabels.down" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.moveDown" :disabled="!selectedItem" />
-        </div>      
-        
+        </div>
     </div>
 </template>
 
@@ -50,13 +46,7 @@ import { ref, watch } from 'vue';
 import Table from './Table.vue';
 import Button from './Button.vue';
 
-const model = defineModel({
-    listeners: {
-        type: Array,
-        required: false,
-        default: []
-    },
-});
+const model = defineModel();
 
 const props = defineProps({
     title: {

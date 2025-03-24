@@ -15,20 +15,31 @@
             <template #content>
                 <Select v-if="listenerCopy" :label="listenerEventLabel" v-model="listenerSelectedEvent" :selectOptionItems="listenerEventsOptions" :clearable="isClearable" />
                 <RadioInput v-if="listenerCopy" :label="listenerTypeLabel" v-model="listenerSelectedType" :radioOptionItems="listenerTypeOptions" :inline="inline"/>
-                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="inputLabel.class" v-model="listnerClass" :rules="listnerClassRequiredRule"/>
-                <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="inputLabel.expression" v-model="listnerExpression" :rules="listnerExpressionRequiredRule" />
-                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="inputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />   
+                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listnerClass" :rules="listnerClassRequiredRule"/>
+                <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listnerExpression" :rules="listnerExpressionRequiredRule" />
+                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />     
                 <br />
-                Listeners Fields: {{ listenerCopy?.item?.fields }}
+                {{ listenerCopy?.item?.fields }}
                 <br />
-                <br />
+                <ConfigurationTable
+                    v-if="listenerFields"
+                    :title="listnerFieldTitle"
+                    :headers="listnersFieldHeaders"
+                    v-model="listenerFields"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item?.name }}</td>
+                        <td>{{ item?.string }}</td>
+                        <td>{{ item?.expression }}</td>
+                    </template>
+                </ConfigurationTable>
             </template>
         </Modal>
     </div>
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted} from 'vue';
+import {ref, onMounted, onUnmounted, watch} from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import Modal from '../generic/Modal.vue';
@@ -41,6 +52,7 @@ import { DELEGATE_EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/ac
 import Select from '../generic/Select.vue';
 import RadioInput from '../generic/RadioInput.vue';
 import TextInput from '../generic/TextInput.vue';
+import ConfigurationTable from '../generic/ConfigurationTable.vue';
 
 const showButton = ref(true);
 const isClearable = ref(false);
@@ -63,6 +75,12 @@ const listnerClass = ref(null);
 const listnerExpression = ref(null);
 const listnerDelegateExpression = ref(null);
 
+const listenerInputLabel = {
+    class: 'Class',
+    expression: 'Expression',
+    delegateExpression: 'Delegate Expression'
+};
+
 const listnerClassRequiredRule = [
   value => !!value || 'This field is required. Please enter a class'
 ];
@@ -73,26 +91,13 @@ const listnerDelegateExpressionRequiredRule = [
   value => !!value || 'This field is required. Please enter a delegate expression'
 ];
 
-
-const inputLabel = {
-    class: 'Class',
-    expression: 'Expression',
-    delegateExpression: 'Delegate Expression'
-};
-
-onMounted(() => {
-    EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
-        clearListensers();
-        setListeners(listener);        
-        showModal.value = true;
-    });
-
-    EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
-        clearListensers();
-        setListeners(listener);        
-        showModal.value = true;
-    });
-});
+const listnerFieldTitle = 'Fields';
+const listnersFieldHeaders = [
+    'Field name',
+    'String value',
+    'Expression'
+];
+const listenerFields = ref([]);
 
 function setListeners(listener){    
     originalListener.value = listener;
@@ -144,11 +149,6 @@ function clearListensers() {
     listenerSelectedType.value = null;
 }
 
-onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.CREATE_LISTENER);
-    EventBus.off(EVENT_TYPE.EDIT_LISTENER);
-});
-
 function save() {
     console.log('ready to save listener');
     clearListensers();
@@ -158,6 +158,37 @@ function cancel() {
     console.log('cancel everything');
     clearListensers();
 }
+
+
+onMounted(() => {
+    EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
+        clearListensers();
+        setListeners(listener);        
+        showModal.value = true;
+    });
+
+    EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
+        clearListensers();
+        setListeners(listener);        
+        showModal.value = true;
+    });
+});
+
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.CREATE_LISTENER);
+    EventBus.off(EVENT_TYPE.EDIT_LISTENER);
+});
+
+watch(
+    () => listenerCopy,
+    () => {
+        if(!listenerCopy.value) {
+            console.log('Handle create')
+        }
+        console.log('here!!!', listenerCopy.value);
+    },
+    { deep: true }
+);
 
 </script>
 
