@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import Table from './Table.vue';
 import Button from './Button.vue';
 
@@ -126,6 +126,14 @@ const buttonClickHandlers = {
     },
 };
 
+onMounted(() => {
+    items.value = model.value;
+});
+
+onUnmounted(() => {
+    items.value = null;
+});
+
 watch(
   () => model, 
   () => {
@@ -181,21 +189,20 @@ function handleParentClick(event) {
 .configuration-table-action-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; 
-    justify-content: flex-start;
+    gap: 10px;
+    justify-content: center; 
     padding: 16px;
 }
 
 .active-row {
     background-color: #f5f5f5;
-    color: #000; 
+    color: #000;
 }
 
 @media (max-width: 100%) { 
   .configuration-table-action-group {
-    flex-direction: column; 
-    align-items: stretch;
+    flex-direction: column;
+    align-items: center; 
   }
 }
-
 </style>

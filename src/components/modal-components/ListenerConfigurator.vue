@@ -17,10 +17,7 @@
                 <RadioInput v-if="listenerCopy" :label="listenerTypeLabel" v-model="listenerSelectedType" :radioOptionItems="listenerTypeOptions" :inline="inline"/>
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listnerClass" :rules="listnerClassRequiredRule"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listnerExpression" :rules="listnerExpressionRequiredRule" />
-                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />     
-                <br />
-                {{ listenerCopy?.item?.fields }}
-                <br />
+                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
                 <ConfigurationTable
                     v-if="listenerFields"
                     :title="listnerFieldTitle"
@@ -99,54 +96,29 @@ const listnersFieldHeaders = [
 ];
 const listenerFields = ref([]);
 
-function setListeners(listener){    
-    originalListener.value = listener;
-    listenerCopy.value = createDeepCopy(listener?.item);
-    listnerClass.value = listenerCopy.value?.item?.class;
-    setListenerEventOptions(listenerCopy.value?.item);
-    setListenerTypeOptions([JAVA_CLASS_LISTENER_TYPE, EXPRESSION_LISTENER_TYPE, DELEGATE_EXPRESSION_LISTENER_TYPE]);
-}
+onMounted(() => {
+    EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
+        console.log('CREATE::',listener);
+        //clearListensers();
+        //setListeners(listener);        
+        //showModal.value = true;
+    });
 
-function setListenerEventOptions(listener) {
-    if(!listener?.$type) {
-        listenerEventsOptions.value = null;
-        return;
-    }
+    EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
+        clearListensers();
+        originalListener.value = listener;
+        listenerCopy.value = createDeepCopy(listener?.item);
+    });
+});
 
-    listenerEventsOptions.value = ACTIVITI_LISTENER_EVENT_OPTIONS[listener.$type];
-    setSelectedListenerEvent(listener.event, listenerEventsOptions.value);
-}
-
-function setSelectedListenerEvent(listenerEvent, listenerEvents) {
-    if(!listenerEvent || (!listenerEvents || !Array.isArray(listenerEvents) || !listenerEvents.length)) {
-        listenerSelectedEvent.value = null;
-        return;
-    }
-
-    listenerSelectedEvent.value = listenerEvents.find(option => option.value.toLowerCase() === listenerEvent.toLowerCase()).label;
-}
-
-function setListenerTypeOptions(listenerTypes) {
-    if(!listenerTypes || !Array.isArray(listenerTypes) || !listenerTypes.length) {
-        listenerTypeOptions.value = null;
-        return;
-    }
-
-    listenerTypeOptions.value = listenerTypes;
-    setListenerSelectedType(listenerTypeOptions.value);
-}
-
-function setListenerSelectedType(listenerTypes) {
-    listenerSelectedType.value = listenerTypes.find(option => option.value === JAVA_CLASS_LISTENER_TYPE.value).value;
-}
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.CREATE_LISTENER);
+    EventBus.off(EVENT_TYPE.EDIT_LISTENER);
+});
 
 function clearListensers() {
     listenerCopy.value = null;
     originalListener.value = null;
-    listenerEventsOptions.value = null;
-    listenerSelectedEvent.value = null;
-    listenerTypeOptions.value = null;
-    listenerSelectedType.value = null;
 }
 
 function save() {
@@ -159,33 +131,27 @@ function cancel() {
     clearListensers();
 }
 
-
-onMounted(() => {
-    EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
-        clearListensers();
-        setListeners(listener);        
-        showModal.value = true;
-    });
-
-    EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
-        clearListensers();
-        setListeners(listener);        
-        showModal.value = true;
-    });
-});
-
-onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.CREATE_LISTENER);
-    EventBus.off(EVENT_TYPE.EDIT_LISTENER);
-});
-
 watch(
     () => listenerCopy,
     () => {
         if(!listenerCopy.value) {
-            console.log('Handle create')
+            console.log('Handle create');
+            return;
         }
-        console.log('here!!!', listenerCopy.value);
+
+        const listenerItem = listenerCopy.value.item;
+        listnerClass.value = listenerItem.class;
+
+        listenerEventsOptions.value = ACTIVITI_LISTENER_EVENT_OPTIONS[listenerItem.$type];
+        listenerSelectedEvent.value = listenerEventsOptions.value.find(option => option.value.toLowerCase() === listenerItem.event.toLowerCase())?.label;
+        
+        listenerTypeOptions.value = [JAVA_CLASS_LISTENER_TYPE, EXPRESSION_LISTENER_TYPE, DELEGATE_EXPRESSION_LISTENER_TYPE];
+        listenerSelectedType.value = listenerTypeOptions.value.find(option => option.value === JAVA_CLASS_LISTENER_TYPE.value)?.value;
+
+        listenerFields.value = listenerItem.fields;
+
+        showModal.value = true;
+
     },
     { deep: true }
 );
