@@ -159,7 +159,6 @@ function initializeForEdit(listener) {
 
 function save() {
     console.log('ready to save listener');
-    clearListensers();
     //run validation
     //operation
     //close if everything goes ok -> showModal.value = false;
@@ -167,7 +166,6 @@ function save() {
 
 function cancel() {
     console.log('cancel everything');
-    clearListensers();
 }
 
 </script>
