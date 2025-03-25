@@ -60,7 +60,7 @@ const executionListenersTitle = 'Execution Listeners';
 
 const taskListenersHandlers = {
     create: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {type: TaskListenerType});
+        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {type: TaskListenerType, item: null});
     },
     edit: (taksListenerItem) => {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: TaskListenerType, item: taksListenerItem});
