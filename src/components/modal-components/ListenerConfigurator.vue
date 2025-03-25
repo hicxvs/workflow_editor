@@ -23,6 +23,8 @@
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
                     v-model="listenerFields"
+                    :createNewListenerHandler="listenersFieldHandler.create"
+                    :editListenerHandler="listenersFieldHandler.edit"
                 >
                     <template #row="{ item }">
                         <td>{{ item?.name }}</td>
@@ -39,13 +41,13 @@
 import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
-import Modal from '../generic/Modal.vue';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
 import { ACTIVITI_LISTENER_EVENT_OPTIONS } from '../../bpmn-workflow-editor/activiti-listeners/listener-events';
 import { JAVA_CLASS_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/javaClass-listener-type';
 import { EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/expression-listener-type';
 import { DELEGATE_EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/delegateExpression-listener-type';
 
+import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
 import RadioInput from '../generic/RadioInput.vue';
 import TextInput from '../generic/TextInput.vue';
@@ -95,6 +97,15 @@ const listnersFieldHeaders = [
     'Expression'
 ];
 const listenerFields = ref([]);
+
+const listenersFieldHandler = {
+    create: () => {
+        EventBus.emit(EVENT_TYPE.CREATE_LISTENER_FIELD);
+    },
+    edit: (fieldItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_LISTENER_FIELD, fieldItem);
+    }
+};
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {

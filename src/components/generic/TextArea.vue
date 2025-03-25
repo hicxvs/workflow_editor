@@ -1,16 +1,14 @@
 <template>
     <div class="text-area-container" data-testid="text-area-container">
         <v-textarea 
-            :clearable="clearable"
+            :clearable="clearable"            
+            :label="label"
             v-model="model" 
-            :label="label" 
-            @update:modelValue="update" 
         />
     </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue']);
 const model = defineModel();
 const props = defineProps({
     label: {
@@ -24,10 +22,6 @@ const props = defineProps({
         default: true
     }
 });
-
-function update() {
-    emit('update:modelValue', model.value);
-}
 </script>
 
 <style scoped>

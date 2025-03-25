@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <FieldConfigurator />
     <ListenerConfigurator />
     <SystemDiagrams />
     <Loader />
@@ -9,6 +10,7 @@
 </template>
 
 <script setup>
+import FieldConfigurator from './components/modal-components/FieldConfigurator.vue';
 import ListenerConfigurator from './components/modal-components/ListenerConfigurator.vue';
 import SystemDiagrams from './components/modal-components/SystemDiagrams.vue';
 import Loader from './components/singleton-components/Loader.vue';
