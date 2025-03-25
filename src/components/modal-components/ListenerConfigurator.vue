@@ -5,7 +5,7 @@
             :showSaveButton = "showButton"
             :showCancelButton = "showButton"
             :saveButtonClickHandler = "save"
-            :cancelButtonClickHandler = "() => {}"
+            :cancelButtonClickHandler = "cancel"
             v-model="showModal"
         >
             <template #title>
@@ -19,12 +19,12 @@
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listnerExpression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
                 <ConfigurationTable
-                    v-if="listenerFields"
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
                     v-model="listenerFields"
-                    :createNewListenerHandler="listenersFieldHandler.create"
-                    :editListenerHandler="listenersFieldHandler.edit"
+                    :createNewItemHandler="listenersFieldHandler.create"
+                    :editItemHandler="listenersFieldHandler.edit"
+                    :removeItemHandler="listenersFieldHandler.remove"
                 >
                     <template #row="{ item }">
                         <td>{{ item?.name }}</td>
@@ -46,6 +46,8 @@ import { ACTIVITI_LISTENER_EVENT_OPTIONS } from '../../bpmn-workflow-editor/acti
 import { JAVA_CLASS_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/javaClass-listener-type';
 import { EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/expression-listener-type';
 import { DELEGATE_EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/delegateExpression-listener-type';
+import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
+import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
@@ -57,6 +59,7 @@ const showButton = ref(true);
 const isClearable = ref(false);
 const inline = ref(true);
 const showModal = ref(false);
+const requestedOperation = ref(null);
 const modalTitle = "Listener Configuration";
 
 const originalListener = ref(null);
@@ -104,17 +107,23 @@ const listenersFieldHandler = {
     },
     edit: (fieldItem) => {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER_FIELD, fieldItem);
+    },
+    remove: (fieldItemsCollection, fieldItem) => {
+        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
+        debugger;
     }
 };
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
+        requestedOperation.value = OPERATION_TYPE.CREATE;
         clearListensers();
         initializeListeners(listener);       
         showModal.value = true;
     });
 
     EventBus.on(EVENT_TYPE.EDIT_LISTENER, (listener) => {
+        requestedOperation.value = OPERATION_TYPE.EDIT;
         clearListensers();
         initializeListeners(listener);
         showModal.value = true;
@@ -164,16 +173,45 @@ function initializeForEdit(listener) {
     listnerClass.value = listenerItem.class;
     listenerSelectedEvent.value = listenerEventsOptions.value.find(option => option.value.toLowerCase() === listenerItem.event.toLowerCase())?.label;
     listenerSelectedType.value = listenerTypeOptions.value.find(option => option.value === JAVA_CLASS_LISTENER_TYPE.value)?.value;
-    listenerFields.value = listenerItem.fields;
+    listenerFields.value = listenerItem.fields || [];
+}
+
+function saveNewListener() {
+
+    originalListener.value = {
+
+    };
+    //NOT Implemented YET!!
+    //run validation
+    debugger;
+    EventBus.emit(EVENT_TYPE.CREATE_LISTENER, originalListener.value);
+    showModal.value = false;
 }
 
 function save() {
-    console.log('ready to save listener');
-    //run validation
-    //operation
-    //close if everything goes ok -> showModal.value = false;
+    if (!requestedOperation.value) {
+        return;
+    }
 
-    //showModal.value = false;
+    if(requestedOperation.value === OPERATION_TYPE.EDIT) {
+        //run validation
+        /*saveChanges(originalField, {
+            name: fieldName.value,
+            string: fieldString.value,
+            expression: fieldExpression.value
+        });*/
+
+        debugger;
+
+        showModal.value = false;
+        return;
+    }
+
+    saveNewListener();
+}
+
+function cancel() {
+    requestedOperation.value = null;
 }
 </script>
 

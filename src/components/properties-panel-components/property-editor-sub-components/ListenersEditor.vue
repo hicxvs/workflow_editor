@@ -6,8 +6,9 @@
             :title="taskListenersTitle"
             :headers="listnersHeaders"
             v-model="taskListeners"
-            :createNewListenerHandler="taskListenersHandlers.create"
-            :editListenerHandler="taskListenersHandlers.edit"
+            :createNewItemHandler="taskListenersHandlers.create"
+            :editItemHandler="taskListenersHandlers.edit"
+            :removeItemHandler="taskListenersHandlers.remove"
         >
             <template #row="{ item }">
                 <td>{{ item?.class }}</td>
@@ -21,8 +22,9 @@
             :title="executionListenersTitle"
             :headers="listnersHeaders"
             v-model="executionListeners"
-            :createNewListenerHandler="executionListenersHandlers.create"
-            :editListenerHandler="executionListenersHandlers.edit"
+            :createNewItemHandler="executionListenersHandlers.create"
+            :editItemHandler="executionListenersHandlers.edit"
+            :removeItemHandler="executionListenersHandlers.remove"
         >
             <template #row="{ item }">
                 <td>{{ item?.class }}</td>
@@ -62,8 +64,12 @@ const taskListenersHandlers = {
     create: () => {
         EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {type: TaskListenerType, item: null});
     },
-    edit: (taksListenerItem) => {
-        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: TaskListenerType, item: taksListenerItem});
+    edit: (taskListenerItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: TaskListenerType, item: taskListenerItem});
+    },
+    remove: (taskListenerItemsCollection, taskListenerItem) => {
+        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
+        debugger;
     }
 };
 
@@ -73,6 +79,10 @@ const executionListenersHandlers = {
     },
     edit: (executionListenerItem) => {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: ExecutionListenerType, item: executionListenerItem});
+    },
+    remove: (executionListenerItemsCollection, executionListenerItem) => {
+        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
+        debugger;
     }
 };
 

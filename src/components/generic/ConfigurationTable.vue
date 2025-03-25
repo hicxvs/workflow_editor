@@ -59,20 +59,30 @@ const props = defineProps({
         required: false,
         default: []
     },
-    createNewListenerHandler: {
+    createNewItemHandler: {
         type: Function,
         required: false,
         default: () => {
             console.warn("No create new handler provided for the button. Please provide a handler to handle the create new click event.");
         }
     },
-    editListenerHandler: {
+    editItemHandler: {
         type: Function,
         required: false,
         default: (item) => {
             console.warn("No edit handler provided for the button. Please provide a handler to handle the edit click event.", item);
         }
-    }
+    },
+    removeItemHandler: {
+        type: Function,
+        required: false,
+        default: (itemsCollection, item) => {
+            console.warn("No remove handler provided for the button. Please provide a handler to handle the remove click event.", {
+                itemsCollection,
+                item
+            });
+        }
+    },
 });
 
 const items = ref(null);
@@ -92,22 +102,27 @@ const buttonColors = {
 
 const buttonClickHandlers = {
     create: () => {
+
+        if(!model.value) {
+            return;
+        }
+
         clearSelectedItem();
-        props.createNewListenerHandler();
+        props.createNewItemHandler();
     },
     edit: () => {
         if(!items.value || !selectedItem.value ) {
             return;
         }
 
-        props.editListenerHandler(selectedItem.value);
+        props.editItemHandler(selectedItem.value);
     },
     remove: () => {
         if(!items.value || !selectedItem.value ) {
             return;
         }
-
-        items.value = items.value.filter(item => item.implementation !== selectedItem.value.item.implementation);
+        
+        props.removeItemHandler(items.value, selectedItem.value);
         clearSelectedItem();        
     },
     moveUp: () => {

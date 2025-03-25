@@ -5,7 +5,7 @@
             :showSaveButton = "showButton"
             :showCancelButton = "showButton"
             :saveButtonClickHandler = "save"
-            :cancelButtonClickHandler = "() => {}"
+            :cancelButtonClickHandler = "cancel"
             v-model="showModal"
         >
             <template #title>
@@ -25,12 +25,15 @@
 import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
+import { FieldType } from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
 
 import Modal from '../generic/Modal.vue';
 import TextInput from '../generic/TextInput.vue';
 import TextArea from '../generic/TextArea.vue';
 
+const requestedOperation = ref(null);
 const isClearable = ref(false);
 const showButton = ref(true);
 const showModal = ref(false);
@@ -46,14 +49,17 @@ const fieldInputLabels = {
 
 const modalTitle = "Listener Field Configuration";
 
+
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, () => {
+        requestedOperation.value = OPERATION_TYPE.CREATE;
         clearFields();
-        initializeFields();
+        initializeFields(null);
         showModal.value = true;
     });
 
     EventBus.on(EVENT_TYPE.EDIT_LISTENER_FIELD, (fieldItem) => {
+        requestedOperation.value = OPERATION_TYPE.EDIT;
         clearFields();
         initializeFields(fieldItem.item);
         showModal.value = true;
@@ -96,14 +102,43 @@ function initializeForEdit(fieldItem) {
     fieldExpression.value = fieldItem?.expression || '';
 }
 
-function save() {
+
+function saveNewCreatedField() {
+    originalField.value = {
+        $type: `activiti:${FieldType}`
+    };
+
     saveChanges(originalField, {
         name: fieldName.value,
         string: fieldString.value,
         expression: fieldExpression.value
     });
 
+    EventBus.emit(EVENT_TYPE.CREATE_LISTENER_FIELD, originalField.value);
     showModal.value = false;
+}
+
+function save() {
+    if (!requestedOperation.value) {
+        return;
+    }
+
+    if(requestedOperation.value === OPERATION_TYPE.EDIT) {
+        saveChanges(originalField, {
+            name: fieldName.value,
+            string: fieldString.value,
+            expression: fieldExpression.value
+        });
+
+        showModal.value = false;
+        return;
+    }
+
+    saveNewCreatedField();
+}
+
+function cancel() {
+    requestedOperation.value = null;
 }
 
 </script>
