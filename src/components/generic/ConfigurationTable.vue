@@ -32,7 +32,7 @@
         </Table>
 
         <div class="configuration-table-action-group">
-            <Button :label="buttonLabels.new" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.create" />
+            <Button :label="buttonLabels.new" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.create" :disabled="!model" />
             <Button :label="buttonLabels.edit" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.edit" :disabled="!selectedItem" />
             <Button :label="buttonLabels.remove" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.remove" :disabled="!selectedItem" />
             <Button :label="buttonLabels.up" :buttonColor="buttonColors.grey" @click="buttonClickHandlers.moveUp" :disabled="!selectedItem" />
