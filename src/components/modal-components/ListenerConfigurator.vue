@@ -5,7 +5,7 @@
             :showSaveButton = "showButton"
             :showCancelButton = "showButton"
             :saveButtonClickHandler = "save"
-            :cancelButtonClickHandler = "cancel"
+            :cancelButtonClickHandler = "() => {}"
             v-model="showModal"
         >
             <template #title>
@@ -167,18 +167,14 @@ function initializeForEdit(listener) {
     listenerFields.value = listenerItem.fields;
 }
 
-
 function save() {
     console.log('ready to save listener');
     //run validation
     //operation
     //close if everything goes ok -> showModal.value = false;
-}
 
-function cancel() {
-    console.log('cancel everything');
+    //showModal.value = false;
 }
-
 </script>
 
 <style scoped>
