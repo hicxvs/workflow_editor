@@ -131,11 +131,12 @@ onMounted(() => {
 
         if(newListener.type === TaskListenerType) {
             taskListeners.value.push(newListener);
+            EventBus.emit(EVENT_TYPE.SAVE_LISTENER, taskListeners.value);
             return;
         }
 
         executionListeners.value.push(newListener);
-        //requerest to update the real modeler; 
+        EventBus.emit(EVENT_TYPE.SAVE_LISTENER, executionListeners.value);
     });
 });
 

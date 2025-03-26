@@ -50,6 +50,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
+        EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -59,6 +60,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SET_API_KEY);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
+        EventBus.off(EVENT_TYPE.SAVE_LISTENER);
     }
 
     function updateElement(element) {                    
@@ -151,7 +153,12 @@ export function WorkflowEditorStore() {
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
         currentModeler.value.fitCanvasToDiagram();
-    }   
+    }
+    
+    function saveListener(listeners) {
+        console.log('LISTENERS::', listeners);
+        debugger;
+    }
 
     function destroyWorkflowEditor() {
         if(currentModeler.value) {
