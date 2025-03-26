@@ -8,6 +8,8 @@
             :multiple="props.multiple"
             v-model="model"
             @update:modelValue="handleSelectItemClick"
+            @update:menu="handleMenuClick"
+            @update:focused="handleMenuFocusChange"
         ></v-select>
     </div>
 </template>
@@ -49,6 +51,16 @@ const props = defineProps({
         type: Function,
         required: false,
         default: () => {}
+    },
+    selectMenuClickHandler: {
+        type: Function,
+        required: false,
+        default: () => {}
+    },
+    selectMenuFocusChangeHandler: {
+        type: Function,
+        required: false,
+        default: () => {}
     }
 });
 
@@ -62,6 +74,14 @@ watch(
 
 function handleSelectItemClick() {
     props.selectItemClickHandler();
+}
+
+function handleMenuClick() {
+    props.selectMenuClickHandler();
+}
+
+function handleMenuFocusChange() {
+    props.selectMenuFocusChangeHandler();
 }
 
 </script>

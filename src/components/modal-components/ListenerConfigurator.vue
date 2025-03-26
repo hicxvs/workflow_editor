@@ -18,7 +18,7 @@
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule" @input="filterJavaClasses" :clearHandler="filterJavaClasses"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
-                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable" :selectItemClickHandler="javaClassSelectItemClickHandler"/>
+                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable" :selectItemClickHandler="javaClassFilterSelectItemClickHandler" />
 
                 <ConfigurationTable
                     :title="listnerFieldTitle"
@@ -211,11 +211,10 @@ function filterJavaClasses() {
         return;
     }
 
-    selectedClass.value = filteredClasses.value[0]?.label;
     showFilterClassSelect.value = true;
 }
 
-function javaClassSelectItemClickHandler() {
+function javaClassFilterSelectItemClickHandler() {
     listenerCopy.value.listener.class = selectedClass.value;
     showFilterClassSelect.value = false;
 }
