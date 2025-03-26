@@ -15,9 +15,10 @@
             <template #content>
                 <Select v-if="listenerCopy" :label="listenerEventLabel" v-model="listenerSelectedEvent" :selectOptionItems="listenerEventsOptions" :clearable="isClearable" />
                 <RadioInput v-if="listenerCopy" :label="listenerTypeLabel" v-model="listenerSelectedType" :radioOptionItems="listenerTypeOptions" :inline="inline"/>
-                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule"/>
+                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule" @input="filterJavaClasses" :clearHandler="filterJavaClasses"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
+                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable"/>
 
                 <ConfigurationTable
                     :title="listnerFieldTitle"
@@ -39,7 +40,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted } from 'vue';
+import {ref, onMounted, onUnmounted, watch } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
@@ -50,6 +51,7 @@ import { DELEGATE_EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/ac
 import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
 import { FieldType } from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
+import { ClassFilterer } from '../../bpmn-workflow-editor/utils/class-filterer';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
@@ -117,6 +119,12 @@ const listenersFieldHandler = {
     }
 };
 
+const classFilterer = ref(null);
+const filteredClasses = ref(null);
+const selectedClass = ref(null);
+const showFilterClassSelect = ref(false);
+const classSelectorLabel = 'Select a class';
+
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_LISTENER, (listener) => {
         requestedOperation.value = OPERATION_TYPE.CREATE;
@@ -139,13 +147,43 @@ onMounted(() => {
 
         listenerCopy.value.listener.fields.push(newFieldItem.field);
     });
+
+    EventBus.on(EVENT_TYPE.JAVA_CLASSES_LISTING_READY, (classes) => {
+        if(!classes || !Array.isArray(classes)) {
+            return;
+        }
+        
+        selectedClass.value = null;
+        classFilterer.value = null;
+        classFilterer.value = ClassFilterer(classes);
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.CREATE_LISTENER);
     EventBus.off(EVENT_TYPE.EDIT_LISTENER);
     EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD);
+    EventBus.off(EVENT_TYPE.JAVA_CLASSES_LISTING_READY);
 });
+
+watch(
+    () => ({selectedClass: selectedClass.value, searchedClass: listenerCopy.value?.listener?.class }),
+    (newValues) => {
+        const { selectedClass, searchedClass } = newValues; 
+
+        if(!selectedClass && !searchedClass) {
+            showFilterClassSelect.value = false;
+            return;
+        }
+
+        if(searchedClass && !selectedClass) {
+            showFilterClassSelect.value = true;
+            return;
+        }
+        
+    },
+    { deep: true }
+);
 
 function clearListensers() {
     listenerEventsOptions.value = null;
@@ -181,6 +219,13 @@ function generateNewListener(listener) {
         event: '',
         fields: []
     };
+}
+
+function filterJavaClasses() {
+    const searchedClass = listenerCopy.value.listener.class;
+    filteredClasses.value = classFilterer.value?.fitlerClasses(searchedClass);
+    selectedClass.value = filteredClasses.value[0]?.label;
+    console.log(filteredClasses.value);
 }
 
 function save() {
