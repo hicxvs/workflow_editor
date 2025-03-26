@@ -18,7 +18,7 @@
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule" @input="filterJavaClasses" :clearHandler="filterJavaClasses"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
-                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable"/>
+                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable" :selectItemClickHandler="javaClassSelectItemClickHandler"/>
 
                 <ConfigurationTable
                     :title="listnerFieldTitle"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted, watch } from 'vue';
+import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
@@ -166,25 +166,6 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.JAVA_CLASSES_LISTING_READY);
 });
 
-watch(
-    () => ({selectedClass: selectedClass.value, searchedClass: listenerCopy.value?.listener?.class }),
-    (newValues) => {
-        const { selectedClass, searchedClass } = newValues; 
-
-        if(!selectedClass && !searchedClass) {
-            showFilterClassSelect.value = false;
-            return;
-        }
-
-        if(searchedClass && !selectedClass) {
-            showFilterClassSelect.value = true;
-            return;
-        }
-        
-    },
-    { deep: true }
-);
-
 function clearListensers() {
     listenerEventsOptions.value = null;
     listenerTypeOptions.value = null;
@@ -225,7 +206,12 @@ function filterJavaClasses() {
     const searchedClass = listenerCopy.value.listener.class;
     filteredClasses.value = classFilterer.value?.fitlerClasses(searchedClass);
     selectedClass.value = filteredClasses.value[0]?.label;
-    console.log(filteredClasses.value);
+    showFilterClassSelect.value = true;
+}
+
+function javaClassSelectItemClickHandler() {
+    listenerCopy.value.listener.class = selectedClass.value;
+    showFilterClassSelect.value = false;
 }
 
 function save() {

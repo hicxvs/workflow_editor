@@ -7,6 +7,7 @@
             :items="itemsLabels"
             :multiple="props.multiple"
             v-model="model"
+            @update:modelValue="handleSelectItemClick"
         ></v-select>
     </div>
 </template>
@@ -43,6 +44,11 @@ const props = defineProps({
         type: Array,
         required: false,
         default: []
+    },
+    selectItemClickHandler: {
+        type: Function,
+        required: false,
+        default: () => {}
     }
 });
 
@@ -53,6 +59,10 @@ watch(
     },
     { immediate: true, deep: true }
 );
+
+function handleSelectItemClick() {
+    props.selectItemClickHandler();
+}
 
 </script>
 
