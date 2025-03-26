@@ -205,6 +205,12 @@ function generateNewListener(listener) {
 function filterJavaClasses() {
     const searchedClass = listenerCopy.value.listener.class;
     filteredClasses.value = classFilterer.value?.fitlerClasses(searchedClass);
+
+    if(!filteredClasses.value.length) {
+        showFilterClassSelect.value = false;
+        return;
+    }
+
     selectedClass.value = filteredClasses.value[0]?.label;
     showFilterClassSelect.value = true;
 }
