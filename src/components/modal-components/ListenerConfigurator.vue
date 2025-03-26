@@ -19,8 +19,6 @@
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
                 
-                {{ listenerCopy.listener }}
-
                 <ConfigurationTable
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
