@@ -1,3 +1,5 @@
+export const FieldType = 'Field';
+
 export default {
     name: 'Field',
     superClass: ['Element'],

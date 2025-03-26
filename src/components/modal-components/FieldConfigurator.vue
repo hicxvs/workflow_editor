@@ -5,7 +5,7 @@
             :showSaveButton = "showButton"
             :showCancelButton = "showButton"
             :saveButtonClickHandler = "save"
-            :cancelButtonClickHandler = "() => {}"
+            :cancelButtonClickHandler = "cancel"
             v-model="showModal"
         >
             <template #title>
@@ -13,9 +13,9 @@
             </template>
 
             <template #content>
-                <TextInput :label="fieldInputLabels.name" v-model="fieldName" :clearable="isClearable" />
-                <TextArea  :label="fieldInputLabels.string" v-model="fieldString" :clearable="isClearable" />
-                <TextArea  :label="fieldInputLabels.expression" v-model="fieldExpression" :clearable="isClearable" />
+                <TextInput :label="fieldInputLabels.name" v-model="fieldCopy.field.name" :clearable="isClearable" />
+                <TextArea  :label="fieldInputLabels.string" v-model="fieldCopy.field.string" :clearable="isClearable" />
+                <TextArea  :label="fieldInputLabels.expression" v-model="fieldCopy.field.expression" :clearable="isClearable" />
             </template>
         </Modal>
     </div>
@@ -25,19 +25,21 @@
 import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
+import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
 
 import Modal from '../generic/Modal.vue';
 import TextInput from '../generic/TextInput.vue';
 import TextArea from '../generic/TextArea.vue';
 
+const requestedOperation = ref(null);
 const isClearable = ref(false);
 const showButton = ref(true);
 const showModal = ref(false);
 const originalField = ref(null);
-const fieldName = ref(null);
-const fieldString = ref(null);
-const fieldExpression = ref(null);
+const fieldCopy = ref(null);
+
 const fieldInputLabels = {
     name: 'Field name',
     string: 'String value',
@@ -47,15 +49,17 @@ const fieldInputLabels = {
 const modalTitle = "Listener Field Configuration";
 
 onMounted(() => {
-    EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, () => {
+    EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, (fieldItem) => {
+        requestedOperation.value = OPERATION_TYPE.CREATE;
         clearFields();
-        initializeFields();
+        initializeFields(fieldItem);
         showModal.value = true;
     });
 
     EventBus.on(EVENT_TYPE.EDIT_LISTENER_FIELD, (fieldItem) => {
+        requestedOperation.value = OPERATION_TYPE.EDIT;
         clearFields();
-        initializeFields(fieldItem.item);
+        initializeFields(fieldItem);
         showModal.value = true;
     });
 });
@@ -66,44 +70,51 @@ onUnmounted(() => {
 });
 
 function clearFields() {
-    fieldName.value = null;
-    fieldString.value = null;
-    fieldExpression.value = null;
     originalField.value = null;
+    fieldCopy.value = null;
 }
 
-function initializeFields(fieldItem) {
+function initializeFields(fieldItem) { 
 
-    originalField.value = fieldItem;
-
-    if(!fieldItem) {
-        initializeForCreate();
-        return;
+    if(!fieldItem.field) {
+        fieldItem.field = generateNewField(fieldItem);
     }
 
-    initializeForEdit(fieldItem);
+    originalField.value = fieldItem;
+    fieldCopy.value = createDeepCopy(fieldItem);
+    const field = fieldCopy.value.field;
+    field.name = field.name || '';
+    field.string = field.string || '';
+    field.expression = field.expression || '';
 }
 
-function initializeForCreate() {
-    fieldName.value = '';
-    fieldString.value = '';
-    fieldExpression.value = '';
-}
-
-function initializeForEdit(fieldItem) {
-    fieldName.value = fieldItem?.name || '';
-    fieldString.value = fieldItem?.string || '';
-    fieldExpression.value = fieldItem?.expression || '';
+function generateNewField(field) {
+    return {
+        $type: `activiti:${field.type}`,
+        name: '',
+        expression: '',
+        string: ''
+    };
 }
 
 function save() {
-    saveChanges(originalField, {
-        name: fieldName.value,
-        string: fieldString.value,
-        expression: fieldExpression.value
-    });
+    if (!requestedOperation.value) {
+        return;
+    }
+
+    saveChanges(originalField.value.field, fieldCopy.value.field);
+
+    if(requestedOperation.value === OPERATION_TYPE.CREATE) {
+        EventBus.emit(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD, originalField.value);
+        showModal.value = false;
+        return;
+    }
 
     showModal.value = false;
+}
+
+function cancel() {
+    requestedOperation.value = null;
 }
 
 </script>
