@@ -18,6 +18,9 @@
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
+                
+                {{ listenerCopy.listener }}
+
                 <ConfigurationTable
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
@@ -47,6 +50,7 @@ import { JAVA_CLASS_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-li
 import { EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/expression-listener-type';
 import { DELEGATE_EXPRESSION_LISTENER_TYPE } from '../../bpmn-workflow-editor/activiti-listeners/delegateExpression-listener-type';
 import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
+import { FieldType } from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
 
 import Modal from '../generic/Modal.vue';
@@ -98,14 +102,20 @@ const listnersFieldHeaders = [
 
 const listenersFieldHandler = {
     create: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_LISTENER_FIELD);
+        EventBus.emit(EVENT_TYPE.CREATE_LISTENER_FIELD, {
+            type: FieldType,
+            field: null
+        });
     },
     edit: (fieldItem) => {
-        EventBus.emit(EVENT_TYPE.EDIT_LISTENER_FIELD, fieldItem);
+        EventBus.emit(EVENT_TYPE.EDIT_LISTENER_FIELD,  {
+            type: FieldType,
+            field: fieldItem.item
+        });
     },
     remove: (fieldItem) => {
-        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
-        debugger;
+        const indexToRemove = fieldItem.index;
+        listenerCopy.value.listener.fields = listenerCopy.value.listener.fields.filter((_, index) => index !== indexToRemove);
     }
 };
 
@@ -124,12 +134,12 @@ onMounted(() => {
         showModal.value = true;
     });
 
-    EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, (newFieldItem) => {
+    EventBus.on(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD, (newFieldItem) => {
         if(!newFieldItem) {
             return;
         }
 
-        listenerCopy.value.fields.push(newFieldItem);
+        listenerCopy.value.listener.fields.push(newFieldItem.field);
     });
 });
 
@@ -147,7 +157,6 @@ function clearListensers() {
 }
 
 function initializeListeners(listener) {
-    originalListener.value = listener;
     listenerEventsOptions.value = ACTIVITI_LISTENER_EVENT_OPTIONS[`activiti:${listener.type}`];
     listenerTypeOptions.value = [JAVA_CLASS_LISTENER_TYPE, EXPRESSION_LISTENER_TYPE, DELEGATE_EXPRESSION_LISTENER_TYPE];
 
@@ -155,6 +164,7 @@ function initializeListeners(listener) {
         listener.listener = generateNewListener(listener);
     }
 
+    originalListener.value = listener;
     listenerCopy.value = createDeepCopy(listener);    
     const listenerItem = listenerCopy.value.listener;
     listenerItem.event = listenerItem.event || listenerEventsOptions.value[0].value;

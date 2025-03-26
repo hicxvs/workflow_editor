@@ -24,6 +24,7 @@ export const EVENT_TYPE = Object.freeze({
     CREATE_LISTENER_FIELD: 'create-listener-field',
     EDIT_LISTENER_FIELD: 'edit-listener-field',
     REMOVE_LISTENER_FIELD: 'remove-listener-field',
+    ADD_CREATED_LISTENER_FIELD: 'add-create-listener-field',
     TASK_TYPES_READY: 'task-types-ready',
     GATEWAY_TYPES_READY: 'gateway-types-ready'
 });
