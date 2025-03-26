@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 import { TaskListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/task-listener';
 import { ExecutionListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/execution-listener';
@@ -63,7 +63,6 @@ const executionListenersTitle = 'Execution Listeners';
 const taskListenersHandlers = {
     create: () => {
         EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {
-            id: crypto.randomUUID(),
             type: TaskListenerType,
             listener: null
         });
@@ -72,15 +71,14 @@ const taskListenersHandlers = {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER, taskListener.item);
     },
     remove: (taskListenerItem) => {
-        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
-        debugger;
+        const indexToRemove = taskListenerItem.index;
+        taskListeners.value = taskListeners.value.filter((_, index) => index !== indexToRemove);
     }
 };
 
 const executionListenersHandlers = {
     create: () => {
         EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {
-            id: crypto.randomUUID(),
             type: ExecutionListenerType,
             listener: null
         });
@@ -89,8 +87,8 @@ const executionListenersHandlers = {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER, executionListener.item);
     },
     remove: (executionListener) => {
-        console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
-        debugger;
+        const indexToRemove = executionListener.index;
+        executionListeners.value = executionListeners.value.filter((_, index) => index !== indexToRemove);
     }
 };
 
@@ -111,7 +109,6 @@ function getListeners(listenerType) {
 
     const listeners = values.filter(element => element?.$type === `activiti:${listenerType}`);
     return listeners.map(listener => ({
-        id: crypto.randomUUID(),
         type: listenerType,
         listener
     }));
@@ -125,6 +122,26 @@ watch(
   },
   { deep: true }
 );
+
+onMounted(() => {
+    EventBus.on(EVENT_TYPE.ADD_CREATED_LISTENER, (newListener) => {
+        if(!newListener) {
+            return;
+        }
+
+        if(newListener.type === TaskListenerType) {
+            taskListeners.value.push(newListener);
+            return;
+        }
+
+        executionListeners.value.push(newListener);
+        //requerest to update the real modeler; 
+    });
+});
+
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER);
+});
 
 </script>
 

@@ -18,7 +18,7 @@
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
-                
+
                 <ConfigurationTable
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
@@ -144,6 +144,7 @@ onMounted(() => {
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.CREATE_LISTENER);
     EventBus.off(EVENT_TYPE.EDIT_LISTENER);
+    EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD);
 });
 
 function clearListensers() {
@@ -182,39 +183,21 @@ function generateNewListener(listener) {
     };
 }
 
-function saveNewListener() {
-
-    originalListener.value = {
-
-    };
-    //NOT Implemented YET!!
-    //run validation
-    debugger;
-    EventBus.emit(EVENT_TYPE.CREATE_LISTENER, originalListener.value);
-    showModal.value = false;
-}
-
 function save() {
     if (!requestedOperation.value) {
         return;
     }
+
+    listenerCopy.value.listener.event = listenerEventsOptions.value.find(option => option.label === listenerSelectedEvent.value).value;
+    saveChanges(originalListener.value.listener, listenerCopy.value.listener);
+
+    if(requestedOperation.value === OPERATION_TYPE.CREATE) {
+        EventBus.emit(EVENT_TYPE.ADD_CREATED_LISTENER, originalListener.value);
+        showModal.value = false;
+        return;
+    }
    
-
-    //if(requestedOperation.value === OPERATION_TYPE.EDIT) {
-        //run validation
-        /*saveChanges(originalField, {
-            name: fieldName.value,
-            string: fieldString.value,
-            expression: fieldExpression.value
-        });*/
-
-        //debugger;
-
-        //showModal.value = false;
-        //return;
-    //}
-
-    //saveNewListener();
+    showModal.value = false;
 }
 
 function cancel() {
