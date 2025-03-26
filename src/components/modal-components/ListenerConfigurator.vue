@@ -15,13 +15,13 @@
             <template #content>
                 <Select v-if="listenerCopy" :label="listenerEventLabel" v-model="listenerSelectedEvent" :selectOptionItems="listenerEventsOptions" :clearable="isClearable" />
                 <RadioInput v-if="listenerCopy" :label="listenerTypeLabel" v-model="listenerSelectedType" :radioOptionItems="listenerTypeOptions" :inline="inline"/>
-                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listnerClass" :rules="listnerClassRequiredRule"/>
-                <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listnerExpression" :rules="listnerExpressionRequiredRule" />
-                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listnerDelegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
+                <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule"/>
+                <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
+                <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
                 <ConfigurationTable
                     :title="listnerFieldTitle"
                     :headers="listnersFieldHeaders"
-                    v-model="listenerFields"
+                    v-model="listenerCopy.listener.fields"
                     :createNewItemHandler="listenersFieldHandler.create"
                     :editItemHandler="listenersFieldHandler.edit"
                     :removeItemHandler="listenersFieldHandler.remove"
@@ -73,10 +73,6 @@ const listenerTypeLabel = 'Type';
 const listenerTypeOptions = ref(null);
 const listenerSelectedType = ref(null);
 
-const listnerClass = ref(null);
-const listnerExpression = ref(null);
-const listnerDelegateExpression = ref(null);
-
 const listenerInputLabel = {
     class: 'Class',
     expression: 'Expression',
@@ -99,7 +95,6 @@ const listnersFieldHeaders = [
     'String value',
     'Expression'
 ];
-const listenerFields = ref([]);
 
 const listenersFieldHandler = {
     create: () => {
@@ -108,7 +103,7 @@ const listenersFieldHandler = {
     edit: (fieldItem) => {
         EventBus.emit(EVENT_TYPE.EDIT_LISTENER_FIELD, fieldItem);
     },
-    remove: (fieldItemsCollection, fieldItem) => {
+    remove: (fieldItem) => {
         console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
         debugger;
     }
@@ -128,6 +123,14 @@ onMounted(() => {
         initializeListeners(listener);
         showModal.value = true;
     });
+
+    EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, (newFieldItem) => {
+        if(!newFieldItem) {
+            return;
+        }
+
+        listenerCopy.value.fields.push(newFieldItem);
+    });
 });
 
 onUnmounted(() => {
@@ -135,45 +138,40 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.EDIT_LISTENER);
 });
 
-function initializeListeners(listener) {
-
-    originalListener.value = listener;
-    listenerEventsOptions.value = ACTIVITI_LISTENER_EVENT_OPTIONS[`activiti:${listener.type}`];
-    listenerTypeOptions.value = [JAVA_CLASS_LISTENER_TYPE, EXPRESSION_LISTENER_TYPE, DELEGATE_EXPRESSION_LISTENER_TYPE];
-
-    if(!listener.item) {
-        initializeForCreate();
-        return;
-    }
-
-    initializeForEdit(listener);
-}
-
 function clearListensers() {
     listenerEventsOptions.value = null;
     listenerTypeOptions.value = null;
-    listnerClass.value = null;
     listenerSelectedType.value = null;
-    listenerFields.value = null;
     listenerCopy.value = null;
     originalListener.value = null;
 }
 
-function initializeForCreate() {
-    listnerClass.value = '';
-    listnerClass.value = '';
-    listenerSelectedEvent.value = listenerEventsOptions.value[0].label;
-    listenerSelectedType.value = listenerTypeOptions.value[0].value;
-    listenerFields.value = [];
-}
+function initializeListeners(listener) {
+    originalListener.value = listener;
+    listenerEventsOptions.value = ACTIVITI_LISTENER_EVENT_OPTIONS[`activiti:${listener.type}`];
+    listenerTypeOptions.value = [JAVA_CLASS_LISTENER_TYPE, EXPRESSION_LISTENER_TYPE, DELEGATE_EXPRESSION_LISTENER_TYPE];
 
-function initializeForEdit(listener) {
-    listenerCopy.value = createDeepCopy(listener.item);
-    const listenerItem = listenerCopy.value.item;
-    listnerClass.value = listenerItem.class;
+    if(!listener.listener) {
+        listener.listener = generateNewListener(listener);
+    }
+
+    listenerCopy.value = createDeepCopy(listener);    
+    const listenerItem = listenerCopy.value.listener;
+    listenerItem.event = listenerItem.event || listenerEventsOptions.value[0].value;
+
     listenerSelectedEvent.value = listenerEventsOptions.value.find(option => option.value.toLowerCase() === listenerItem.event.toLowerCase())?.label;
     listenerSelectedType.value = listenerTypeOptions.value.find(option => option.value === JAVA_CLASS_LISTENER_TYPE.value)?.value;
-    listenerFields.value = listenerItem.fields || [];
+}
+
+function generateNewListener(listener) {
+    return {
+        $type: `activiti:${listener.type}`,
+        class: '',
+        expression: '',
+        delegateExpression: '',
+        event: '',
+        fields: []
+    };
 }
 
 function saveNewListener() {
@@ -192,8 +190,9 @@ function save() {
     if (!requestedOperation.value) {
         return;
     }
+   
 
-    if(requestedOperation.value === OPERATION_TYPE.EDIT) {
+    //if(requestedOperation.value === OPERATION_TYPE.EDIT) {
         //run validation
         /*saveChanges(originalField, {
             name: fieldName.value,
@@ -201,13 +200,13 @@ function save() {
             expression: fieldExpression.value
         });*/
 
-        debugger;
+        //debugger;
 
-        showModal.value = false;
-        return;
-    }
+        //showModal.value = false;
+        //return;
+    //}
 
-    saveNewListener();
+    //saveNewListener();
 }
 
 function cancel() {

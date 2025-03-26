@@ -76,11 +76,8 @@ const props = defineProps({
     removeItemHandler: {
         type: Function,
         required: false,
-        default: (itemsCollection, item) => {
-            console.warn("No remove handler provided for the button. Please provide a handler to handle the remove click event.", {
-                itemsCollection,
-                item
-            });
+        default: (item) => {
+            console.warn("No remove handler provided for the button. Please provide a handler to handle the remove click event.", item);
         }
     },
 });
@@ -121,8 +118,8 @@ const buttonClickHandlers = {
         if(!items.value || !selectedItem.value ) {
             return;
         }
-        
-        props.removeItemHandler(items.value, selectedItem.value);
+
+        props.removeItemHandler(selectedItem.value);
         clearSelectedItem();        
     },
     moveUp: () => {

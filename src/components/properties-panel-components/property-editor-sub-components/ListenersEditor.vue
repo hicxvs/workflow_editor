@@ -11,10 +11,10 @@
             :removeItemHandler="taskListenersHandlers.remove"
         >
             <template #row="{ item }">
-                <td>{{ item?.class }}</td>
-                <td>{{ item?.$type }}</td>
-                <td>{{ item?.event }}</td>
-                <td>{{ item?.fields?.length || 0 }}</td>
+                <td>{{ item?.listener?.class }}</td>
+                <td>{{ item?.listener?.$type }}</td>
+                <td>{{ item?.listener?.event }}</td>
+                <td>{{ item?.listener?.fields?.length || 0 }}</td>
             </template>
         </ConfigurationTable>
 
@@ -27,10 +27,10 @@
             :removeItemHandler="executionListenersHandlers.remove"
         >
             <template #row="{ item }">
-                <td>{{ item?.class }}</td>
-                <td>{{ item?.$type }}</td>
-                <td>{{ item?.event }}</td>
-                <td>{{ item?.fields?.length || 0 }}</td>
+                <td>{{ item?.listener?.class }}</td>
+                <td>{{ item?.listener?.$type }}</td>
+                <td>{{ item?.listener?.event }}</td>
+                <td>{{ item?.listener?.fields?.length || 0 }}</td>
             </template>
         </ConfigurationTable>
     </div>
@@ -62,12 +62,16 @@ const executionListenersTitle = 'Execution Listeners';
 
 const taskListenersHandlers = {
     create: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {type: TaskListenerType, item: null});
+        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {
+            id: crypto.randomUUID(),
+            type: TaskListenerType,
+            listener: null
+        });
     },
-    edit: (taskListenerItem) => {
-        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: TaskListenerType, item: taskListenerItem});
+    edit: (taskListener) => {
+        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, taskListener.item);
     },
-    remove: (taskListenerItemsCollection, taskListenerItem) => {
+    remove: (taskListenerItem) => {
         console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
         debugger;
     }
@@ -75,12 +79,16 @@ const taskListenersHandlers = {
 
 const executionListenersHandlers = {
     create: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {type: ExecutionListenerType, item: null});
+        EventBus.emit(EVENT_TYPE.CREATE_LISTENER, {
+            id: crypto.randomUUID(),
+            type: ExecutionListenerType,
+            listener: null
+        });
     },
-    edit: (executionListenerItem) => {
-        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, { type: ExecutionListenerType, item: executionListenerItem});
+    edit: (executionListener) => {
+        EventBus.emit(EVENT_TYPE.EDIT_LISTENER, executionListener.item);
     },
-    remove: (executionListenerItemsCollection, executionListenerItem) => {
+    remove: (executionListener) => {
         console.warn('NOT IMPLEMENTED YET, IDS ARE NECESSARY');
         debugger;
     }
@@ -101,7 +109,12 @@ function getListeners(listenerType) {
         return [];
     }
 
-    return values.filter(element => element?.$type === `activiti:${listenerType}`);
+    const listeners = values.filter(element => element?.$type === `activiti:${listenerType}`);
+    return listeners.map(listener => ({
+        id: crypto.randomUUID(),
+        type: listenerType,
+        listener
+    }));
 }
 
 watch(
