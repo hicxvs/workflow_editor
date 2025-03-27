@@ -29,7 +29,7 @@ const buttonLabels = {
 };
 
 const buttonClickHandlers = {
-    generateXML: () => EventBus.emit(EVENT_TYPE.GENERATE_DIAGRAM),
+    generateXML: () => EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM),
     clearXML: () => EventBus.emit(EVENT_TYPE.CLEAR_DIAGRAM),
     expandPanel: () => {
         console.log("Expand Panel");

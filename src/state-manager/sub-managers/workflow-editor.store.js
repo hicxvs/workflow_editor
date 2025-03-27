@@ -52,6 +52,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
         EventBus.on(EVENT_TYPE.SAVE_FORM_PROPERTY, saveFormProperty);
+        EventBus.on(EVENT_TYPE.GENERATE_XML_DIAGRAM, generateXMLDiagram);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -63,6 +64,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
         EventBus.off(EVENT_TYPE.SAVE_FORM_PROPERTY);
+        EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
     function updateElement(element) {                    
@@ -204,6 +206,12 @@ export function WorkflowEditorStore() {
         const fileName = 'diagram';
         const diagramXMLContent = await currentModeler.value.saveDiagram();
         downloadDiagram(fileName, diagramXMLContent);
+    }
+
+    async function generateXMLDiagram() {
+        const diagramXMLContent = await currentModeler.value.saveDiagram();
+        const {xml} = diagramXMLContent;
+        EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
     }
   
     return {
