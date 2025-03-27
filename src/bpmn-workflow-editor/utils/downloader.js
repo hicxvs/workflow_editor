@@ -1,7 +1,8 @@
 export function downloadDiagram(fileName, fileContent) {
 
     try {
-        const blob = new Blob([fileContent], { type: 'text/xml' });
+        const {xml} = fileContent;
+        const blob = new Blob([xml], { type: 'text/xml' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;

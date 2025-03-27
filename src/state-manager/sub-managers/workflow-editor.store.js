@@ -7,12 +7,14 @@ import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram'
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
+import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
 const { getAllSystemDiagrams, getSystemDiagramByName, isApiKeyValid } = SystemDiagrams();
+const { getAllJavaClasses } = ClassListing();
 
 export function WorkflowEditorStore() {
 
@@ -25,8 +27,7 @@ export function WorkflowEditorStore() {
     const currentImportDiagramResults = ref(null);
     const currentApiKey = ref(null);
     const currentSystemDiagrams = ref(null);
-
-
+    
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
             return;
@@ -35,8 +36,10 @@ export function WorkflowEditorStore() {
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
+        const javaClasses = await getAllJavaClasses();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
-        EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
+        EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);        
+        EventBus.emit(EVENT_TYPE.JAVA_CLASSES_LISTING_READY, javaClasses);
     }
 
     function registerWorkflowEditorEventHandlers() {
@@ -47,6 +50,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
+        EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -56,6 +60,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SET_API_KEY);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
+        EventBus.off(EVENT_TYPE.SAVE_LISTENER);
     }
 
     function updateElement(element) {                    
@@ -148,7 +153,11 @@ export function WorkflowEditorStore() {
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
         currentModeler.value.fitCanvasToDiagram();
-    }   
+    }
+    
+    function saveListener(listeners) {
+        currentModeler.value.saveListener(currentWorkingElementProperties.value, listeners);
+    }
 
     function destroyWorkflowEditor() {
         if(currentModeler.value) {
