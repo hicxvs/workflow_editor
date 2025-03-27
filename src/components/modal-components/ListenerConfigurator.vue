@@ -233,7 +233,8 @@ function save() {
         showModal.value = false;
         return;
     }
-   
+    
+    EventBus.emit(EVENT_TYPE.UPDATE_EDITED_LISTENER, originalListener.value);
     showModal.value = false;
 }
 

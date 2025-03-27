@@ -140,10 +140,24 @@ onMounted(() => {
         executionListeners.value.push(newListener);
         EventBus.emit(EVENT_TYPE.SAVE_LISTENER, executionListeners.value);
     });
+
+    EventBus.on(EVENT_TYPE.UPDATE_EDITED_LISTENER, (editedListener) => {
+        if(!editedListener) {
+            return;
+        }
+
+        if(editedListener.type === TaskListenerType) {
+            EventBus.emit(EVENT_TYPE.SAVE_LISTENER, taskListeners.value);
+            return;
+        }
+
+        EventBus.emit(EVENT_TYPE.SAVE_LISTENER, executionListeners.value);
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER);
+    EventBus.off(EVENT_TYPE.UPDATE_EDITED_LISTENER);
 });
 
 </script>
