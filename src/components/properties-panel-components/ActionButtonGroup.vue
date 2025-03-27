@@ -29,8 +29,8 @@ const buttonLabels = {
 };
 
 const buttonClickHandlers = {
-    generateXML: () => EventBus.emit(EVENT_TYPE.GENERATE_DIAGRAM),
-    clearXML: () => EventBus.emit(EVENT_TYPE.CLEAR_DIAGRAM),
+    generateXML: () => EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM),
+    clearXML: () => EventBus.emit(EVENT_TYPE.CLEAR_GENERATED_XML_DIAGRAM),
     expandPanel: () => {
         console.log("Expand Panel");
         isExpanded.value = true;    

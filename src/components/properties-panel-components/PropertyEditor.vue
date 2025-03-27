@@ -8,6 +8,7 @@
             <DocumentationEditor v-model="model" />
             <FormEditor v-model="model" />
             <ListenersEditor v-model="model" />
+            <OutputPanel v-model="model" />
           </div>
         </template>
     </Card>
@@ -21,6 +22,7 @@ import MainConfigEditor from "./property-editor-sub-components/MainConfigEditor.
 import DocumentationEditor from "./property-editor-sub-components/DocumentationEditor.vue";
 import FormEditor from "./property-editor-sub-components/FormEditor.vue";
 import ListenersEditor from "./property-editor-sub-components/ListenersEditor.vue";
+import OutputPanel from "./property-editor-sub-components/OutputPanel.vue";
 
 const model = defineModel();
 
