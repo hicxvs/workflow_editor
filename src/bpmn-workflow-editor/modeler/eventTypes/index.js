@@ -23,6 +23,7 @@ export const EVENT_TYPE = Object.freeze({
     REMOVE_LISTENER: 'remove-listener',
     SAVE_LISTENER: 'save-listener',
     ADD_CREATED_LISTENER: 'add-create-listener',
+    UPDATE_EDITED_LISTENER: 'update-create-listener',
     CREATE_LISTENER_FIELD: 'create-listener-field',
     EDIT_LISTENER_FIELD: 'edit-listener-field',
     REMOVE_LISTENER_FIELD: 'remove-listener-field',
