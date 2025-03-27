@@ -3,6 +3,7 @@
         <p class="v-card-title">{{ title }}</p>
 
         <ConfigurationTable
+            v-if="model"
             :title="taskListenersTitle"
             :headers="listnersHeaders"
             v-model="taskListeners"
@@ -19,6 +20,7 @@
         </ConfigurationTable>
 
         <ConfigurationTable
+            v-if="model"
             :title="executionListenersTitle"
             :headers="listnersHeaders"
             v-model="executionListeners"

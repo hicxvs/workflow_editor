@@ -30,7 +30,10 @@ export const EVENT_TYPE = Object.freeze({
     ADD_CREATED_LISTENER_FIELD: 'add-create-listener-field',
     TASK_TYPES_READY: 'task-types-ready',
     GATEWAY_TYPES_READY: 'gateway-types-ready',
-    JAVA_CLASSES_LISTING_READY: 'java-classes-listing-ready'
+    JAVA_CLASSES_LISTING_READY: 'java-classes-listing-ready',
+    CREATE_FORM_PROPERTY: 'create-form-property',
+    ADD_CREATED_FORM_PROPERTY: 'add-created-form-property',
+    SAVE_FORM_PROPERTY: 'save-form-property'
 });
 
 

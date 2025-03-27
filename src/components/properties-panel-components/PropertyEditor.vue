@@ -6,6 +6,7 @@
             <GeneralPropertiesEditor v-model="model"/>
             <MainConfigEditor v-model="model" />
             <DocumentationEditor v-model="model" />
+            <FormEditor v-model="model" />
             <ListenersEditor v-model="model" />
           </div>
         </template>
@@ -18,6 +19,7 @@ import Card from "../generic/Card.vue";
 import GeneralPropertiesEditor from "./property-editor-sub-components/GeneralPropertiesEditor.vue";
 import MainConfigEditor from "./property-editor-sub-components/MainConfigEditor.vue";
 import DocumentationEditor from "./property-editor-sub-components/DocumentationEditor.vue";
+import FormEditor from "./property-editor-sub-components/FormEditor.vue";
 import ListenersEditor from "./property-editor-sub-components/ListenersEditor.vue";
 
 const model = defineModel();

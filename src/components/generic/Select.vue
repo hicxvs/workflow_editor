@@ -93,6 +93,7 @@ function handleSelectItemClick() {
 }
 
 function handleMenuClick() {
+    menuOpen.value = !menuOpen.value;
     props.selectMenuClickHandler();
 }
 

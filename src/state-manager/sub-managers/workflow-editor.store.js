@@ -51,6 +51,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
+        EventBus.on(EVENT_TYPE.SAVE_FORM_PROPERTY, saveFormProperty);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -61,6 +62,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
+        EventBus.off(EVENT_TYPE.SAVE_FORM_PROPERTY);
     }
 
     function updateElement(element) {                    
@@ -157,6 +159,10 @@ export function WorkflowEditorStore() {
     
     function saveListener(listeners) {
         currentModeler.value.saveListener(currentWorkingElementProperties.value, listeners);
+    }
+
+    function saveFormProperty(formProperties) {
+        currentModeler.value.saveFormProperty(currentWorkingElementProperties.value, formProperties);
     }
 
     function destroyWorkflowEditor() {

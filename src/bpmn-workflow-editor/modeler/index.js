@@ -104,6 +104,52 @@ export function createWorkflowEditor(container) {
         return null;
     }
 
+    function saveFormProperty(elementProperties, formProperties) {
+        if(!modeler) {
+            console.error("Error: Workflow editor is not initialized.");
+            return null;
+        }
+
+        if(!elementProperties || !formProperties) {
+            console.error("Error: ElementPorperties and/or Listeners are not provided.");
+            return null;
+        }
+
+        createExtensionElements(elementProperties);
+        createFormProperties(elementProperties, formProperties);
+    }
+
+    function createFormProperties(elementProperties, formProperties) {
+
+        if(!formProperties || !formProperties.length) {
+            return;
+        }
+
+        const defaultFalse = 'False';
+        const defaultType = 'Boolean';
+
+        elementProperties.extensionElements.values = formProperties.map(formProperty => {
+            const formPropertyItem = formProperty.formProperty;
+
+            const newFormProperty = moddle.create(formPropertyItem.$type, {
+                id: formPropertyItem.id || '',        
+                name: formPropertyItem.name || '',        
+                type: formPropertyItem.type || defaultType,        
+                expression: formPropertyItem.expression || '',        
+                variable: formPropertyItem.variable || '',    
+                pattern: formPropertyItem.pattern || '',    
+                default: formPropertyItem.default || defaultFalse,
+                required: formPropertyItem.required || defaultFalse,        
+                readable: formPropertyItem.readable || defaultFalse,        
+                writable: formPropertyItem.writable || defaultFalse,        
+                formValue: formPropertyItem.formValue || ''
+            });
+            
+            newFormProperty.$parent = elementProperties;
+            return newFormProperty;
+        });
+    }
+
     function saveListener(elementProperties, listeners) {
         if(!modeler) {
             console.error("Error: Workflow editor is not initialized.");
@@ -196,6 +242,7 @@ export function createWorkflowEditor(container) {
         clearDiagram,
         getProcessDefinition,
         saveListener,
+        saveFormProperty,
         fitCanvasToDiagram
     };
 }
