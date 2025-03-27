@@ -7,6 +7,7 @@
             :items="itemsLabels"
             :multiple="props.multiple"
             v-model="model"
+            :menu.sync="menuOpen"
             @update:modelValue="handleSelectItemClick"
             @update:menu="handleMenuClick"
             @update:focused="handleMenuFocusChange"
@@ -20,6 +21,7 @@ import { VSelect } from "vuetify/components";
 
 const model = defineModel();
 const itemsLabels = ref(null);
+const menuOpen = ref(false);
 
 const props = defineProps({
     label: {
@@ -36,6 +38,11 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: true
+    },
+    openMenu: {
+        type: Boolean,
+        required: false,
+        default: false
     },
     chips: {
         type: Boolean,
@@ -71,6 +78,15 @@ watch(
     },
     { immediate: true, deep: true }
 );
+
+watch(
+    () => props.openMenu,
+    (newValue) => {
+        menuOpen.value = newValue;
+    },
+    { immediate: true }
+);
+
 
 function handleSelectItemClick() {
     props.selectItemClickHandler();
