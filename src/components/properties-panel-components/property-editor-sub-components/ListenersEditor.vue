@@ -73,6 +73,7 @@ const taskListenersHandlers = {
     remove: (taskListenerItem) => {
         const indexToRemove = taskListenerItem.index;
         taskListeners.value = taskListeners.value.filter((_, index) => index !== indexToRemove);
+        EventBus.emit(EVENT_TYPE.SAVE_LISTENER, taskListeners.value);
     }
 };
 
@@ -89,6 +90,7 @@ const executionListenersHandlers = {
     remove: (executionListener) => {
         const indexToRemove = executionListener.index;
         executionListeners.value = executionListeners.value.filter((_, index) => index !== indexToRemove);
+        EventBus.emit(EVENT_TYPE.SAVE_LISTENER, executionListeners.value);
     }
 };
 

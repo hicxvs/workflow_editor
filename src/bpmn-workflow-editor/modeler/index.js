@@ -104,22 +104,65 @@ export function createWorkflowEditor(container) {
         return null;
     }
 
-    function saveListener(listener) {
+    function saveListener(elementProperties, listeners) {
         if(!modeler) {
             console.error("Error: Workflow editor is not initialized.");
             return null;
         }
 
-        if(!listener) {
-            console.error("Error: Listeners not provided.");
+        if(!elementProperties || !listeners) {
+            console.error("Error: ElementPorperties and/or Listeners are not provided.");
             return null;
         }
 
-        const createdListener = factory.create(listener.$type, listener);
-        const cm = modeler;
-        
-        debugger;
+        createExtensionElements(elementProperties);
+        createListeners(elementProperties, listeners);
     }
+
+    function createExtensionElements(elementProperties) {
+        const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
+            values: []
+        });
+
+        newExtensionElements.$parent = elementProperties;
+        elementProperties.extensionElements = newExtensionElements;
+    }
+
+    function createListeners(elementProperties, listeners) {
+
+        if(!listeners || !listeners.length) {
+            return;
+        }
+
+        elementProperties.extensionElements.values = listeners.map(listener => {
+            const listenerItem = listener.listener;
+
+            const newListener = moddle.create(listenerItem.$type, {
+                class: listenerItem.class || '',
+                event: listenerItem.event || '',
+                expression: listenerItem.expression || '',
+                fields: createListenerFields(listenerItem)
+            });
+            
+            newListener.$parent = elementProperties;
+            return newListener;
+        });
+    }
+
+    function createListenerFields(listenerItem) {
+        const fields = listenerItem?.fields;
+
+        if(!fields || !fields.length) {
+            return;
+        }
+
+        return fields.map(field => {
+            const newField = moddle.create(field.$type, field);
+            newField.$parent = listenerItem;
+            return newField;
+        });
+    }
+    
 
     function fitCanvasToDiagram() {
         if(!modeler) {
