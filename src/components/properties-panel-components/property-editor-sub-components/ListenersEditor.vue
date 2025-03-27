@@ -1,54 +1,65 @@
 <template>
     <div class="listeners-editor-container" data-testid="listeners-editor-container">
-        <p class="v-card-title">{{ title }}</p>
+        
+        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
+            <template #content>
+                <ConfigurationTable
+                    v-if="model"
+                    :title="taskListenersTitle"
+                    :headers="listnersHeaders"
+                    v-model="taskListeners"
+                    :createNewItemHandler="taskListenersHandlers.create"
+                    :editItemHandler="taskListenersHandlers.edit"
+                    :removeItemHandler="taskListenersHandlers.remove"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item?.listener?.class }}</td>
+                        <td>{{ item?.listener?.$type }}</td>
+                        <td>{{ item?.listener?.event }}</td>
+                        <td>{{ item?.listener?.fields?.length || 0 }}</td>
+                    </template>
+                </ConfigurationTable>
 
-        <ConfigurationTable
-            :title="taskListenersTitle"
-            :headers="listnersHeaders"
-            v-model="taskListeners"
-            :createNewItemHandler="taskListenersHandlers.create"
-            :editItemHandler="taskListenersHandlers.edit"
-            :removeItemHandler="taskListenersHandlers.remove"
-        >
-            <template #row="{ item }">
-                <td>{{ item?.listener?.class }}</td>
-                <td>{{ item?.listener?.$type }}</td>
-                <td>{{ item?.listener?.event }}</td>
-                <td>{{ item?.listener?.fields?.length || 0 }}</td>
+                <ConfigurationTable
+                    v-if="model"
+                    :title="executionListenersTitle"
+                    :headers="listnersHeaders"
+                    v-model="executionListeners"
+                    :createNewItemHandler="executionListenersHandlers.create"
+                    :editItemHandler="executionListenersHandlers.edit"
+                    :removeItemHandler="executionListenersHandlers.remove"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item?.listener?.class }}</td>
+                        <td>{{ item?.listener?.$type }}</td>
+                        <td>{{ item?.listener?.event }}</td>
+                        <td>{{ item?.listener?.fields?.length || 0 }}</td>
+                    </template>
+                </ConfigurationTable>
             </template>
-        </ConfigurationTable>
-
-        <ConfigurationTable
-            :title="executionListenersTitle"
-            :headers="listnersHeaders"
-            v-model="executionListeners"
-            :createNewItemHandler="executionListenersHandlers.create"
-            :editItemHandler="executionListenersHandlers.edit"
-            :removeItemHandler="executionListenersHandlers.remove"
-        >
-            <template #row="{ item }">
-                <td>{{ item?.listener?.class }}</td>
-                <td>{{ item?.listener?.$type }}</td>
-                <td>{{ item?.listener?.event }}</td>
-                <td>{{ item?.listener?.fields?.length || 0 }}</td>
-            </template>
-        </ConfigurationTable>
+        </Card>        
     </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 import { TaskListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/task-listener';
 import { ExecutionListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/execution-listener';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
-const model = defineModel();
+import Card from '../../generic/Card.vue';
+import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
-const title = 'Listeners';
+const model = defineModel();
 const taskListeners = ref(null);
 const executionListeners = ref(null);
+
+const cardProps = {
+    title: "Listeners",
+    subtitle: "",
+    text: ""
+};
 
 const listnersHeaders = [
     'Listener implementation',

@@ -1,3 +1,5 @@
+export const FormPropertyType = 'FormProperty';
+
 export default {
     name: 'FormProperty',
     superClass: ['Element'],

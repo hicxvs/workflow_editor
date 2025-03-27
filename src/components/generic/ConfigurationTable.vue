@@ -26,7 +26,7 @@
                     <slot name="row" :item="item"></slot>
                 </tr>
                 <tr v-else>
-                    <td colspan="4" class="text-center">No items available</td>
+                    <td :colspan="headers.length" class="text-center">No items available</td>
                 </tr>
             </template>
         </Table>

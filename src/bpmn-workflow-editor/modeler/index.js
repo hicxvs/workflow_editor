@@ -104,6 +104,52 @@ export function createWorkflowEditor(container) {
         return null;
     }
 
+    function saveFormProperty(elementProperties, formProperties) {
+        if(!modeler) {
+            console.error("Error: Workflow editor is not initialized.");
+            return null;
+        }
+
+        if(!elementProperties || !formProperties) {
+            console.error("Error: ElementPorperties and/or Listeners are not provided.");
+            return null;
+        }
+
+        manageExtensionElements(elementProperties);
+        createFormProperties(elementProperties, formProperties);
+    }
+
+    function createFormProperties(elementProperties, formProperties) {
+
+        if(!formProperties || !formProperties.length) {
+            return;
+        }
+
+        const defaultFalse = 'False';
+        const defaultType = 'Boolean';
+        
+        formProperties.forEach(formProperty => {
+            const formPropertyItem = formProperty.formProperty;
+
+            const newFormProperty = moddle.create(formPropertyItem.$type, {
+                id: formPropertyItem.id || '',        
+                name: formPropertyItem.name || '',        
+                type: formPropertyItem.type || defaultType,        
+                expression: formPropertyItem.expression || '',        
+                variable: formPropertyItem.variable || '',    
+                pattern: formPropertyItem.pattern || '', 
+                formValue: formPropertyItem.formValue || '',   
+                default: formPropertyItem.default || defaultFalse,
+                required: formPropertyItem.required || defaultFalse,        
+                readable: formPropertyItem.readable || defaultFalse,        
+                writable: formPropertyItem.writable || defaultFalse    
+            });
+            
+            newFormProperty.$parent = elementProperties;
+            elementProperties.extensionElements.values.push(newFormProperty);
+        });
+    }
+
     function saveListener(elementProperties, listeners) {
         if(!modeler) {
             console.error("Error: Workflow editor is not initialized.");
@@ -115,17 +161,24 @@ export function createWorkflowEditor(container) {
             return null;
         }
 
-        createExtensionElements(elementProperties);
+        manageExtensionElements(elementProperties);
         createListeners(elementProperties, listeners);
     }
 
-    function createExtensionElements(elementProperties) {
-        const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
-            values: []
-        });
+    function manageExtensionElements(elementProperties) {
 
-        newExtensionElements.$parent = elementProperties;
-        elementProperties.extensionElements = newExtensionElements;
+        let extensionElements = elementProperties?.extensionElements;
+
+        if(!extensionElements || !extensionElements.values) {
+            const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
+                values: []
+            });
+
+            newExtensionElements.$parent = elementProperties;
+            extensionElements = newExtensionElements;            
+        }
+       
+        elementProperties.extensionElements = extensionElements;
     }
 
     function createListeners(elementProperties, listeners) {
@@ -134,7 +187,7 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        elementProperties.extensionElements.values = listeners.map(listener => {
+        listeners.forEach(listener => {
             const listenerItem = listener.listener;
 
             const newListener = moddle.create(listenerItem.$type, {
@@ -145,7 +198,7 @@ export function createWorkflowEditor(container) {
             });
             
             newListener.$parent = elementProperties;
-            return newListener;
+            elementProperties.extensionElements.values.push(newListener);
         });
     }
 
@@ -196,6 +249,7 @@ export function createWorkflowEditor(container) {
         clearDiagram,
         getProcessDefinition,
         saveListener,
+        saveFormProperty,
         fitCanvasToDiagram
     };
 }

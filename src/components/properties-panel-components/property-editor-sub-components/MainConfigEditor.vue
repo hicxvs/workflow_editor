@@ -2,7 +2,7 @@
     <div class="main-config-editor">
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">            
             <template #content>
-                <div class="main-config-editor-content">
+                <div class="main-config-editor-content" data-testid="main-config-editor-content">
                     <TextInput v-if="model" :label="inputLabel.assignee" :model="model.assignee" />
                     <TextInput v-if="model" :label="inputLabel.candidateUsers" :model="model.candidateUsers" />
                     <TextInput v-if="model" :label="inputLabel.candidateGroups" :model="model.candidateGroups" />
@@ -11,8 +11,7 @@
                     <TextInput v-if="model" :label="inputLabel.priority" :model="model.priority" />
                     <TextInput v-if="model" :label="inputLabel.category" :model="model.category" />         
                     <TextInput v-if="model" :label="inputLabel.skipExpression" :model="model.skipExpression" />
-                </div>
-                
+                </div>                
             </template>
         </Card>
     </div>
