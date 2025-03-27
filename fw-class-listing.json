@@ -1,0 +1,232 @@
+{
+    "files": [
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "ApprovalCmdActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "DeleteContactActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "FindMatchActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "GenericExternalURLTaskActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "LinkUserToPartnerActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "NeedsClairificationCmdActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "PartnerExternalURLTaskActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestApprovalActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestCallAPIActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestCopyToObjectActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestGenericUserTaskActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestJsonToObjectActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestNotificationActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestNotificationPartnerActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestNotificationRequestorActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestPartnerActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestRequesterActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestStartActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestSyncObjectRolesActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestUpdateObjectActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestUpdatePartnerUserActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "RequestUpdateStatusActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf",
+        "file": "SecurityGroupNotificationDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.comment",
+        "file": "CheckCommentActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.data",
+        "file": "DdoUpdateActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.data",
+        "file": "DdoUpdateOverwriteType.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.data",
+        "file": "GetDdoValueActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.data",
+        "file": "TargetFieldProperties.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.itv",
+        "file": "StartInitiativeActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.lookup",
+        "file": "SensitiveFieldsActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.mapping",
+        "file": "MappingRequestToObjectActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata",
+        "file": "UnlinkMasterDataActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.bank",
+        "file": "AddBankAccountActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.bank",
+        "file": "DeactivateBankAccountActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.bank",
+        "file": "DeleteBankAccountActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.localbank",
+        "file": "DeactivateLocalBankAccountActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.locallocation",
+        "file": "DeactivateLocalLocationActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.location",
+        "file": "DeactivateLocationActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.location",
+        "file": "MarkLocationAsOutOfUseActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.masterdata.partner",
+        "file": "DeletePartnerActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.milestone",
+        "file": "RequestMilestoneCompleteActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.milestone",
+        "file": "RequestMilestoneEndActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.milestone",
+        "file": "RequestMilestoneRejectActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.milestone",
+        "file": "RequestMilestoneStartActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.milestone",
+        "file": "RequestMilestoneUpdateActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.request",
+        "file": "CountPendingExecutionsActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.request",
+        "file": "CreateChangeRequestActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.request",
+        "file": "RequestTitleUpdateActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.request.datum",
+        "file": "DatumAddDdoActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.request.datum",
+        "file": "DatumAddMapActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.setting",
+        "file": "BaseSystemSettingActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.setting",
+        "file": "GetSystemSettingAsBooleanActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.setting",
+        "file": "GetSystemSettingAsLongActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.setting",
+        "file": "GetSystemSettingAsStringActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.setting",
+        "file": "IsSwitchSystemSettingActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.user",
+        "file": "GetUserFuncionalRolesActDelegate.java"
+      },
+      {
+        "source": "com.hicx.esm.cmd.delegates.wf.user",
+        "file": "GetUserSecurityRolesActDelegate.java"
+      }
+    ]
+  }
