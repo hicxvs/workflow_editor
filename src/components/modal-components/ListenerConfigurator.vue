@@ -18,7 +18,7 @@
                 <TextInput v-if="listenerSelectedType === JAVA_CLASS_LISTENER_TYPE.value" :label="listenerInputLabel.class" v-model="listenerCopy.listener.class" :rules="listnerClassRequiredRule" @input="filterJavaClasses" :clearHandler="filterJavaClasses"/>
                 <TextInput v-if="listenerSelectedType === EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.expression" v-model="listenerCopy.listener.expression" :rules="listnerExpressionRequiredRule" />
                 <TextInput v-if="listenerSelectedType === DELEGATE_EXPRESSION_LISTENER_TYPE.value" :label="listenerInputLabel.delegateExpression" v-model="listenerCopy.listener.delegateExpression" :rules="listnerDelegateExpressionRequiredRule" />
-                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable" :selectItemClickHandler="javaClassFilterSelectItemClickHandler" />
+                <Select v-if="showFilterClassSelect" :label="classSelectorLabel" v-model="selectedClass" :selectOptionItems="filteredClasses" :clearable="isClearable" :openMenu="showFilterClassSelectAlreadyOpen" :selectItemClickHandler="javaClassFilterSelectItemClickHandler" />
 
                 <ConfigurationTable
                     :title="listnerFieldTitle"
@@ -123,6 +123,7 @@ const classFilterer = ref(null);
 const filteredClasses = ref(null);
 const selectedClass = ref(null);
 const showFilterClassSelect = ref(false);
+const showFilterClassSelectAlreadyOpen = ref(true);
 const classSelectorLabel = 'Select a class';
 
 onMounted(() => {
