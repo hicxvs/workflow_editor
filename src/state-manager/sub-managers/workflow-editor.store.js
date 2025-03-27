@@ -156,8 +156,10 @@ export function WorkflowEditorStore() {
     }
     
     function saveListener(listeners) {
-        console.log('LISTENERS::', listeners);
-        debugger;
+        listeners.forEach(listener => {
+            const tempListener = listener.listener;
+            currentModeler.value.saveListener(tempListener);
+        });
     }
 
     function destroyWorkflowEditor() {

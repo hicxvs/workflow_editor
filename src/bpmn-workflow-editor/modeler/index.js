@@ -104,6 +104,23 @@ export function createWorkflowEditor(container) {
         return null;
     }
 
+    function saveListener(listener) {
+        if(!modeler) {
+            console.error("Error: Workflow editor is not initialized.");
+            return null;
+        }
+
+        if(!listener) {
+            console.error("Error: Listeners not provided.");
+            return null;
+        }
+
+        const createdListener = factory.create(listener.$type, listener);
+        const cm = modeler;
+        
+        debugger;
+    }
+
     function fitCanvasToDiagram() {
         if(!modeler) {
             console.error("Error: Workflow editor is not initialized.");
@@ -135,6 +152,7 @@ export function createWorkflowEditor(container) {
         saveDiagram,
         clearDiagram,
         getProcessDefinition,
+        saveListener,
         fitCanvasToDiagram
     };
 }
