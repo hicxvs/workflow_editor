@@ -1,5 +1,5 @@
 <template>
-    <div class="form-editor-container">
+    <div class="form-editor-container" data-testid="form-editor-container">
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
                 <div class="form-editor-content" data-testid="form-editor-content">

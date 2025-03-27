@@ -3,6 +3,7 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_NAVIGATION_PATH: 'update-navigation-path',
     GENERATE_XML_DIAGRAM: 'generate-xml-diagram',
     GENERATED_XML_DIAGRAM_READY: 'generated-xml-diagram-ready',
+    CLEAR_GENERATED_XML_DIAGRAM: 'clear-generated-xml-diagram',
     CLEAR_DIAGRAM: 'clear-diagram',
     SAVE_DIAGRAM: 'save-diagram',
     LOAD_FILE: 'load-file',
