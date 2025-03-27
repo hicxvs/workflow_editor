@@ -4,6 +4,7 @@
             <template #content>
                 <div class="form-editor-content" data-testid="form-editor-content">
                     <ConfigurationTable
+                        v-if="model"
                         :title="formPropertiesTableSettings.title"
                         :headers="formPropertiesTableSettings.headers"
                         v-model="formProperties"
@@ -74,11 +75,12 @@ const formPropertiesHandlers = {
         });      
     },
     edit: (formProperty) => {
-        console.log('lets edit!', formProperty);
-
+        EventBus.emit(EVENT_TYPE.EDIT_FORM_PROPERTY, formProperty.item);
     },
     remove: (formProperty) => {
-        console.log('lets remove!', formProperty);
+        const indexToRemove = formProperty.index;
+        formProperties.value = formProperties.value.filter((_, index) => index !== indexToRemove);
+        EventBus.emit(EVENT_TYPE.SAVE_FORM_PROPERTY, formProperties.value);
     }
 };
 
@@ -121,10 +123,19 @@ onMounted(() => {
         formProperties.value.push(newFormProperty);
         EventBus.emit(EVENT_TYPE.SAVE_FORM_PROPERTY, formProperties.value);
     });
+
+    EventBus.on(EVENT_TYPE.UPDATE_EDITED_FORM_PROPERTY, (editedFormProperty) => {
+        if(!editedFormProperty) {
+            return;
+        }
+
+        EventBus.emit(EVENT_TYPE.SAVE_FORM_PROPERTY, formProperties.value);
+    });
 });
 
 onUnmounted(() => {
-    
+    EventBus.off(EVENT_TYPE.ADD_CREATED_FORM_PROPERTY);
+    EventBus.off(EVENT_TYPE.UPDATE_EDITED_FORM_PROPERTY);
 });
 
 </script>

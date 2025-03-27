@@ -115,7 +115,7 @@ export function createWorkflowEditor(container) {
             return null;
         }
 
-        createExtensionElements(elementProperties);
+        manageExtensionElements(elementProperties);
         createFormProperties(elementProperties, formProperties);
     }
 
@@ -127,8 +127,8 @@ export function createWorkflowEditor(container) {
 
         const defaultFalse = 'False';
         const defaultType = 'Boolean';
-
-        elementProperties.extensionElements.values = formProperties.map(formProperty => {
+        
+        formProperties.forEach(formProperty => {
             const formPropertyItem = formProperty.formProperty;
 
             const newFormProperty = moddle.create(formPropertyItem.$type, {
@@ -137,16 +137,16 @@ export function createWorkflowEditor(container) {
                 type: formPropertyItem.type || defaultType,        
                 expression: formPropertyItem.expression || '',        
                 variable: formPropertyItem.variable || '',    
-                pattern: formPropertyItem.pattern || '',    
+                pattern: formPropertyItem.pattern || '', 
+                formValue: formPropertyItem.formValue || '',   
                 default: formPropertyItem.default || defaultFalse,
                 required: formPropertyItem.required || defaultFalse,        
                 readable: formPropertyItem.readable || defaultFalse,        
-                writable: formPropertyItem.writable || defaultFalse,        
-                formValue: formPropertyItem.formValue || ''
+                writable: formPropertyItem.writable || defaultFalse    
             });
             
             newFormProperty.$parent = elementProperties;
-            return newFormProperty;
+            elementProperties.extensionElements.values.push(newFormProperty);
         });
     }
 
@@ -161,17 +161,24 @@ export function createWorkflowEditor(container) {
             return null;
         }
 
-        createExtensionElements(elementProperties);
+        manageExtensionElements(elementProperties);
         createListeners(elementProperties, listeners);
     }
 
-    function createExtensionElements(elementProperties) {
-        const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
-            values: []
-        });
+    function manageExtensionElements(elementProperties) {
 
-        newExtensionElements.$parent = elementProperties;
-        elementProperties.extensionElements = newExtensionElements;
+        let extensionElements = elementProperties?.extensionElements;
+
+        if(!extensionElements || !extensionElements.values) {
+            const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
+                values: []
+            });
+
+            newExtensionElements.$parent = elementProperties;
+            extensionElements = newExtensionElements;            
+        }
+       
+        elementProperties.extensionElements = extensionElements;
     }
 
     function createListeners(elementProperties, listeners) {
@@ -180,7 +187,7 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        elementProperties.extensionElements.values = listeners.map(listener => {
+        listeners.forEach(listener => {
             const listenerItem = listener.listener;
 
             const newListener = moddle.create(listenerItem.$type, {
@@ -191,7 +198,7 @@ export function createWorkflowEditor(container) {
             });
             
             newListener.$parent = elementProperties;
-            return newListener;
+            elementProperties.extensionElements.values.push(newListener);
         });
     }
 

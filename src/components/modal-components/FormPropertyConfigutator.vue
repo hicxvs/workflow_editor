@@ -34,7 +34,6 @@ import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
-import { FormPropertyType } from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/form-property';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
 
@@ -80,6 +79,14 @@ const formPropertiesLabels = {
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_FORM_PROPERTY, (formProperty) => {
         requestedOperation.value = OPERATION_TYPE.CREATE;
+        clearFormProperties();
+        initializeFormProperty(formProperty);
+        showModal.value = true;
+    });
+
+    EventBus.on(EVENT_TYPE.EDIT_FORM_PROPERTY, (formProperty) => {
+        requestedOperation.value = OPERATION_TYPE.EDIT;
+        clearFormProperties();
         initializeFormProperty(formProperty);
         showModal.value = true;
     });
@@ -87,7 +94,13 @@ onMounted(() => {
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.CREATE_FORM_PROPERTY);
+    EventBus.off(EVENT_TYPE.EDIT_FORM_PROPERTY);
 });
+
+function clearFormProperties() {
+    originalFormProperty.value = null;
+    formPropertyCopy.value = null;
+}
 
 function initializeFormProperty(formProperty) {
     
@@ -130,6 +143,9 @@ function save() {
         showModal.value = false;
         return;
     }
+
+    EventBus.emit(EVENT_TYPE.UPDATE_EDITED_FORM_PROPERTY, originalFormProperty.value);
+    showModal.value = false;
    
 }
 

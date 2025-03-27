@@ -23,7 +23,7 @@ export const EVENT_TYPE = Object.freeze({
     REMOVE_LISTENER: 'remove-listener',
     SAVE_LISTENER: 'save-listener',
     ADD_CREATED_LISTENER: 'add-create-listener',
-    UPDATE_EDITED_LISTENER: 'update-create-listener',
+    UPDATE_EDITED_LISTENER: 'update-edited-listener',
     CREATE_LISTENER_FIELD: 'create-listener-field',
     EDIT_LISTENER_FIELD: 'edit-listener-field',
     REMOVE_LISTENER_FIELD: 'remove-listener-field',
@@ -32,8 +32,10 @@ export const EVENT_TYPE = Object.freeze({
     GATEWAY_TYPES_READY: 'gateway-types-ready',
     JAVA_CLASSES_LISTING_READY: 'java-classes-listing-ready',
     CREATE_FORM_PROPERTY: 'create-form-property',
+    EDIT_FORM_PROPERTY: 'edit-form-property',
     ADD_CREATED_FORM_PROPERTY: 'add-created-form-property',
-    SAVE_FORM_PROPERTY: 'save-form-property'
+    SAVE_FORM_PROPERTY: 'save-form-property',
+    UPDATE_EDITED_FORM_PROPERTY: 'update-edited-form-property'
 });
 
 
