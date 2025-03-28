@@ -70,11 +70,13 @@ export function WorkflowEditorStore() {
     function updateElement(element) {                    
         if(!element) {
             clearCurrentWorkingElement();
+            EventBus.emit(EVENT_TYPE.CLEAR_GENERATED_XML_DIAGRAM);
             return;
         }
 
         currentWorkingElement.value = element;
         currentWorkingElementProperties.value = element?.businessObject || null;
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
     function updateNavigationPath(navigationPath) {
@@ -161,10 +163,12 @@ export function WorkflowEditorStore() {
     
     function saveListener(listeners) {
         currentModeler.value.saveListener(currentWorkingElementProperties.value, listeners);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
     function saveFormProperty(formProperties) {
         currentModeler.value.saveFormProperty(currentWorkingElementProperties.value, formProperties);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
     function destroyWorkflowEditor() {

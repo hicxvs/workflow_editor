@@ -119,36 +119,6 @@ export function createWorkflowEditor(container) {
         createFormProperties(elementProperties, formProperties);
     }
 
-    function createFormProperties(elementProperties, formProperties) {
-
-        if(!formProperties || !formProperties.length) {
-            return;
-        }
-
-        const defaultFalse = 'False';
-        const defaultType = 'Boolean';
-        
-        formProperties.forEach(formProperty => {
-            const formPropertyItem = formProperty.formProperty;
-
-            const newFormProperty = moddle.create(formPropertyItem.$type, {
-                id: formPropertyItem.id || '',        
-                name: formPropertyItem.name || '',        
-                type: formPropertyItem.type || defaultType,        
-                expression: formPropertyItem.expression || '',        
-                variable: formPropertyItem.variable || '',    
-                pattern: formPropertyItem.pattern || '', 
-                formValue: formPropertyItem.formValue || '',   
-                default: formPropertyItem.default || defaultFalse,
-                required: formPropertyItem.required || defaultFalse,        
-                readable: formPropertyItem.readable || defaultFalse,        
-                writable: formPropertyItem.writable || defaultFalse    
-            });
-            
-            newFormProperty.$parent = elementProperties;
-            elementProperties.extensionElements.values.push(newFormProperty);
-        });
-    }
 
     function saveListener(elementProperties, listeners) {
         if(!modeler) {
@@ -181,25 +151,76 @@ export function createWorkflowEditor(container) {
         elementProperties.extensionElements = extensionElements;
     }
 
+    function createFormProperties(elementProperties, formProperties) {
+
+        if(!formProperties || !formProperties.length) {
+            return;
+        }
+
+        const itemsCollection = elementProperties.extensionElements.values;
+        const untargetedItems = getUntargetedItems(itemsCollection, formProperties[0].type);
+        const newFormProperties = createNewFormProperties(elementProperties, formProperties);       
+        elementProperties.extensionElements.values = [...untargetedItems, ...newFormProperties];       
+    }
+
+    function createNewFormProperties(elementProperties, formProperties) {
+
+        const defaultFalse = 'False';
+        const defaultType = 'Boolean';
+
+        return formProperties.map(formProperty => {
+            const formPropertyItem = formProperty.formProperty;
+        
+            const newFormProperty = moddle.create(formPropertyItem.$type, {
+                id: formPropertyItem.id || '',
+                name: formPropertyItem.name || '',
+                type: formPropertyItem.type || defaultType,
+                expression: formPropertyItem.expression || '',
+                variable: formPropertyItem.variable || '',
+                pattern: formPropertyItem.pattern || '',
+                formValue: formPropertyItem.formValue || '',
+                default: formPropertyItem.default || defaultFalse,
+                required: formPropertyItem.required || defaultFalse,
+                readable: formPropertyItem.readable || defaultFalse,
+                writable: formPropertyItem.writable || defaultFalse
+            });
+        
+            newFormProperty.$parent = elementProperties;
+            return newFormProperty;
+        });
+    }
+
+
     function createListeners(elementProperties, listeners) {
 
         if(!listeners || !listeners.length) {
             return;
         }
 
-        listeners.forEach(listener => {
-            const listenerItem = listener.listener;
+        const itemsCollection = elementProperties.extensionElements.values;
+        const untargetedItems = getUntargetedItems(itemsCollection, listeners[0].type);
+        const newListeners = createNewListeners(elementProperties, listeners);
+        elementProperties.extensionElements.values = [...untargetedItems, ...newListeners];        
+    }
 
-            const newListener = moddle.create(listenerItem.$type, {
-                class: listenerItem.class || '',
-                event: listenerItem.event || '',
-                expression: listenerItem.expression || '',
-                fields: createListenerFields(listenerItem)
-            });
-            
-            newListener.$parent = elementProperties;
-            elementProperties.extensionElements.values.push(newListener);
+    function createNewListeners(elementProperties, listeners) {
+        return listeners.map(listener => {
+            const listenerItem = listener.listener;        
+            const newListener = createNewListener(elementProperties, listenerItem);
+            return newListener;
         });
+    }
+
+    function createNewListener(elementProperties, listenerItem) {
+        const listener = moddle.create(listenerItem.$type, {
+            class: listenerItem.class || '',
+            event: listenerItem.event || '',
+            expression: listenerItem.expression || '',
+            fields: createListenerFields(listenerItem)
+        });
+
+        listener.$parent = elementProperties;
+        return listener;
     }
 
     function createListenerFields(listenerItem) {
@@ -216,6 +237,9 @@ export function createWorkflowEditor(container) {
         });
     }
     
+    function getUntargetedItems(collection, targetType) {
+        return collection.filter(item => item.$type !== `activiti:${targetType}`);
+    }
 
     function fitCanvasToDiagram() {
         if(!modeler) {
