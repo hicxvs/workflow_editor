@@ -37,7 +37,9 @@ export const EVENT_TYPE = Object.freeze({
     EDIT_FORM_PROPERTY: 'edit-form-property',
     ADD_CREATED_FORM_PROPERTY: 'add-created-form-property',
     SAVE_FORM_PROPERTY: 'save-form-property',
-    UPDATE_EDITED_FORM_PROPERTY: 'update-edited-form-property'
+    UPDATE_EDITED_FORM_PROPERTY: 'update-edited-form-property',
+    UPDATE_TASK_TYPE: 'update-task-type',
+    UPDATE_GATEWAY_TYPE: 'update-gateway-type'
 });
 
 

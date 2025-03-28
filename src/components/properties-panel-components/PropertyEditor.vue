@@ -3,7 +3,7 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
           <div class="property-editor-content" data-testid="property-editor-content">
-            <GeneralPropertiesEditor v-model="model"/>
+            <GeneralEditor v-model="model"/>
             <MainConfigEditor v-model="model" />
             <DocumentationEditor v-model="model" />
             <FormEditor v-model="model" />
@@ -17,7 +17,7 @@
 
 <script setup>
 import Card from "../generic/Card.vue";
-import GeneralPropertiesEditor from "./property-editor-sub-components/GeneralPropertiesEditor.vue";
+import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
 import MainConfigEditor from "./property-editor-sub-components/MainConfigEditor.vue";
 import DocumentationEditor from "./property-editor-sub-components/DocumentationEditor.vue";
 import FormEditor from "./property-editor-sub-components/FormEditor.vue";
