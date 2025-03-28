@@ -20,7 +20,8 @@ export function createWorkflowEditor(container) {
     const factory = modeler.get('bpmnFactory');
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
-
+    const replace = modeler.get('bpmnReplace');
+ 
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
@@ -257,6 +258,24 @@ export function createWorkflowEditor(container) {
         canvas.zoom("fit-viewport", center);
     }
 
+    function updateElementType(selectedType) {
+        try {
+            const element = elementRegistry.get(selectedType.elementId);
+
+            if(!element) {
+                console.error('Element not found');
+                return;
+            }
+
+            replace.replaceElement(element, {
+                type: selectedType.elementType
+            });
+        } 
+        catch (error) {
+            console.error(error);
+        }        
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -274,6 +293,7 @@ export function createWorkflowEditor(container) {
         getProcessDefinition,
         saveListener,
         saveFormProperty,
-        fitCanvasToDiagram
+        fitCanvasToDiagram,
+        updateElementType
     };
 }

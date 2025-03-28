@@ -53,6 +53,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
         EventBus.on(EVENT_TYPE.SAVE_FORM_PROPERTY, saveFormProperty);
         EventBus.on(EVENT_TYPE.GENERATE_XML_DIAGRAM, generateXMLDiagram);
+        EventBus.on(EVENT_TYPE.UPDATE_TASK_TYPE, updateTaskType);
+        EventBus.on(EVENT_TYPE.UPDATE_GATEWAY_TYPE, updateGatewayType);
+
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -65,6 +68,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
         EventBus.off(EVENT_TYPE.SAVE_FORM_PROPERTY);
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+        EventBus.off(EVENT_TYPE.UPDATE_TASK_TYPE);
+        EventBus.off(EVENT_TYPE.UPDATE_GATEWAY_TYPE);
     }
 
     function updateElement(element) {                    
@@ -216,6 +221,14 @@ export function WorkflowEditorStore() {
         const diagramXMLContent = await currentModeler.value.saveDiagram();
         const {xml} = diagramXMLContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
+    }
+
+    function updateTaskType(selectedTaskType) {
+        currentModeler.value.updateElementType(selectedTaskType);
+    }
+
+    function updateGatewayType(selectedGatewayType) {
+        currentModeler.value.updateElementType(selectedGatewayType);
     }
   
     return {
