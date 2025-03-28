@@ -225,10 +225,12 @@ export function WorkflowEditorStore() {
 
     function updateTaskType(selectedTaskType) {
         currentModeler.value.updateElementType(selectedTaskType);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
     function updateGatewayType(selectedGatewayType) {
         currentModeler.value.updateElementType(selectedGatewayType);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
   
     return {
