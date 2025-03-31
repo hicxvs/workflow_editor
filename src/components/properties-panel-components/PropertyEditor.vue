@@ -4,7 +4,7 @@
         <template #content>
           <div class="property-editor-content" data-testid="property-editor-content">
             <GeneralEditor v-model="model"/>
-            <MainConfigEditor v-model="model" />
+            <MainEditor v-model="model" />            
             <DocumentationEditor v-model="model" />
             <FormEditor v-model="model" />
             <ListenersEditor v-model="model" />
@@ -18,7 +18,7 @@
 <script setup>
 import Card from "../generic/Card.vue";
 import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
-import MainConfigEditor from "./property-editor-sub-components/MainConfigEditor.vue";
+import MainEditor from "./property-editor-sub-components/MainEditor.vue";
 import DocumentationEditor from "./property-editor-sub-components/DocumentationEditor.vue";
 import FormEditor from "./property-editor-sub-components/FormEditor.vue";
 import ListenersEditor from "./property-editor-sub-components/ListenersEditor.vue";
