@@ -276,6 +276,50 @@ export function createWorkflowEditor(container) {
         }        
     }
 
+    function updateBusinessObjectProperty(selectedProperty) {
+        try {
+            const element = elementRegistry.get(selectedProperty.elementId);
+    
+            if (!element) {
+                console.error('Element not found');
+                return;
+            }
+    
+            const businessObject = element.businessObject;
+    
+            const updatedProperties = { ...businessObject };
+            updatedProperties[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
+    
+            modeling.updateProperties(element, updatedProperties);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function updateAttrsObjectProperty(selectedProperty) {
+        try {
+            const element = elementRegistry.get(selectedProperty.elementId);
+    
+            if (!element) {
+                console.error('Element not found');
+                return;
+            }
+    
+            const businessObject = element.businessObject;
+    
+            if (!businessObject.$attrs) {
+                businessObject.$attrs = {};
+            }
+    
+            const updatedAttrs = { ...businessObject.$attrs };
+            updatedAttrs[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
+    
+            modeling.updateProperties(element, { $attrs: updatedAttrs });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -294,6 +338,8 @@ export function createWorkflowEditor(container) {
         saveListener,
         saveFormProperty,
         fitCanvasToDiagram,
-        updateElementType
+        updateElementType,
+        updateBusinessObjectProperty,
+        updateAttrsObjectProperty
     };
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="checkbox-container" data-testid="checkbox-container">
-    <v-checkbox v-model="model" :label="label" @update:modelValue="update" />
+    <v-checkbox v-model="model" :label="label" />
   </div>
 </template>
 
@@ -15,9 +15,6 @@ const props = defineProps({
   }
 });
 
-function update(value) {
-    emit('update:modelValue', value);
-}
 </script>
 
 <style scoped>
