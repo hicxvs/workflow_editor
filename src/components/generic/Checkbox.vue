@@ -6,7 +6,7 @@
 
 <script setup>
 const emit = defineEmits(['update:modelValue']);
-const model = defineModel();
+const model = defineModel(false);
 const props = defineProps({
   label: {
     type: String,
@@ -14,7 +14,6 @@ const props = defineProps({
     default: "Default label"
   }
 });
-
 </script>
 
 <style scoped>

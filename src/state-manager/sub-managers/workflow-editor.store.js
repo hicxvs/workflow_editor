@@ -55,8 +55,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GENERATE_XML_DIAGRAM, generateXMLDiagram);
         EventBus.on(EVENT_TYPE.UPDATE_TASK_TYPE, updateTaskType);
         EventBus.on(EVENT_TYPE.UPDATE_GATEWAY_TYPE, updateGatewayType);
-        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_PROPERTY, updateElementBusinessProperty);
-        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_ATTRIBUTE_PROPERTY, updateElementBusinessAttritubeProperty);
+        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -71,8 +70,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_TASK_TYPE);
         EventBus.off(EVENT_TYPE.UPDATE_GATEWAY_TYPE);
-        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_PROPERTY);
-        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_ATTRIBUTE_PROPERTY);
+        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY);
     }
 
     function updateElement(element) {                    
@@ -236,13 +234,8 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
-    function updateElementBusinessProperty(propertyToUpdate) {
-        currentModeler.value.updateBusinessObjectProperty(propertyToUpdate);
-        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
-    }
-
-    function updateElementBusinessAttritubeProperty(propertyToUpdate) {
-        currentModeler.value.updateAttrsObjectProperty(propertyToUpdate);
+    function updateElementAttribute(attributeToUpdate) {
+        currentModeler.value.updateElementAttribute(attributeToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
   

@@ -10,10 +10,10 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import ScriptTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/script-task';
 
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
+import ScriptTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/script-task';
 
 import Select from '../../../generic/Select.vue';
 import Checkbox from '../../../generic/Checkbox.vue';
@@ -51,7 +51,10 @@ watch(
   () => model, 
   () => {
     scriptTaskFormat.value = model.value?.scriptFormat || scriptFormatSelectOptions.value[0].label;
-    scriptTaskAutoStoreVariables.value = model.value?.autoStoreVariables || false;
+    
+    const isScriptTaskAutoStoreVariablesChecked = model.value?.$attrs[`activiti:${fieldKeys.scriptTaskAutoStoreVariables}`];
+    scriptTaskAutoStoreVariables.value = ( isScriptTaskAutoStoreVariablesChecked === 'true' ) ? true : false;
+
     scriptTaskScript.value = model.value?.script || '';
   },
   { immediate: true, deep: true }
@@ -59,36 +62,33 @@ watch(
 
 
 function updatesScriptFormat() {
-    const targetProperty = ScriptTask.properties.find(property => property.name.includes(fieldKeys.scriptFormat)).name;
-
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_PROPERTY, 
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
-            elementProperty: targetProperty.name,
+            elementProperty: fieldKeys.scriptFormat,
             elementPropertyValue: scriptTaskFormat.value
         }
     );    
 }
 
 function updateAutoStoreVariables() {
-    const targetProperty = ScriptTask.properties.find(property => property.name.includes(fieldKeys.scriptTaskAutoStoreVariables)).name;
 
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_ATTRIBUTE_PROPERTY, 
+    const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.scriptTaskAutoStoreVariables).name;
+
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, 
         {
             elementId: model.value?.id,
-            elementProperty: targetProperty.name,
-            elementPropertyValue: scriptTaskAutoStoreVariables.value
+            elementProperty: targetProperty,
+            elementPropertyValue: scriptTaskAutoStoreVariables.value?.toString()
         }
     );
 }
 
 function updateScript() {
-    const targetProperty = ScriptTask.properties.find(property => property.name.includes(fieldKeys.script)).name;
-
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_BUSINESS_PROPERTY, 
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
-            elementProperty: targetProperty.name,
+            elementProperty: fieldKeys.script,
             elementPropertyValue: scriptTaskScript.value
         }
     );

@@ -275,30 +275,15 @@ export function createWorkflowEditor(container) {
             console.error(error);
         }        
     }
-
-    function updateBusinessObjectProperty(selectedProperty) {
+   
+    function updateElementAttribute(selectedAttribute) {
         try {
-            const element = elementRegistry.get(selectedProperty.elementId);
-    
-            if (!element) {
-                console.error('Element not found');
+            if (!selectedAttribute.elementId || !selectedAttribute.elementProperty || selectedAttribute.elementPropertyValue === undefined) {
+                console.error('Invalid property details');
                 return;
             }
     
-            const businessObject = element.businessObject;
-    
-            const updatedProperties = { ...businessObject };
-            updatedProperties[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
-    
-            modeling.updateProperties(element, updatedProperties);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    function updateAttrsObjectProperty(selectedProperty) {
-        try {
-            const element = elementRegistry.get(selectedProperty.elementId);
+            const element = elementRegistry.get(selectedAttribute.elementId);
     
             if (!element) {
                 console.error('Element not found');
@@ -311,10 +296,8 @@ export function createWorkflowEditor(container) {
                 businessObject.$attrs = {};
             }
     
-            const updatedAttrs = { ...businessObject.$attrs };
-            updatedAttrs[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
-    
-            modeling.updateProperties(element, { $attrs: updatedAttrs });
+            businessObject.$attrs[selectedAttribute.elementProperty] = selectedAttribute.elementPropertyValue;
+            modeling.updateProperties(element, {});
         } catch (error) {
             console.error(error);
         }
@@ -339,7 +322,6 @@ export function createWorkflowEditor(container) {
         saveFormProperty,
         fitCanvasToDiagram,
         updateElementType,
-        updateBusinessObjectProperty,
-        updateAttrsObjectProperty
+        updateElementAttribute
     };
 }
