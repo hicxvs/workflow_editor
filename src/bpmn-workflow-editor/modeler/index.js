@@ -275,6 +275,56 @@ export function createWorkflowEditor(container) {
             console.error(error);
         }        
     }
+   
+    function updateElementAttribute(selectedAttribute) {
+        try {
+            if (!selectedAttribute.elementId || !selectedAttribute.elementProperty || selectedAttribute.elementPropertyValue === undefined) {
+                console.error('Invalid property details');
+                return;
+            }
+    
+            const element = elementRegistry.get(selectedAttribute.elementId);
+    
+            if (!element) {
+                console.error('Element not found');
+                return;
+            }
+    
+            const businessObject = element.businessObject;
+    
+            if (!businessObject.$attrs) {
+                businessObject.$attrs = {};
+            }
+    
+            businessObject.$attrs[selectedAttribute.elementProperty] = selectedAttribute.elementPropertyValue;
+            modeling.updateProperties(element, {});
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function updateElementProperty(selectedProperty) {
+        try  {
+            if (!selectedProperty.elementId || !selectedProperty.elementProperty || selectedProperty.elementPropertyValue === undefined) {
+                console.error('Invalid property details');
+                return;
+            }
+    
+            const element = elementRegistry.get(selectedProperty.elementId);
+    
+            if (!element) {
+                console.error('Element not found');
+                return;
+            }
+    
+            const businessObject = element.businessObject;
+            businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
+            modeling.updateProperties(element, {});
+    
+        } catch (error) {
+            console.error(error);
+        }        
+    }
 
     return {
         modeler,
@@ -294,6 +344,8 @@ export function createWorkflowEditor(container) {
         saveListener,
         saveFormProperty,
         fitCanvasToDiagram,
-        updateElementType
+        updateElementType,
+        updateElementAttribute,
+        updateElementProperty
     };
 }
