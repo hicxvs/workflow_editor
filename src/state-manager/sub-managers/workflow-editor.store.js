@@ -56,6 +56,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_TASK_TYPE, updateTaskType);
         EventBus.on(EVENT_TYPE.UPDATE_GATEWAY_TYPE, updateGatewayType);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
+        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, updateElementProperty);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -236,6 +237,11 @@ export function WorkflowEditorStore() {
 
     function updateElementAttribute(attributeToUpdate) {
         currentModeler.value.updateElementAttribute(attributeToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateElementProperty(propertyToUpdate) {
+        currentModeler.value.updateElementProperty(propertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
   

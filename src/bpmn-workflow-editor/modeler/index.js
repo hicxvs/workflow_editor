@@ -303,6 +303,29 @@ export function createWorkflowEditor(container) {
         }
     }
 
+    function updateElementProperty(selectedProperty) {
+        try  {
+            if (!selectedProperty.elementId || !selectedProperty.elementProperty || selectedProperty.elementPropertyValue === undefined) {
+                console.error('Invalid property details');
+                return;
+            }
+    
+            const element = elementRegistry.get(selectedProperty.elementId);
+    
+            if (!element) {
+                console.error('Element not found');
+                return;
+            }
+    
+            const businessObject = element.businessObject;
+            businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
+            modeling.updateProperties(element, {});
+    
+        } catch (error) {
+            console.error(error);
+        }        
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -322,6 +345,7 @@ export function createWorkflowEditor(container) {
         saveFormProperty,
         fitCanvasToDiagram,
         updateElementType,
-        updateElementAttribute
+        updateElementAttribute,
+        updateElementProperty
     };
 }

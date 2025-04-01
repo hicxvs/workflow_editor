@@ -62,11 +62,15 @@ watch(
 
 
 function updatesScriptFormat() {
+
+    const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.scriptFormat);
+    const selectedScript = scriptFormatSelectOptions.value.find(option => option.label === scriptTaskFormat.value);
+
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
-            elementProperty: fieldKeys.scriptFormat,
-            elementPropertyValue: scriptTaskFormat.value
+            elementProperty: targetProperty.ns.localName,
+            elementPropertyValue: selectedScript.value
         }
     );    
 }
