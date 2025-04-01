@@ -2,25 +2,16 @@
     <div class="main-editor-container" data-testid="main-editor-container">
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
-                <div v-if="model" class="main-editor-content" data-testid="main-editor-content">
-                                        
-                    <ScriptTaskPropertiesEditor v-if=" model.$type === elementType.scriptTask" v-model="model" />
-                    <UserTaskPropertiesEditor v-if=" model.$type === elementType.userTask" v-model="model" />
-                    <FormKeyPropertyEditor v-if=" model.$type === elementType.userTask" v-model="model" />
-                    
-                    
-                    
+                <div v-if="model" class="main-editor-content" data-testid="main-editor-content">                                        
+                    <ScriptTaskPropertiesEditor v-if="model.$type === elementType.scriptTask" v-model="model" />
+                    <UserTaskPropertiesEditor v-if="model.$type === elementType.userTask" v-model="model" />
+                    <InitiatorPropertyEditor v-if="model.$type === elementType.startEvent" v-model="model" />
+                    <FormKeyPropertyEditor v-if="model.$type === elementType.userTask || model.$type === elementType.startEvent" v-model="model" />
                     
                     
                     
                     <!--<TextInput :label="inputLabel.assignee" v-model="mainProperties.assignee" @input="updateProperty()" :clearHandler="updateProperty"/>
-                    <TextInput :label="inputLabel.candidateUsers" v-model="mainProperties.candidateUsers"/>
-                    <TextInput :label="inputLabel.candidateGroups" v-model="mainProperties.candidateGroups"/>
-                    <TextInput :label="inputLabel.formKey" v-model="mainProperties.formKey"/>
-                    <TextInput :label="inputLabel.initiator" v-model="mainProperties.initiator"/>
-                    <TextInput :label="inputLabel.dueDate" v-model="mainProperties.dueDate"/>
-                    <TextInput :label="inputLabel.priority" v-model="mainProperties.priority"/>
-                    <TextInput :label="inputLabel.category" v-model="mainProperties.category"/>
+                        <TextInput :label="inputLabel.category" v-model="mainProperties.category"/>
                     <TextInput :label="inputLabel.skipExpression" v-model="mainProperties.skipExpression"/> -->
                 </div>
             </template>
@@ -34,6 +25,7 @@ import { ref, watch } from 'vue';
 import ScriptTaskPropertiesEditor from './main-editor-sub.components/ScriptTaskPropertiesEditor.vue';
 import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPropertiesEditor.vue';
 import FormKeyPropertyEditor from './main-editor-sub.components/FormKeyPropertyEditor.vue';
+import InitiatorPropertyEditor from './main-editor-sub.components/InitiatorPropertyEditor.vue';
 
 import Card from '../../generic/Card.vue';
 
@@ -50,7 +42,8 @@ const cardProps = {
 const elementType = {
     scriptTask:'bpmn:ScriptTask',
     userTask: 'bpmn:UserTask',
-    serviceTask: 'bpmn:ServiceTask'
+    serviceTask: 'bpmn:ServiceTask',
+    startEvent: 'bpmn:StartEvent',
 };
 
 const inputLabel = {
