@@ -1,8 +1,10 @@
 <template>
     <div class="user-task-properties-editor-container" data-testid="user-task-properties-editor-container">
-        <TextInput :label="inputTaskPropertiesLabels.assignee" v-model="assignee" @input="updatesAssignee" :clearHandler="updatesAssignee"/>
-        <TextInput :label="inputTaskPropertiesLabels.candidateUsers" v-model="candidateUsers" @input="updatesCandidateUsers" :clearHandler="updatesCandidateUsers"/>
-        <TextInput :label="inputTaskPropertiesLabels.candidateGroups" v-model="candidateGroups" @input="updatesCandidateGroups" :clearHandler="updatesCandidateGroups"/>
+        <TextInput :label="inputTaskPropertiesLabels.assignee" v-model="assignee" @input="updateAssignee" :clearHandler="updateAssignee"/>
+        <TextInput :label="inputTaskPropertiesLabels.candidateUsers" v-model="candidateUsers" @input="updateCandidateUsers" :clearHandler="updateCandidateUsers"/>
+        <TextInput :label="inputTaskPropertiesLabels.candidateGroups" v-model="candidateGroups" @input="updateCandidateGroups" :clearHandler="updateCandidateGroups"/>
+        <TextInput :label="inputTaskPropertiesLabels.dueDate" v-model="dueDate" @input="updateDueDate" :clearHandler="updateDueDate"/>
+        <TextInput :label="inputTaskPropertiesLabels.priority" v-model="priority" @input="updatePriority" :clearHandler="updatePriority"/>
     </div>
 </template>
 
@@ -19,51 +21,53 @@ const model = defineModel();
 const assignee = ref(null);
 const candidateUsers = ref (null);
 const candidateGroups = ref (null);
+const dueDate = ref (null);
+const priority = ref (null);
 
 const inputTaskPropertiesLabels = {
     assignee: "Assignee",
     candidateUsers: "Candidate Users ( comma separated )",
     candidateGroups: "Candidate Groups ( comma separated )",
+    dueDate: "Due Date",
+    priority: "Priority"
 }
 
 const fieldKeys = {
     assignee: 'assignee',
     candidateUsers: 'candidateUsers',
     candidateGroups: 'candidateGroups',
+    dueDate: 'dueDate',
+    priority: 'priority',
 };
 
-function updatesAssignee() {
-    const targetProperty = UserTask.properties.find(property => property.ns.localName === fieldKeys.assignee);
-
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
-        {
-            elementId: model.value?.id,
-            elementProperty: targetProperty.ns.localName,
-            elementPropertyValue: assignee.value
-        }
-    );
+function updateAssignee() {
+    updateProperty(fieldKeys.assignee, assignee.value);
 }
 
-function updatesCandidateUsers() {
-    const targetProperty = UserTask.properties.find(property => property.ns.localName === fieldKeys.candidateUsers);
-
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
-        {
-            elementId: model.value?.id,
-            elementProperty: targetProperty.ns.localName,
-            elementPropertyValue: candidateUsers.value
-        }
-    );
+function updateCandidateUsers() {
+    updateProperty(fieldKeys.candidateUsers, candidateUsers.value);
 }
 
-function updatesCandidateGroups() {
-    const targetProperty = UserTask.properties.find(property => property.ns.localName === fieldKeys.candidateGroups);
+function updateCandidateGroups() {
+    updateProperty(fieldKeys.candidateGroups, candidateGroups.value);
+}
+
+function updateDueDate() {
+    updateProperty(fieldKeys.dueDate, dueDate.value);
+}
+
+function updatePriority() {
+    updateProperty(fieldKeys.priority, priority.value);
+}
+
+function updateProperty(propertyKey, propertyValue) {
+    const targetProperty = UserTask.properties.find(property => property.ns.localName === propertyKey);
 
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
             elementProperty: targetProperty.ns.localName,
-            elementPropertyValue: candidateGroups.value
+            elementPropertyValue: propertyValue
         }
     );
 }
@@ -74,6 +78,8 @@ watch(
     assignee.value = model.value?.assignee || '';
     candidateUsers.value = model.value?.candidateUsers || '';
     candidateGroups.value = model.value?.candidateGroups || '';
+    dueDate.value = model.value?.dueDate || '';
+    priority.value = model.value?.priority || '';
   },
   { immediate: true, deep: true }
 );

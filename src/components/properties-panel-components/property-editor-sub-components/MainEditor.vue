@@ -6,6 +6,7 @@
                                         
                     <ScriptTaskPropertiesEditor v-if=" model.$type === elementType.scriptTask" v-model="model" />
                     <UserTaskPropertiesEditor v-if=" model.$type === elementType.userTask" v-model="model" />
+                    <FormKeyPropertyEditor v-if=" model.$type === elementType.userTask" v-model="model" />
                     
                     
                     
@@ -32,6 +33,7 @@ import { ref, watch } from 'vue';
 
 import ScriptTaskPropertiesEditor from './main-editor-sub.components/ScriptTaskPropertiesEditor.vue';
 import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPropertiesEditor.vue';
+import FormKeyPropertyEditor from './main-editor-sub.components/FormKeyPropertyEditor.vue';
 
 import Card from '../../generic/Card.vue';
 

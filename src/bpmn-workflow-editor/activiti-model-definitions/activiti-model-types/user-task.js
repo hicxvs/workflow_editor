@@ -6,6 +6,7 @@ export default {
         { name: 'candidateUsers', type: 'String', isAttr: true, ns: { name: 'activiti' } },
         { name: 'formKey', type: 'String', isAttr: true, ns: { name: 'activiti' } },
         { name: 'assignee', type: 'String', isAttr: true, ns: { name: 'activiti' } },
-        { name: 'dueDate', type: 'String', isAttr: true, ns: { name: 'activiti' } }
+        { name: 'dueDate', type: 'String', isAttr: true, ns: { name: 'activiti' } },
+        { name: 'priority', type: 'String', isAttr: true, ns: { name: 'activiti' } },
     ]
 };
