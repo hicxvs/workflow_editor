@@ -3,7 +3,9 @@
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
                 <div v-if="model" class="main-editor-content" data-testid="main-editor-content">
-                    <ScriptTaskPropertiesEditor v-model="model" />
+                                        
+                    <ScriptTaskPropertiesEditor v-if=" model.$type === elementType.scriptTask" v-model="model" />
+                    <UserTaskPropertiesEditor v-if=" model.$type === elementType.userTask" v-model="model" />
                     
                     
                     
@@ -29,9 +31,10 @@
 import { ref, watch } from 'vue';
 
 import ScriptTaskPropertiesEditor from './main-editor-sub.components/ScriptTaskPropertiesEditor.vue';
+import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPropertiesEditor.vue';
 
 import Card from '../../generic/Card.vue';
-import TextInput from "../../generic/TextInput.vue";
+
 
 const model = defineModel();
 const mainProperties = ref(null);
@@ -42,10 +45,14 @@ const cardProps = {
     text: ""
 };
 
+const elementType = {
+    scriptTask:'bpmn:ScriptTask',
+    userTask: 'bpmn:UserTask',
+    serviceTask: 'bpmn:ServiceTask'
+};
+
 const inputLabel = {
-    assignee: "Assignee",
-    candidateUsers: "Candidate Users ( comma separated )",
-    candidateGroups: "Candidate Groups ( comma separated )",
+
     formKey: "Form Key",
     initiator: "Initiator",
     dueDate: "Due Date ( variable )",

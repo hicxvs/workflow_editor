@@ -1,9 +1,7 @@
 <template>
     <div class="script-task-properties-editor-container" data-testid="script-task-properties-editor-container">
         <Select v-model="scriptTaskFormat" :label="scriptTaskPropertiesLabels.scriptFormat" :selectOptionItems="scriptFormatSelectOptions" :selectItemClickHandler="updatesScriptFormat"/>
-
         <Checkbox v-model="scriptTaskAutoStoreVariables" :label="scriptTaskPropertiesLabels.autoStoreVariables" @update:modelValue="updateAutoStoreVariables"/>
-
         <TextInput :label="scriptTaskPropertiesLabels.script" v-model="scriptTaskScript" @input="updateScript" :clearHandler="updateScript"/>
     </div>
 </template>
@@ -89,10 +87,13 @@ function updateAutoStoreVariables() {
 }
 
 function updateScript() {
+
+    const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.script).name;
+
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
-            elementProperty: fieldKeys.script,
+            elementProperty: targetProperty,
             elementPropertyValue: scriptTaskScript.value
         }
     );
