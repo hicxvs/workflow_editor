@@ -1,6 +1,7 @@
 <template>
     <div class="service-task-properties-editor-container" data-testid="service-task-properties-editor-container">
         <Select :label="serviceTaskPropertiesLabels.serviceTaskType" v-model="serviceTaskExpressionType" :selectOptionItems="serviceTaskExpressionTypeSelectOptions" :selectItemClickHandler="updatesServiceTaskExpressionType" :clearable="isClearable" />
+        <TextInput :label="serviceTaskPropertiesLabels.resultVariable" v-model="resultVariable" @input="updateResultVariable" :clearHandler="updateResultVariable"/>
     </div>
 </template>
 
@@ -17,6 +18,7 @@ import TextInput from '../../../generic/TextInput.vue';
 const model = defineModel();
 const isClearable = ref(false);
 const serviceTaskExpressionType = ref(null);
+const resultVariable = ref(null);
 
 const serviceTaskExpressionTypeSelectOptions = ref([
     {
@@ -35,10 +37,12 @@ const serviceTaskExpressionTypeSelectOptions = ref([
 
 const serviceTaskPropertiesLabels = {
     serviceTaskType: 'Service Task Type',
+    resultVariable: 'Result Variable'
 };
 
 const fieldKeys = {
-    serviceTaskExpressionType: 'serviceTaskExpressionType'
+    serviceTaskExpressionType: 'serviceTaskExpressionType',
+    resultVariable: 'resultVariable'
 };
 
 function setServiceTaskExpressionType(serviceTaskExpressionType) {
@@ -59,6 +63,10 @@ function updatesServiceTaskExpressionType() {
     updateProperty(fieldKeys.serviceTaskExpressionType, selectedExpressionType);
 }
 
+function updateResultVariable() {
+    updateProperty(fieldKeys.resultVariable, resultVariable.value);
+}
+
 
 function updateProperty(propertyKey, propertyValue) {
     const targetProperty = ServiceTask.properties.find(property => property.ns.localName === propertyKey);
@@ -75,9 +83,9 @@ function updateProperty(propertyKey, propertyValue) {
 watch(
   () => model, 
   () => {  
-    
-    debugger;
+
     serviceTaskExpressionType.value = setServiceTaskExpressionType(model.value?.serviceTaskExpressionType);
+    resultVariable.value = model.value?.resultVariable || '';
     
   },
   { immediate: true, deep: true }
