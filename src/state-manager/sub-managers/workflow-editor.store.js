@@ -36,10 +36,9 @@ export function WorkflowEditorStore() {
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
-        const javaClasses = await getAllJavaClasses();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
-        EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);        
-        EventBus.emit(EVENT_TYPE.JAVA_CLASSES_LISTING_READY, javaClasses);
+        EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
+        EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);       
     }
 
     function registerWorkflowEditorEventHandlers() {
@@ -56,6 +55,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_TYPE, updateElementType);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, updateElementProperty);
+        EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -70,6 +70,12 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_TYPE);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY);
+        EventBus.of(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
+    }
+
+    async function getWorkflowJavaClasses() {
+        const javaClasses = await getAllJavaClasses();
+        EventBus.emit(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY, javaClasses);
     }
 
     function updateElement(element) {                    

@@ -149,7 +149,7 @@ onMounted(() => {
         listenerCopy.value.listener.fields.push(newFieldItem.field);
     });
 
-    EventBus.on(EVENT_TYPE.JAVA_CLASSES_LISTING_READY, (classes) => {
+    EventBus.on(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY, (classes) => {
         if(!classes || !Array.isArray(classes)) {
             return;
         }
@@ -164,7 +164,7 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.CREATE_LISTENER);
     EventBus.off(EVENT_TYPE.EDIT_LISTENER);
     EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD);
-    EventBus.off(EVENT_TYPE.JAVA_CLASSES_LISTING_READY);
+    EventBus.off(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY);
 });
 
 function clearListensers() {
