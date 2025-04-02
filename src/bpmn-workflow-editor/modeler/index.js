@@ -21,6 +21,7 @@ export function createWorkflowEditor(container) {
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
     const replace = modeler.get('bpmnReplace');
+    const commandStack = modeler.get('commandStack');
  
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
@@ -261,20 +262,21 @@ export function createWorkflowEditor(container) {
     function updateElementType(selectedType) {
         try {
             const element = elementRegistry.get(selectedType.elementId);
-
-            if(!element) {
+    
+            if (!element) {
                 console.error('Element not found');
                 return;
             }
-
+    
             replace.replaceElement(element, {
-                type: selectedType.elementType
+                [selectedType.elementField]: selectedType.elementType
             });
         } 
         catch (error) {
             console.error(error);
-        }        
+        }
     }
+    
    
     function updateElementAttribute(selectedAttribute) {
         try {
@@ -319,7 +321,7 @@ export function createWorkflowEditor(container) {
     
             const businessObject = element.businessObject;
             businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
-            modeling.updateProperties(element, {});
+            modeling.updateProperties(element, {});    
     
         } catch (error) {
             console.error(error);
