@@ -50,6 +50,10 @@ const inputLabel = {
     gatewayType: 'Gateway Type'
 };
 
+const fieldKeys = {
+    type: 'type'
+};
+
 function setSelectedType(modelValue, types, selectedType, typeCheck) {
     if (!modelValue || !modelValue.$type?.toLowerCase()?.includes(typeCheck) || !types.value) {
         selectedType.value = null;
@@ -95,9 +99,10 @@ function updateTaskType() {
 
     const taskType = taskTypes.value.find(task => task.label === selectedTaskType.value).value;
 
-    EventBus.emit(EVENT_TYPE.UPDATE_TASK_TYPE, {
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_TYPE, {
         elementId: generalProperties.value.id,
-        elementType: taskType
+        elementType: taskType,
+        elementField: fieldKeys.type
     });
 }
 
@@ -108,9 +113,10 @@ function updateGatewayType() {
 
     const gatewayType = gatewayTypes.value.find(gateway => gateway.label === selectedGatewayType.value).value;
 
-    EventBus.emit(EVENT_TYPE.UPDATE_GATEWAY_TYPE, {
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_TYPE, {
         elementId: generalProperties.value.id,
-        elementType: gatewayType
+        elementType: gatewayType,
+        elementField: fieldKeys.type
     });
 }
 

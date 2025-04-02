@@ -261,20 +261,21 @@ export function createWorkflowEditor(container) {
     function updateElementType(selectedType) {
         try {
             const element = elementRegistry.get(selectedType.elementId);
-
-            if(!element) {
+    
+            if (!element) {
                 console.error('Element not found');
                 return;
             }
-
+    
             replace.replaceElement(element, {
-                type: selectedType.elementType
+                [selectedType.elementField]: selectedType.elementType
             });
         } 
         catch (error) {
             console.error(error);
-        }        
+        }
     }
+    
    
     function updateElementAttribute(selectedAttribute) {
         try {

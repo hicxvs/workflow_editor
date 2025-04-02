@@ -53,8 +53,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
         EventBus.on(EVENT_TYPE.SAVE_FORM_PROPERTY, saveFormProperty);
         EventBus.on(EVENT_TYPE.GENERATE_XML_DIAGRAM, generateXMLDiagram);
-        EventBus.on(EVENT_TYPE.UPDATE_TASK_TYPE, updateTaskType);
-        EventBus.on(EVENT_TYPE.UPDATE_GATEWAY_TYPE, updateGatewayType);
+        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_TYPE, updateElementType);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, updateElementProperty);
     }
@@ -69,8 +68,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
         EventBus.off(EVENT_TYPE.SAVE_FORM_PROPERTY);
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
-        EventBus.off(EVENT_TYPE.UPDATE_TASK_TYPE);
-        EventBus.off(EVENT_TYPE.UPDATE_GATEWAY_TYPE);
+        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_TYPE);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY);
     }
 
@@ -81,6 +79,7 @@ export function WorkflowEditorStore() {
             return;
         }
 
+        clearCurrentWorkingElement();
         currentWorkingElement.value = element;
         currentWorkingElementProperties.value = element?.businessObject || null;
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
@@ -225,13 +224,8 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
     }
 
-    function updateTaskType(selectedTaskType) {
-        currentModeler.value.updateElementType(selectedTaskType);
-        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
-    }
-
-    function updateGatewayType(selectedGatewayType) {
-        currentModeler.value.updateElementType(selectedGatewayType);
+    function updateElementType(typeToUpdate) {
+        currentModeler.value.updateElementType(typeToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
