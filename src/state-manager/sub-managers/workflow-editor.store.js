@@ -70,7 +70,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_TYPE);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY);
-        EventBus.of(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
+        EventBus.off(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
     }
 
     async function getWorkflowJavaClasses() {
