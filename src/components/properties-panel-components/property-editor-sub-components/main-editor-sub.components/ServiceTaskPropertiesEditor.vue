@@ -47,7 +47,7 @@ const serviceTaskExpressionTypeSelectOptions = ref([
 const serviceTaskPropertiesLabels = {
     serviceTaskType: 'Service Task Type',
     resultVariable: 'Result Variable',
-    class: 'Class',
+    class: 'Class Name',
     expression: 'Expression',
     delegateExpression: 'Delegate Expression'
 };
