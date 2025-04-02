@@ -1,7 +1,12 @@
 <template>
     <div class="service-task-properties-editor-container" data-testid="service-task-properties-editor-container">
         <Select :label="serviceTaskPropertiesLabels.serviceTaskType" v-model="serviceTaskExpressionType" :selectOptionItems="serviceTaskExpressionTypeSelectOptions" :selectItemClickHandler="updatesServiceTaskExpressionType" :clearable="isClearable" />
-        <TextInput :label="serviceTaskPropertiesLabels.resultVariable" v-model="resultVariable" @input="updateResultVariable" :clearHandler="updateResultVariable"/>
+        <TextInput v-if="serviceTaskExpressionType?.toLowerCase() === fieldKeys.class" :label="serviceTaskPropertiesLabels.class" v-model="serviceTaskClass" @input="updateServiceTaskClass" :clearHandler="updateServiceTaskClass"/>
+        <TextInput v-if="serviceTaskExpressionType?.toLowerCase() === fieldKeys.expression" :label="serviceTaskPropertiesLabels.expression" v-model="serviceTaskExpression" @input="updateServiceTaskExpression" :clearHandler="updateServiceTaskExpression"/>
+        <TextInput v-if="serviceTaskExpressionType?.toLowerCase() === fieldKeys.delegateExpression" :label="serviceTaskPropertiesLabels.delegateExpression" v-model="serviceTaskDelegateExpression" @input="updateServiceTaskDelegateExpression" :clearHandler="updateServiceTaskDelegateExpression"/>
+        <SkipExpressionPropertyEditor v-model="model" />
+        <TextInput :label="serviceTaskPropertiesLabels.resultVariable" v-model="serviceTaskResultVariable" @input="updateResultVariable" :clearHandler="updateResultVariable"/>
+        
     </div>
 </template>
 
@@ -14,11 +19,15 @@ import ServiceTask from '../../../../bpmn-workflow-editor/activiti-model-definit
 
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
+import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
 
 const model = defineModel();
 const isClearable = ref(false);
 const serviceTaskExpressionType = ref(null);
-const resultVariable = ref(null);
+const serviceTaskClass = ref(null);
+const serviceTaskExpression = ref(null);
+const serviceTaskDelegateExpression = ref(null);
+const serviceTaskResultVariable = ref(null);
 
 const serviceTaskExpressionTypeSelectOptions = ref([
     {
@@ -37,12 +46,18 @@ const serviceTaskExpressionTypeSelectOptions = ref([
 
 const serviceTaskPropertiesLabels = {
     serviceTaskType: 'Service Task Type',
-    resultVariable: 'Result Variable'
+    resultVariable: 'Result Variable',
+    class: 'Class',
+    expression: 'Expression',
+    delegateExpression: 'Delegate Expression'
 };
 
 const fieldKeys = {
     serviceTaskExpressionType: 'serviceTaskExpressionType',
-    resultVariable: 'resultVariable'
+    resultVariable: 'resultVariable',
+    class: 'class',
+    expression: 'expression',
+    delegateExpression: 'delegateExpression'
 };
 
 function setServiceTaskExpressionType(serviceTaskExpressionType) {
@@ -64,7 +79,19 @@ function updatesServiceTaskExpressionType() {
 }
 
 function updateResultVariable() {
-    updateProperty(fieldKeys.resultVariable, resultVariable.value);
+    updateProperty(fieldKeys.resultVariable, serviceTaskResultVariable.value);
+}
+
+function updateServiceTaskClass() {
+    updateProperty(fieldKeys.class, serviceTaskClass.value);
+}
+
+function updateServiceTaskExpression() {
+    updateProperty(fieldKeys.expression, serviceTaskExpression.value);
+}
+
+function updateServiceTaskDelegateExpression() {
+    updateProperty(fieldKeys.delegateExpression, serviceTaskDelegateExpression.value);
 }
 
 
@@ -82,11 +109,12 @@ function updateProperty(propertyKey, propertyValue) {
 
 watch(
   () => model, 
-  () => {  
-
+  () => {
     serviceTaskExpressionType.value = setServiceTaskExpressionType(model.value?.serviceTaskExpressionType);
-    resultVariable.value = model.value?.resultVariable || '';
-    
+    serviceTaskResultVariable.value = model.value?.resultVariable || '';
+    serviceTaskClass.value = model.value?.class || '';
+    serviceTaskExpression.value = model.value?.expression || '';
+    serviceTaskDelegateExpression.value = model.value?.delegateExpression || '';
   },
   { immediate: true, deep: true }
 );
