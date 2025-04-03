@@ -43,7 +43,10 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_ELEMENT_PROPERTY: 'update-element-property',
     UPDATE_ELEMENT_TYPE: 'update-element-type',
     CREATE_SERVICE_TASK_FIELD: 'create-service-task-field',    
-    EDIT_SERVICE_TASK_FIELD: 'edit-service-task-field',   
+    EDIT_SERVICE_TASK_FIELD: 'edit-service-task-field',
+    ADD_CREATED_SERVICE_TASK_FIELD: 'add-created-service-task-field',  
+    UPDATE_SERVICE_TASK_FIELD: 'update-service-task-field',  
+    SAVE_SERVICE_TASK_FIELD: 'save-service-task-field',  
 });
 
 

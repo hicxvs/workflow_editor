@@ -39,12 +39,12 @@ import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes'
 import { ClassFilterer } from '../../../../bpmn-workflow-editor/utils/class-filterer';
 import { createDeepCopy } from '../../../../bpmn-workflow-editor/utils/create-deep-copy';
 import { FieldType } from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
-import { OPERATION_TYPE } from '../../../../bpmn-workflow-editor/modeler/operationTypes';
 
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
 import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
 import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
+import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
 
 const model = defineModel();
 const isClearable = ref(false);
@@ -118,7 +118,8 @@ const serviceTaskFieldHandler = {
     },
     remove: (fieldItem) => {
         const indexToRemove = fieldItem.index;
-        serviceTaskExtentionElementsCopy.value.fields = serviceTaskExtentionElementsCopy.value.fields.filter((_, index) => index !== indexToRemove);
+        serviceTaskExtentionElementsCopy.value.values = serviceTaskExtentionElementsCopy.value.values.filter((_, index) => index !== indexToRemove);
+        save();
     }
 };
 
@@ -196,10 +197,29 @@ onMounted(() => {
         classFilterer.value = null;
         classFilterer.value = ClassFilterer(classes);
     });
+
+    EventBus.on(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD, (newFieldItem) => {
+        if(!newFieldItem) {
+            return;
+        }
+
+        serviceTaskExtentionElementsCopy.value.values.push(newFieldItem.field);
+        save();
+    });
+
+    EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_FIELD, (updatedFieldItem) => {
+        if(!updatedFieldItem) {
+            return;
+        }
+
+        save();
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY);
+    EventBus.off(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD);
+    EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_FIELD);
 });
 
 watch(
@@ -215,6 +235,12 @@ watch(
   },
   { immediate: true, deep: true }
 );
+
+function save() {
+    saveChanges(originalServiceTaskExtentionElements.value.values, serviceTaskExtentionElementsCopy.value.values);
+
+    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value.values);
+}
 </script>
 
 <style scoped>
