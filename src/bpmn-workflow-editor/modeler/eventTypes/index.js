@@ -41,7 +41,9 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_EDITED_FORM_PROPERTY: 'update-edited-form-property',
     UPDATE_ELEMENT_ATTRIBUTE: 'update-element-attribute',    
     UPDATE_ELEMENT_PROPERTY: 'update-element-property',
-    UPDATE_ELEMENT_TYPE: 'update-element-type'    
+    UPDATE_ELEMENT_TYPE: 'update-element-type',
+    CREATE_SERVICE_TASK_FIELD: 'create-service-task-field',    
+    EDIT_SERVICE_TASK_FIELD: 'edit-service-task-field',   
 });
 
 

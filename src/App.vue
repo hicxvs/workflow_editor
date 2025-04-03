@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <FormPropertyConfigutator />
-    <FieldConfigurator />
+    <ListenerFieldConfigurator />
     <ListenerConfigurator />
     <SystemDiagrams />
     <Loader />
@@ -12,7 +12,7 @@
 
 <script setup>
 import FormPropertyConfigutator from './components/modal-components/FormPropertyConfigutator.vue';
-import FieldConfigurator from './components/modal-components/FieldConfigurator.vue';
+import ListenerFieldConfigurator from './components/modal-components/ListenerFieldConfigurator.vue';
 import ListenerConfigurator from './components/modal-components/ListenerConfigurator.vue';
 import SystemDiagrams from './components/modal-components/SystemDiagrams.vue';
 import Loader from './components/singleton-components/Loader.vue';

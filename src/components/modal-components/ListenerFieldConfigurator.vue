@@ -1,5 +1,5 @@
 <template>
-    <div class="field-configurator-container" data-testid="field-configurator-container">
+    <div class="listener-field-configurator-container" data-testid="listener-field-configurator-container">
         <Modal
             :showCloseButton = "!showButton"
             :showSaveButton = "showButton"
