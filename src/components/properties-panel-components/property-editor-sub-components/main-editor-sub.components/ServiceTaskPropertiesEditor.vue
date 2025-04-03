@@ -239,7 +239,7 @@ watch(
 function save() {
     saveChanges(originalServiceTaskExtentionElements.value.values, serviceTaskExtentionElementsCopy.value.values);
 
-    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value.values);
+    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value);
 }
 </script>
 
