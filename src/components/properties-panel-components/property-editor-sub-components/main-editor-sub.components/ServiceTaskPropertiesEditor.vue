@@ -11,21 +11,40 @@
         <TextInput v-if="serviceTaskExpressionType?.toLowerCase() === fieldKeys.delegateExpression" :label="serviceTaskPropertiesLabels.delegateExpression" v-model="serviceTaskDelegateExpression" @input="updateServiceTaskDelegateExpression" :clearHandler="updateServiceTaskDelegateExpression"/>
         <SkipExpressionPropertyEditor v-model="model" />
 
-        <TextInput :label="serviceTaskPropertiesLabels.resultVariable" v-model="serviceTaskResultVariable" @input="updateResultVariable" :clearHandler="updateResultVariable"/>        
+        <TextInput :label="serviceTaskPropertiesLabels.resultVariable" v-model="serviceTaskResultVariable" @input="updateResultVariable" :clearHandler="updateResultVariable"/>
+        
+        <ConfigurationTable
+            :title="serviceTaskPropertiesLabels.fields"
+            :headers="fieldsHeaders"
+            v-model="serviceTaskExtentionElementsCopy.values"
+            :createNewItemHandler="serviceTaskFieldHandler.create"
+            :editItemHandler="serviceTaskFieldHandler.edit"
+            :removeItemHandler="serviceTaskFieldHandler.remove"
+        >
+            <template #row="{ item }">
+                <td>{{ item?.name }}</td>
+                <td>{{ item?.string }}</td>
+                <td>{{ item?.expression }}</td>
+            </template>
+        </ConfigurationTable>
     </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 
+import ServiceTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/service-task';
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
-import ServiceTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/service-task';
 import { ClassFilterer } from '../../../../bpmn-workflow-editor/utils/class-filterer';
+import { createDeepCopy } from '../../../../bpmn-workflow-editor/utils/create-deep-copy';
+import { FieldType } from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
 import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
+import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
+import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
 
 const model = defineModel();
 const isClearable = ref(false);
@@ -57,12 +76,22 @@ const serviceTaskExpressionTypeSelectOptions = ref([
     }
 ]);
 
+const originalServiceTaskExtentionElements = ref(null);
+const serviceTaskExtentionElementsCopy = ref(null);
+
+const fieldsHeaders = [
+    'Field name',
+    'String value',
+    'Expression'
+];
+
 const serviceTaskPropertiesLabels = {
     serviceTaskType: 'Service Task Type',
     resultVariable: 'Result Variable',
     class: 'Class Name',
     expression: 'Expression',
-    delegateExpression: 'Delegate Expression'
+    delegateExpression: 'Delegate Expression',
+    fields: 'Fields'
 };
 
 const fieldKeys = {
@@ -70,8 +99,30 @@ const fieldKeys = {
     resultVariable: 'resultVariable',
     class: 'class',
     expression: 'expression',
-    delegateExpression: 'delegateExpression'
+    delegateExpression: 'delegateExpression',
+    fields: 'fields'
 };
+
+const serviceTaskFieldHandler = {
+    create: () => {
+        EventBus.emit(EVENT_TYPE.CREATE_SERVICE_TASK_FIELD, {
+            type: FieldType,
+            field: null
+        });
+    },
+    edit: (fieldItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_SERVICE_TASK_FIELD,  {
+            type: FieldType,
+            field: fieldItem.item
+        });
+    },
+    remove: (fieldItem) => {
+        const indexToRemove = fieldItem.index;
+        serviceTaskExtentionElementsCopy.value.values = serviceTaskExtentionElementsCopy.value.values.filter((_, index) => index !== indexToRemove);
+        save();
+    }
+};
+
 
 function setServiceTaskExpressionType(serviceTaskExpressionType) {
     
@@ -146,10 +197,29 @@ onMounted(() => {
         classFilterer.value = null;
         classFilterer.value = ClassFilterer(classes);
     });
+
+    EventBus.on(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD, (newFieldItem) => {
+        if(!newFieldItem) {
+            return;
+        }
+
+        serviceTaskExtentionElementsCopy.value.values.push(newFieldItem.field);
+        save();
+    });
+
+    EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_FIELD, (updatedFieldItem) => {
+        if(!updatedFieldItem) {
+            return;
+        }
+
+        save();
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY);
+    EventBus.off(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD);
+    EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_FIELD);
 });
 
 watch(
@@ -160,9 +230,17 @@ watch(
     serviceTaskClass.value = model.value?.class || '';
     serviceTaskExpression.value = model.value?.expression || '';
     serviceTaskDelegateExpression.value = model.value?.delegateExpression || '';
+    originalServiceTaskExtentionElements.value = model.value?.extensionElements || null;
+    serviceTaskExtentionElementsCopy.value = createDeepCopy(model.value?.extensionElements);
   },
   { immediate: true, deep: true }
 );
+
+function save() {
+    saveChanges(originalServiceTaskExtentionElements.value.values, serviceTaskExtentionElementsCopy.value.values);
+
+    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value);
+}
 </script>
 
 <style scoped>

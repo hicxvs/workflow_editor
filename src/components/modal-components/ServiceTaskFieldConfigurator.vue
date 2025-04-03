@@ -1,5 +1,5 @@
 <template>
-    <div class="field-configurator-container" data-testid="field-configurator-container">
+    <div class="service-task-field-configurator-container" data-testid="service-task-field-configurator-container">
         <Modal
             :showCloseButton = "!showButton"
             :showSaveButton = "showButton"
@@ -46,17 +46,17 @@ const fieldInputLabels = {
     expression: 'Expression',
 };
 
-const modalTitle = "Listener Field Configuration";
+const modalTitle = "Service Task Field Configuration";
 
 onMounted(() => {
-    EventBus.on(EVENT_TYPE.CREATE_LISTENER_FIELD, (fieldItem) => {
+    EventBus.on(EVENT_TYPE.CREATE_SERVICE_TASK_FIELD, (fieldItem) => {
         requestedOperation.value = OPERATION_TYPE.CREATE;
         clearFields();
         initializeFields(fieldItem);
         showModal.value = true;
     });
 
-    EventBus.on(EVENT_TYPE.EDIT_LISTENER_FIELD, (fieldItem) => {
+    EventBus.on(EVENT_TYPE.EDIT_SERVICE_TASK_FIELD, (fieldItem) => {
         requestedOperation.value = OPERATION_TYPE.EDIT;
         clearFields();
         initializeFields(fieldItem);
@@ -65,8 +65,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.CREATE_LISTENER_FIELD);
-    EventBus.off(EVENT_TYPE.EDIT_LISTENER_FIELD);
+    EventBus.off(EVENT_TYPE.CREATE_SERVICE_TASK_FIELD);
+    EventBus.off(EVENT_TYPE.EDIT_SERVICE_TASK_FIELD);
 });
 
 function clearFields() {
@@ -105,11 +105,12 @@ function save() {
     saveChanges(originalField.value.field, fieldCopy.value.field);
 
     if(requestedOperation.value === OPERATION_TYPE.CREATE) {
-        EventBus.emit(EVENT_TYPE.ADD_CREATED_LISTENER_FIELD, originalField.value);
+        EventBus.emit(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD, originalField.value);
         showModal.value = false;
         return;
     }
 
+    EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_FIELD, originalField.value);
     showModal.value = false;
 }
 

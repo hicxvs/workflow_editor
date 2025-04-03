@@ -19,7 +19,7 @@ const formKey = ref(null);
 
 const inputTaskPropertiesLabels = {
     formKey: "Form Key",
-}
+};
 
 const fieldKeys = {
     formKey: 'formKey'

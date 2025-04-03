@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 

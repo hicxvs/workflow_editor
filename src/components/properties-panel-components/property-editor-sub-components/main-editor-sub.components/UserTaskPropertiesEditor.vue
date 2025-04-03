@@ -30,7 +30,7 @@ const inputTaskPropertiesLabels = {
     candidateGroups: "Candidate Groups ( comma separated )",
     dueDate: "Due Date",
     priority: "Priority"
-}
+};
 
 const fieldKeys = {
     assignee: 'assignee',

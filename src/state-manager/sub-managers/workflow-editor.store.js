@@ -56,6 +56,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, updateElementProperty);
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
+        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -71,6 +72,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_TYPE);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY);
         EventBus.off(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
+        EventBus.off(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD);
     }
 
     async function getWorkflowJavaClasses() {
@@ -242,6 +244,11 @@ export function WorkflowEditorStore() {
 
     function updateElementProperty(propertyToUpdate) {
         currentModeler.value.updateElementProperty(propertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function saveServiceTaskFields(serviceTaskToSave) {
+        currentModeler.value.saveElementField(serviceTaskToSave);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
   

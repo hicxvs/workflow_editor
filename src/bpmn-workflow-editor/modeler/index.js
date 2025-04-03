@@ -21,7 +21,6 @@ export function createWorkflowEditor(container) {
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
     const replace = modeler.get('bpmnReplace');
-    const commandStack = modeler.get('commandStack');
  
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
@@ -328,6 +327,37 @@ export function createWorkflowEditor(container) {
         }        
     }
 
+    function saveElementField(selectedElement) {
+        try{    
+            const parentElement = elementRegistry.get(selectedElement.$parent.id);
+
+            if (!parentElement) {
+                console.error('Element not found');
+                return;
+            }
+
+            selectedElement.values = createElementFields(selectedElement, selectedElement.values);
+            modeling.updateProperties(parentElement, {});
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function createElementFields(selectedElement, fieldsCollectionToCreate) {
+        const fields = fieldsCollectionToCreate;
+
+        if(!fields || !fields.length) {
+            return;
+        }
+
+        return fields.map(field => {
+            const newField = moddle.create(field.$type, field);
+            newField.$parent = selectedElement;
+            return newField;
+        });
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -348,6 +378,7 @@ export function createWorkflowEditor(container) {
         fitCanvasToDiagram,
         updateElementType,
         updateElementAttribute,
-        updateElementProperty
+        updateElementProperty,
+        saveElementField
     };
 }
