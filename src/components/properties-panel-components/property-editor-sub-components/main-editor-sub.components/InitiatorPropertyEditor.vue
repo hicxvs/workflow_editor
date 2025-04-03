@@ -18,7 +18,7 @@ const initiator = ref(null);
 
 const inputTaskPropertiesLabels = {
     initiator: "Initiator",
-}
+};
 
 const fieldKeys = {
     initiator: 'initiator'

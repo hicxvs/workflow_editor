@@ -21,7 +21,6 @@ export function createWorkflowEditor(container) {
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
     const replace = modeler.get('bpmnReplace');
-    const commandStack = modeler.get('commandStack');
  
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
