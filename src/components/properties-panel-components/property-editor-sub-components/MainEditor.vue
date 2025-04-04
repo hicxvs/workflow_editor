@@ -8,7 +8,7 @@
                     <InitiatorPropertyEditor v-if="model.$type === elementType.startEvent" v-model="model" />
                     <FormKeyPropertyEditor v-if="model.$type === elementType.userTask || model.$type === elementType.startEvent" v-model="model" />
                     <ServiceTaskPropertiesEditor v-if="model.$type === elementType.serviceTask" v-model="model" />
-                    
+                    <SequenceFlowPropertyEditor v-if="model.$type === elementType.sequenceFlow" v-model="model" />
                 </div>
             </template>
         </Card>
@@ -23,6 +23,7 @@ import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPrope
 import FormKeyPropertyEditor from './main-editor-sub.components/FormKeyPropertyEditor.vue';
 import InitiatorPropertyEditor from './main-editor-sub.components/InitiatorPropertyEditor.vue';
 import ServiceTaskPropertiesEditor from './main-editor-sub.components/ServiceTaskPropertiesEditor.vue';
+import SequenceFlowPropertyEditor from './main-editor-sub.components/SequenceFlowPropertyEditor.vue';
 
 import Card from '../../generic/Card.vue';
 
@@ -40,6 +41,7 @@ const elementType = {
     userTask: 'bpmn:UserTask',
     serviceTask: 'bpmn:ServiceTask',
     startEvent: 'bpmn:StartEvent',
+    sequenceFlow: 'bpmn:SequenceFlow',
 };
 
 watch(
