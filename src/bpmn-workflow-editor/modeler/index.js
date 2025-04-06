@@ -275,23 +275,10 @@ export function createWorkflowEditor(container) {
             console.error(error);
         }
     }
-    
-   
+       
     function updateElementAttribute(selectedAttribute) {
         try {
-            if (!selectedAttribute.elementId || !selectedAttribute.elementProperty || selectedAttribute.elementPropertyValue === undefined) {
-                console.error('Invalid property details');
-                return;
-            }
-    
-            const element = elementRegistry.get(selectedAttribute.elementId);
-    
-            if (!element) {
-                console.error('Element not found');
-                return;
-            }
-    
-            const businessObject = element.businessObject;
+            const {element, businessObject} = getElementAndBusinessObject(selectedAttribute);
     
             if (!businessObject.$attrs) {
                 businessObject.$attrs = {};
@@ -305,26 +292,70 @@ export function createWorkflowEditor(container) {
     }
 
     function updateElementProperty(selectedProperty) {
-        try  {
-            if (!selectedProperty.elementId || !selectedProperty.elementProperty || selectedProperty.elementPropertyValue === undefined) {
+        try  {    
+            const {element, businessObject} = getElementAndBusinessObject(selectedProperty);
+            businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
+            modeling.updateProperties(element, {});
+        } catch (error) {
+            console.error(error);
+        }        
+    }
+
+    function updateElementConditionExpression(conditionExpressionToUpdate) {
+        try{
+            const {element, businessObject} = getElementAndBusinessObject(conditionExpressionToUpdate);
+                        
+            if (!businessObject.conditionExpression) {
+                businessObject.conditionExpression = createConditionExpression(element, conditionExpressionToUpdate.elementPropertyValue);
+                modeling.updateProperties(element, {});
+                return;
+            }
+
+            businessObject.conditionExpression.body = conditionExpressionToUpdate.elementPropertyValue;
+            modeling.updateProperties(element, {});
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function updateElementDocumentation(documentationToUpdate) {
+        try {
+            const {element, businessObject} = getElementAndBusinessObject(documentationToUpdate);
+            const documentation = createDocumentation(element, documentationToUpdate.elementPropertyValue);
+            businessObject[documentationToUpdate.elementProperty] = [documentation];
+            modeling.updateProperties(element, {});
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
+    function getElementAndBusinessObject(selectedDetails) {
+        try {
+            if (!selectedDetails.elementId || !selectedDetails.elementProperty || selectedDetails.elementPropertyValue === undefined) {
                 console.error('Invalid property details');
                 return;
             }
     
-            const element = elementRegistry.get(selectedProperty.elementId);
-    
-            if (!element) {
-                console.error('Element not found');
+            const element = elementRegistry.get(selectedDetails.elementId);
+
+            if(!element) {
+                console.error('Element not found!');
+                return;
+            }
+
+            if(!element.businessObject) {
+                console.error("Element's business object no found!");
                 return;
             }
     
-            const businessObject = element.businessObject;
-            businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
-            modeling.updateProperties(element, {});    
-    
-        } catch (error) {
+            return {
+                element: element,
+                businessObject: element?.businessObject,
+            };
+
+        } catch(error) {
             console.error(error);
-        }        
+        }
     }
 
     function saveElementField(selectedElement) {
@@ -358,6 +389,22 @@ export function createWorkflowEditor(container) {
         });
     }
 
+    function createConditionExpression(selectedElement, expressionBody) {
+        const conditionExpression = moddle.create('bpmn:FormalExpression', {
+            body: expressionBody
+        });
+        conditionExpression.$parent = selectedElement;
+        return conditionExpression;
+    }
+
+    function createDocumentation(selectedElement, content) {
+        const documentation = moddle.create('bpmn:Documentation', {
+            text: content
+        });
+        documentation.$parent = selectedElement;
+        return documentation;
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -379,6 +426,8 @@ export function createWorkflowEditor(container) {
         updateElementType,
         updateElementAttribute,
         updateElementProperty,
+        updateElementConditionExpression,
+        updateElementDocumentation,
         saveElementField
     };
 }

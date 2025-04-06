@@ -3,7 +3,8 @@
         <v-textarea 
             :clearable="clearable"            
             :label="label"
-            v-model="model" 
+            v-model="model"
+            @click:clear="clearHandler"
         />
     </div>
 </template>
@@ -20,6 +21,11 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: true
+    },
+    clearHandler: {
+        type: Function,
+        required: false,
+        default: () => {}
     }
 });
 </script>
