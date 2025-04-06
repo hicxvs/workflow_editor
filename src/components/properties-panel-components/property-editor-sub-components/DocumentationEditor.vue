@@ -3,7 +3,7 @@
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
                 <div v-if="model"class="documentation-editor-content" data-testid="documentation-editor-content">
-                    <TextArea :label="inputLabel.documentation" v-model="documentationProperties.documentation" />
+                    <TextArea :label="inputLabel.documentation" v-model="documentationText" @input="updateDocumentation" :clearHandler="updateDocumentation"/>
                 </div>
             </template>
         </Card>
@@ -12,6 +12,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { createParagraphs } from '../../../bpmn-workflow-editor/utils/create-paragraphs';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
@@ -19,7 +20,7 @@ import Card from "../../generic/Card.vue";
 import TextArea from "../../generic/TextArea.vue";
 
 const model = defineModel();
-const documentationProperties = ref(null);
+const documentationText = ref(null);
 
 const cardProps = {
     title: "Documentation",
@@ -31,13 +32,33 @@ const inputLabel = {
     documentation: "Documentation"
 };
 
+const fieldKeys = {
+    documentation: 'documentation'
+};
+
 watch(
   () => model, 
   () => {
-    documentationProperties.value = model.value?.documentation || '';
+    if(!model.value?.documentation) {
+        return;
+    }
+
+    documentationText.value = createParagraphs(model.value?.documentation);
   },
-  { deep: true }
+  { immediate: true, deep: true }
 );
+
+
+function updateDocumentation() { 
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, 
+        {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.documentation,
+            elementPropertyValue: documentationText.value
+        }
+    );
+}
+
 </script>
 
 <style scoped>

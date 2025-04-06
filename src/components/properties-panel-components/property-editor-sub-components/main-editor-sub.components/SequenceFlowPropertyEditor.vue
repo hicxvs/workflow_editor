@@ -33,7 +33,7 @@ function updateSkipExpression() {
         {
             elementId: model.value?.id,
             elementProperty: fieldKeys.skipExpression,
-            elementPropertyValue:  skipExpression.value
+            elementPropertyValue: skipExpression.value
         }
     );
 }
@@ -46,7 +46,6 @@ function updateCondition() {
             elementPropertyValue: conditionBody.value
         }
     );
-
 }
 
 watch(

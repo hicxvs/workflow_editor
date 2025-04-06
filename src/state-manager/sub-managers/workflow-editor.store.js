@@ -56,9 +56,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, updateElementAttribute);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, updateElementProperty);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION, updateElementConditionExpression);
+        EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, updateElementDocumentation);
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
-        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
-        
+        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);        
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -76,6 +76,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.off(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
+        EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
     }
 
     async function getWorkflowJavaClasses() {
@@ -252,6 +253,11 @@ export function WorkflowEditorStore() {
 
     function updateElementConditionExpression(conditionExpressionToUpdate) {
         currentModeler.value.updateElementConditionExpression(conditionExpressionToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateElementDocumentation(documentationToUpdate) {
+        currentModeler.value.updateElementDocumentation(documentationToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 

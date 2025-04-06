@@ -318,6 +318,17 @@ export function createWorkflowEditor(container) {
         }
     }
 
+    function updateElementDocumentation(documentationToUpdate) {
+        try {
+            const {element, businessObject} = getElementAndBusinessObject(documentationToUpdate);
+            const documentation = createDocumentation(element, documentationToUpdate.elementPropertyValue);
+            businessObject[documentationToUpdate.elementProperty] = [documentation];
+            modeling.updateProperties(element, {});
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
     function getElementAndBusinessObject(selectedDetails) {
         try {
             if (!selectedDetails.elementId || !selectedDetails.elementProperty || selectedDetails.elementPropertyValue === undefined) {
@@ -382,8 +393,16 @@ export function createWorkflowEditor(container) {
         const conditionExpression = moddle.create('bpmn:FormalExpression', {
             body: expressionBody
         });
-        conditionExpression.parent = selectedElement;
+        conditionExpression.$parent = selectedElement;
         return conditionExpression;
+    }
+
+    function createDocumentation(selectedElement, content) {
+        const documentation = moddle.create('bpmn:Documentation', {
+            text: content
+        });
+        documentation.$parent = selectedElement;
+        return documentation;
     }
 
     return {
@@ -408,6 +427,7 @@ export function createWorkflowEditor(container) {
         updateElementAttribute,
         updateElementProperty,
         updateElementConditionExpression,
+        updateElementDocumentation,
         saveElementField
     };
 }
