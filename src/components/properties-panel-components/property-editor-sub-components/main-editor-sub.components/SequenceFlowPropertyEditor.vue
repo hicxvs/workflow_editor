@@ -1,69 +1,60 @@
 <template>
     <div class="sequence-flow-properties-editor-container">
-        {{ model }}
-
-        <TextInput :label="inputPropertiesLabels.labelWith" v-model="labelWith" @input="updateLabelWith" :clearHandler="updateLabelWith"/>
         <TextInput :label="inputPropertiesLabels.skipExpression" v-model="skipExpression" @input="updateSkipExpression" :clearHandler="updateSkipExpression"/>
-        <TextInput :label="inputPropertiesLabels.condition" v-model="condition" @input="updateCondition" :clearHandler="updateCondition"/>
+        <TextArea :label="inputPropertiesLabels.conditionExpression" v-model="conditionBody" @input="updateCondition" :clearHandler="updateCondition" />
     </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
+import EventBus from '../../../../eventbus';
+import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
 
 import TextInput from '../../../generic/TextInput.vue';
+import TextArea from '../../../generic/TextArea.vue';
 
 const model = defineModel();
-const isClearable = ref(false);
-const labelWith = ref(null);
 const skipExpression = ref(null);
-const condition = ref(null);
+const conditionExpression = ref(null);
+const conditionBody = ref(null);
 
 const inputPropertiesLabels = {
-    labelWith: "Label with (50 - 500)",
     skipExpression: "Skip Expression",
-    condition: "Condition"
+    conditionExpression: "Condition Expression"
 };
 
 const fieldKeys = {
-    labelWith: 'labelWith',
     skipExpression: 'skipExpression',
-    condition: 'condition'
+    conditionExpression: 'conditionExpression'
 };
 
-function updateLabelWith() {
-    updateProperty(fieldKeys.labelWith, labelWith.value);
-}
-
 function updateSkipExpression() {
-    updateProperty(fieldKeys.skipExpression, skipExpression.value);
-}
-
-function updateCondition() {
-    updateProperty(fieldKeys.condition, condition.value);
-
-}
-
-function updateProperty(propertyKey, propertyValue) {
-    /*const targetProperty = UserTask.properties.find(property => property.ns.localName === propertyKey);
-
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
-            elementProperty: targetProperty.ns.localName,
-            elementPropertyValue: propertyValue
+            elementProperty: fieldKeys.skipExpression,
+            elementPropertyValue:  skipExpression.value
         }
-    ); */
+    );
 }
 
+function updateCondition() {   
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION, 
+        {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.conditionExpression,
+            elementPropertyValue: conditionBody.value
+        }
+    );
 
+}
 
 watch(
   () => model, 
   () => {
-    labelWith.value = model.value?.labelWith || '';
     skipExpression.value = model.value?.skipExpression || '';
-    condition.value = model.value?.condition || '';
+    conditionExpression.value = model.value?.conditionExpression || '';
+    conditionBody.value = conditionExpression.value?.body || '';
   },
   { immediate: true, deep: true }
 );

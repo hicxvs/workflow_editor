@@ -42,6 +42,7 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_ELEMENT_ATTRIBUTE: 'update-element-attribute',    
     UPDATE_ELEMENT_PROPERTY: 'update-element-property',
     UPDATE_ELEMENT_TYPE: 'update-element-type',
+    UPDATE_ELEMENT_CONDITION_EXPRESSION: 'update-element-condition-expression',
     CREATE_SERVICE_TASK_FIELD: 'create-service-task-field',    
     EDIT_SERVICE_TASK_FIELD: 'edit-service-task-field',
     ADD_CREATED_SERVICE_TASK_FIELD: 'add-created-service-task-field',  
