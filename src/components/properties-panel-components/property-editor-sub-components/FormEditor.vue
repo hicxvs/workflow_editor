@@ -111,7 +111,7 @@ watch(
   () => {
     formProperties.value = getFormProperties(FormPropertyType);  
   },
-  { deep: true }
+  { immediate:true, deep: true }
 );
 
 onMounted(() => {
