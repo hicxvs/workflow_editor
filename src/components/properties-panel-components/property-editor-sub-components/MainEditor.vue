@@ -5,8 +5,8 @@
                 <div v-if="model" class="main-editor-content" data-testid="main-editor-content">                                        
                     <ScriptTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SCRIPT_TASK" v-model="model" />
                     <UserTaskPropertiesEditor v-if="model.$type === TASK_TYPES.USER_TASK" v-model="model" />
-                    <InitiatorPropertyEditor v-if="model.$type === START_TYPES.START_EVENT" v-model="model" />
-                    <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === START_TYPES.START_EVENT" v-model="model" />
+                    <InitiatorPropertyEditor v-if="model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
+                    <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
                     <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
                     <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
                 </div>
@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { START_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/startTypes';
+import { EVENT_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
 import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { FLOW_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
 
