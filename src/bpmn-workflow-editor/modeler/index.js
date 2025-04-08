@@ -152,19 +152,20 @@ export function createWorkflowEditor(container) {
         elementProperties.extensionElements = extensionElements;
     }
 
-    function createFormProperties(elementProperties, formProperties) {
+    function createFormProperties(element, formProperties) {
 
         if(!formProperties || !formProperties.length) {
             return;
         }
 
-        const itemsCollection = elementProperties.extensionElements.values;
+        const itemsCollection = element.extensionElements.values;
         const untargetedItems = getUntargetedItems(itemsCollection, formProperties[0].type);
-        const newFormProperties = createNewFormProperties(elementProperties, formProperties);       
-        elementProperties.extensionElements.values = [...untargetedItems, ...newFormProperties];       
+        const newFormProperties = createNewFormProperties(element, formProperties); 
+        element.extensionElements.values = [...untargetedItems, ...newFormProperties];     
     }
 
-    function createNewFormProperties(elementProperties, formProperties) {
+
+    function createNewFormProperties(element, formProperties) {
 
         const defaultFalse = 'False';
         const defaultType = 'Boolean';
@@ -179,40 +180,57 @@ export function createWorkflowEditor(container) {
                 expression: formPropertyItem.expression || '',
                 variable: formPropertyItem.variable || '',
                 pattern: formPropertyItem.pattern || '',
-                formValue: formPropertyItem.formValue || '',
+                formValue: createFormValues(element, formPropertyItem.formValue),
                 default: formPropertyItem.default || defaultFalse,
                 required: formPropertyItem.required || defaultFalse,
                 readable: formPropertyItem.readable || defaultFalse,
                 writable: formPropertyItem.writable || defaultFalse
             });
         
-            newFormProperty.$parent = elementProperties;
+            newFormProperty.$parent = element;
             return newFormProperty;
         });
     }
 
+    function createFormValues(element, formValuesCollection) {
 
-    function createListeners(elementProperties, listeners) {
+        if(!formValuesCollection || !formValuesCollection.length) {
+            return;
+        }
+
+        return formValuesCollection.map(formValue => {
+            const newFormValue = moddle.create(`${formValue.$type}`, {
+                id: formValue.id || '',
+                name: formValue.name || ''
+            });
+
+            newFormValue.$parent = element;
+            return newFormValue;
+        });
+    }
+
+
+    function createListeners(element, listeners) {
 
         if(!listeners || !listeners.length) {
             return;
         }
 
-        const itemsCollection = elementProperties.extensionElements.values;
+        const itemsCollection = element.extensionElements.values;
         const untargetedItems = getUntargetedItems(itemsCollection, listeners[0].type);
-        const newListeners = createNewListeners(elementProperties, listeners);
-        elementProperties.extensionElements.values = [...untargetedItems, ...newListeners];        
+        const newListeners = createNewListeners(element, listeners);
+        element.extensionElements.values = [...untargetedItems, ...newListeners];        
     }
 
-    function createNewListeners(elementProperties, listeners) {
+    function createNewListeners(element, listeners) {
         return listeners.map(listener => {
             const listenerItem = listener.listener;        
-            const newListener = createNewListener(elementProperties, listenerItem);
+            const newListener = createNewListener(element, listenerItem);
             return newListener;
         });
     }
 
-    function createNewListener(elementProperties, listenerItem) {
+    function createNewListener(element, listenerItem) {
         const listener = moddle.create(listenerItem.$type, {
             class: listenerItem.class || '',
             event: listenerItem.event || '',
@@ -220,7 +238,7 @@ export function createWorkflowEditor(container) {
             fields: createListenerFields(listenerItem)
         });
 
-        listener.$parent = elementProperties;
+        listener.$parent = element;
         return listener;
     }
 

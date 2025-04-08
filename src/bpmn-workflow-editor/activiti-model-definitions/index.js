@@ -1,3 +1,4 @@
+import Value from './activiti-model-types/value';
 import FormProperty from './activiti-model-types/form-property';
 import UserTask from './activiti-model-types/user-task';
 import StartEvent from './activiti-model-types/start-event';
@@ -19,6 +20,7 @@ export default {
     }, 
     associations: [],
     types: [
+        Value,
         FormProperty,
         UserTask,
         StartEvent,
