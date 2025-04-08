@@ -23,7 +23,7 @@
                             <td>{{ item.formProperty.required }}</td>
                             <td>{{ item.formProperty.readable }}</td>
                             <td>{{ item.formProperty.writable }}</td>
-                            <td>{{ item.formProperty.formValue }}</td>
+                            <td>{{ getItemNamesAsString(item.formProperty.formValue) }}</td>
                         </template>
                     </ConfigurationTable>
                 </div>
@@ -35,6 +35,7 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { FormPropertyType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/form-property';
+import { getItemNamesAsString } from '../../../bpmn-workflow-editor/utils/get-item-names-as-string';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
@@ -109,7 +110,7 @@ function getFormProperties(formPropertyType) {
 watch(
   () => model, 
   () => {
-    formProperties.value = getFormProperties(FormPropertyType);  
+    formProperties.value = getFormProperties(FormPropertyType);
   },
   { immediate:true, deep: true }
 );

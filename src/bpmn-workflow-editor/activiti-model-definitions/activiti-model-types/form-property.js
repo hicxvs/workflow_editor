@@ -14,7 +14,6 @@ export default {
         { name: 'required', type: 'String', isAttr: true },
         { name: 'writable', type: 'String', isAttr: true },
         { name: 'readable', type: 'String', isAttr: true },
-        //{ name: 'formvalue', type: 'String', isAttr: true }
-        { name: 'values', type: 'Value', isMany: true }
+        { name: 'formValue', type: 'Value', isMany: true }
     ]
 };

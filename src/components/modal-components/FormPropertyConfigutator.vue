@@ -23,7 +23,7 @@
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.required" :label="formPropertiesLabels.required" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.readable" :label="formPropertiesLabels.readable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.writable" :label="formPropertiesLabels.writable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
-                <TextInput v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.formValue" :label="formPropertiesLabels.formValue" />
+                <TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/>
             </template>
         </Modal>
     </div>
@@ -36,6 +36,7 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
+import { getItemNamesAsString } from '../../bpmn-workflow-editor/utils/get-item-names-as-string';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
@@ -49,6 +50,7 @@ const modalTitle = "Form Property Configuration";
 
 const originalFormProperty = ref(null);
 const formPropertyCopy = ref(null);
+const formValue = ref(null);
 
 const formPropertySelectOptions = ref([
     {
@@ -107,9 +109,10 @@ function initializeFormProperty(formProperty) {
     if(!formProperty.formProperty) {
         formProperty.formProperty = generateFormProperty(formProperty);
     }
-
+    
     originalFormProperty.value = formProperty;
     formPropertyCopy.value = createDeepCopy(formProperty);
+    formValue.value = getItemNamesAsString(formPropertyCopy.value.formProperty?.formValue) || '';
 }
 
 function generateFormProperty(formProperty) {
@@ -129,6 +132,20 @@ function generateFormProperty(formProperty) {
         writable: defaultFalse,        
         formValue: ''        
     };
+}
+
+function updatesFormValue() {
+    formPropertyCopy.value.formProperty.formValue = generateActivitiValueCollection(formValue.value);
+}
+
+function generateActivitiValueCollection(input) {
+    const items = input.split(',').map(item => item.trim());
+    const collection = items.filter(item => item !== "").map((name, index) => ({
+        $type: 'activiti:Value',
+        id: `check${index + 1}`,
+        name: name
+    }));
+    return collection;
 }
 
 function save() {
