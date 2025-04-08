@@ -8,8 +8,8 @@
                     <TextInput :label="inputLabel.name" v-model="generalProperties.name" />
                     <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
                     <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
-                    <Select v-if="generalType === propertiesType.serviceTask" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
-                    <Select v-if="generalType === propertiesType.gateway" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
+                    <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
+                    <Select v-if="isGatewayType(generalType)" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
                 </div>                
             </template>
         </Card>
@@ -18,6 +18,8 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
+import { GATEWAY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import EventBus from "../../../eventbus";
 import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
 
@@ -54,13 +56,6 @@ const inputLabel = {
 const fieldKeys = {
     type: 'type'
 };
-
-const propertiesType = {
-    serviceTask: 'bpmn:ServiceTask',
-    gateway: 'bpmn:ExclusiveGateway',
-};
-
-
 
 function setSelectedType(modelValue, types, selectedType, typeCheck) {
     if (!modelValue || !modelValue.$type?.toLowerCase()?.includes(typeCheck) || !types.value) {
@@ -126,6 +121,10 @@ function updateGatewayType() {
         elementType: gatewayType,
         elementField: fieldKeys.type
     });
+}
+
+function isGatewayType(generalType) {
+    return Object.values(GATEWAY_TYPES).includes(generalType);
 }
 
 onMounted(() => {

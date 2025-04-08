@@ -1,5 +1,6 @@
 import { EVENT_TYPE } from '../eventTypes';
 import EventBus from '../../../eventbus';
+import { PROCESS_TYPES } from '../modelerTypes/processTypes';
 
 export function workflowSubprocessNavigationEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
@@ -36,7 +37,7 @@ export function workflowSubprocessNavigationEventsHandler(modeler) {
     });      
 
     function handleSubprocessNavigation(rootElement) {
-       if(rootElement.type === 'bpmn:SubProcess') {
+       if(rootElement.type === PROCESS_TYPES.SUB_PROCESS) {
 
             const navigationPath = () => ({
                 id: rootElement.id,
@@ -47,7 +48,7 @@ export function workflowSubprocessNavigationEventsHandler(modeler) {
             return;
        }
 
-       if(rootElement.type === 'bpmn:Process') {
+       if(rootElement.type === PROCESS_TYPES.PROCESS) {
 
             EventBus.emit(EVENT_TYPE.UPDATE_NAVIGATION_PATH, null);
             return;

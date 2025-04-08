@@ -3,12 +3,12 @@
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
                 <div v-if="model" class="main-editor-content" data-testid="main-editor-content">                                        
-                    <ScriptTaskPropertiesEditor v-if="model.$type === elementType.scriptTask" v-model="model" />
-                    <UserTaskPropertiesEditor v-if="model.$type === elementType.userTask" v-model="model" />
-                    <InitiatorPropertyEditor v-if="model.$type === elementType.startEvent" v-model="model" />
-                    <FormKeyPropertyEditor v-if="model.$type === elementType.userTask || model.$type === elementType.startEvent" v-model="model" />
-                    <ServiceTaskPropertiesEditor v-if="model.$type === elementType.serviceTask" v-model="model" />
-                    <SequenceFlowPropertyEditor v-if="model.$type === elementType.sequenceFlow" v-model="model" />
+                    <ScriptTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SCRIPT_TASK" v-model="model" />
+                    <UserTaskPropertiesEditor v-if="model.$type === TASK_TYPES.USER_TASK" v-model="model" />
+                    <InitiatorPropertyEditor v-if="model.$type === START_TYPES.START_EVENT" v-model="model" />
+                    <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === START_TYPES.START_EVENT" v-model="model" />
+                    <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
+                    <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
                 </div>
             </template>
         </Card>
@@ -17,6 +17,9 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { START_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/startTypes';
+import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
+import { FLOW_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
 
 import ScriptTaskPropertiesEditor from './main-editor-sub.components/ScriptTaskPropertiesEditor.vue';
 import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPropertiesEditor.vue';
@@ -34,14 +37,6 @@ const cardProps = {
     title: "Main",
     subtitle: "",
     text: ""
-};
-
-const elementType = {
-    scriptTask:'bpmn:ScriptTask',
-    userTask: 'bpmn:UserTask',
-    serviceTask: 'bpmn:ServiceTask',
-    startEvent: 'bpmn:StartEvent',
-    sequenceFlow: 'bpmn:SequenceFlow',
 };
 
 watch(

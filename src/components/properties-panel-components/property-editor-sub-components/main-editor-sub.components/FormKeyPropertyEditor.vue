@@ -9,6 +9,7 @@ import { ref, watch } from 'vue';
 
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
+import { TASK_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import UserTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/user-task';
 import StartEvent from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/start-event';
 
@@ -25,15 +26,10 @@ const fieldKeys = {
     formKey: 'formKey'
 };
 
-const elementTypes = {
-    userTasK: 'bpmn:UserTask',
-    startEvent: 'bpmn:StartEvent'
-};
-
 function updatesFormKey() {
     let targetProperty = StartEvent.properties.find(property => property.ns.localName === fieldKeys.formKey);
 
-    if(model.value?.$type === elementTypes.userTasK) {
+    if(model.value?.$type === TASK_TYPES.USER_TASK) {
         targetProperty = UserTask.properties.find(property => property.ns.localName === fieldKeys.formKey);
     }
 
@@ -45,8 +41,6 @@ function updatesFormKey() {
         }
     );
 }
-
-
 
 watch(
   () => model, 
