@@ -175,6 +175,8 @@ export function WorkflowEditorStore() {
         }
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
+        console.log(JSON.stringify(currentImportDiagramResults.value.warnings));
+
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
         currentModeler.value.fitCanvasToDiagram();
     }

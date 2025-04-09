@@ -9,6 +9,7 @@
                     <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
                     <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
                     <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
+                    <BoundaryEventPropertiesEditor v-if="model.$type === EVENT_TYPES.BOUNDARY_EVENT" v-model="model" />
                 </div>
             </template>
         </Card>
@@ -27,6 +28,7 @@ import FormKeyPropertyEditor from './main-editor-sub.components/FormKeyPropertyE
 import InitiatorPropertyEditor from './main-editor-sub.components/InitiatorPropertyEditor.vue';
 import ServiceTaskPropertiesEditor from './main-editor-sub.components/ServiceTaskPropertiesEditor.vue';
 import SequenceFlowPropertyEditor from './main-editor-sub.components/SequenceFlowPropertyEditor.vue';
+import BoundaryEventPropertiesEditor from './main-editor-sub.components/BoundaryEventPropertiesEditor.vue';
 
 import Card from '../../generic/Card.vue';
 
