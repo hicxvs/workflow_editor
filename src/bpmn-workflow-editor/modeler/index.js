@@ -347,6 +347,26 @@ export function createWorkflowEditor(container) {
         }
     }
 
+    function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
+        const processDefinition = getProcessDefinition();
+
+        if(!processDefinition.flowElements || !processDefinition.flowElements.length) {
+            return;
+        }
+
+        const element = processDefinition.flowElements.find(boundaryEvent => boundaryEvent.id === boundaryPropertyToUpdate.elementId);
+
+        if(!element) {
+            console.error('Element not found!');
+            return;
+        }
+
+        //debugger;
+        element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
+
+        updateElementProperty(boundaryPropertyToUpdate);
+    }
+
     function getElementAndBusinessObject(selectedDetails) {
         try {
             if (!selectedDetails.elementId || !selectedDetails.elementProperty || selectedDetails.elementPropertyValue === undefined) {
@@ -423,6 +443,8 @@ export function createWorkflowEditor(container) {
         return documentation;
     }
 
+    
+
     return {
         modeler,
         elementRegistry,
@@ -446,6 +468,7 @@ export function createWorkflowEditor(container) {
         updateElementProperty,
         updateElementConditionExpression,
         updateElementDocumentation,
-        saveElementField
+        saveElementField,
+        updateBoundaryEventElementProperty
     };
 }

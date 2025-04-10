@@ -1,8 +1,9 @@
 import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
+import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
-import EventBus from '../../eventbus';
+
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
@@ -10,6 +11,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
+import { EVENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -58,7 +60,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION, updateElementConditionExpression);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, updateElementDocumentation);
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
-        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);        
+        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
+        EventBus.on(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS, getAllBoundaryEvents);
+        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);        
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -77,6 +81,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
+        EventBus.off(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
+        EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
     }
 
     async function getWorkflowJavaClasses() {
@@ -175,8 +181,6 @@ export function WorkflowEditorStore() {
         }
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
-        console.log(JSON.stringify(currentImportDiagramResults.value.warnings));
-
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
         currentModeler.value.fitCanvasToDiagram();
     }
@@ -265,6 +269,20 @@ export function WorkflowEditorStore() {
 
     function saveServiceTaskFields(serviceTaskToSave) {
         currentModeler.value.saveElementField(serviceTaskToSave);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function getAllBoundaryEvents() {
+        if(!currentProcessDefinition.value?.flowElements || !currentProcessDefinition.value?.flowElements.length) {
+            return;
+        }
+
+        const boundaryElements = currentProcessDefinition.value.flowElements.filter(element => element.$type === EVENT_TYPES.BOUNDARY_EVENT);
+        EventBus.emit(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, boundaryElements);
+    }
+
+    function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
+        currentModeler.value.updateBoundaryEventElementProperty(boundaryPropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
   

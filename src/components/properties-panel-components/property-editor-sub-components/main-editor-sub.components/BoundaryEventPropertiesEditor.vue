@@ -1,13 +1,12 @@
 <template>
     <div class="boundary-event-properties-editor-container" data-testid="boundary-event-properties-editor-container">
-        {{ model }}
-        <Checkbox v-if="shouldDisplayCancelActivity" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
-        <TextInput v-if="shouldDisplayErrorCode" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
+        <Checkbox v-if="canDisplayCancelActivity" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
+        <TextInput v-if="canDisplayErrorCode" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
     </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
 
@@ -19,10 +18,13 @@ import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
 
 const model = defineModel();
+const boundaryEvent = ref(null);
 const eventDefinitions = ref(null);
 const cancelActivity = ref(null);
 const errorCode = ref(null);
 const messageReference = ref(null);
+const canDisplayCancelActivity = ref(false);
+const canDisplayErrorCode = ref(false);
 
 const boundaryEventPropertiesLabels = {
     cancelActivity: 'Cancel Activity',
@@ -36,29 +38,44 @@ const fieldKeys = {
     messageRefence: 'messageRefence'
 };
 
-const shouldDisplayCancelActivity = computed(() => {
-  const requestedTypes = [EVENT_DEFINITION_TYPES.MESSAGE_EVENT_DEFINITION];
-  return hasMatchingTypes(eventDefinitions.value, requestedTypes);
+function canDisplay(eventDefinitions, requestedTypes) {
+    return hasMatchingTypes(eventDefinitions, requestedTypes);
+}
+
+onMounted(() => {
+    EventBus.emit(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
 });
 
-const shouldDisplayErrorCode = computed(() => {
-  const requestedTypes = [EVENT_DEFINITION_TYPES.ERROR_EVENT_DEFINITION];
-  return hasMatchingTypes(eventDefinitions.value, requestedTypes);
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY);
 });
 
 watch(
   () => model, 
   () => {
-    eventDefinitions.value = model.value.eventDefinitions || [];
-    cancelActivity.value = model.value.cancelActivity || false;
+    EventBus.on(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, (boundaryEventElementsCollection) => {
+        if(!boundaryEventElementsCollection || !boundaryEventElementsCollection.length) {
+            return;
+        }
+
+        boundaryEvent.value = boundaryEventElementsCollection.find(boundaryEvent => boundaryEvent.id === model.value.id);
+        eventDefinitions.value = boundaryEvent.value.eventDefinitions;
+        canDisplayCancelActivity.value = canDisplay(eventDefinitions.value, [EVENT_DEFINITION_TYPES.MESSAGE_EVENT_DEFINITION]);
+        canDisplayErrorCode.value = canDisplay(eventDefinitions.value, [EVENT_DEFINITION_TYPES.ERROR_EVENT_DEFINITION]);
+
+        cancelActivity.value = boundaryEvent.value?.cancelActivity || false;
+        errorCode.value = '';
+    });
+
+
   },
   { immediate: true, deep: true }
 );
 
 function updateCancelActivity() {
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, 
+    EventBus.emit(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, 
         {
-            elementId: model.value?.id,
+            elementId: boundaryEvent.value?.id,
             elementProperty: fieldKeys.cancelActivity,
             elementPropertyValue: cancelActivity.value
         }
@@ -66,7 +83,7 @@ function updateCancelActivity() {
 }
 
 function updateErrorCode() {
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_ATTRIBUTE, 
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: model.value?.id,
             elementProperty: fieldKeys.errorCode,

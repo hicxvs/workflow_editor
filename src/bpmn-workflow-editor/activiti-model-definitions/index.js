@@ -31,6 +31,6 @@ export default {
         TaskListener,
         ExecutionListener,
         Field,
-        ScriptTask
+        ScriptTask,
     ]
 };

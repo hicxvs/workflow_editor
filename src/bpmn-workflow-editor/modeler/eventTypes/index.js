@@ -48,7 +48,10 @@ export const EVENT_TYPE = Object.freeze({
     EDIT_SERVICE_TASK_FIELD: 'edit-service-task-field',
     ADD_CREATED_SERVICE_TASK_FIELD: 'add-created-service-task-field',  
     UPDATE_SERVICE_TASK_FIELD: 'update-service-task-field',  
-    SAVE_SERVICE_TASK_FIELD: 'save-service-task-field',  
+    SAVE_SERVICE_TASK_FIELD: 'save-service-task-field',
+    GET_BOUNDARY_EVENT_ELEMENTS: 'get-boundary-event-elements',  
+    BOUNDARY_EVENT_ELEMENTS_READY: 'boundary-event-elements-ready',  
+    UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY: 'update-boundary-event-element-property',  
 });
 
 
