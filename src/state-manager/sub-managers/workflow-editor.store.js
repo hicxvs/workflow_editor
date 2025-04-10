@@ -63,7 +63,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
         EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
         EventBus.on(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS, getAllBoundaryEvents);
-        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);        
+        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
+        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);       
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -83,7 +84,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
         EventBus.off(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
-        EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
+        EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY);
+        EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE); 
     }
 
     async function getWorkflowJavaClasses() {
@@ -273,6 +275,12 @@ export function WorkflowEditorStore() {
         currentModeler.value.saveElementField(serviceTaskToSave);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
+    
+    function saveDiagramMessages(diagramMessageToSave) {
+        currentModeler.value.saveDiagramMessages(diagramMessageToSave);
+        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
 
     function getAllBoundaryEvents() {
         if(!currentProcessDefinition.value?.flowElements || !currentProcessDefinition.value?.flowElements.length) {
@@ -281,8 +289,6 @@ export function WorkflowEditorStore() {
 
         const boundaryElements = currentProcessDefinition.value.flowElements.filter(element => element.$type === EVENT_TYPES.BOUNDARY_EVENT);
         EventBus.emit(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, boundaryElements);
-
-        console.log('DIAGRAM MESSAGES:::',currentDiagramMessages.value);
     }
 
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
@@ -298,6 +304,7 @@ export function WorkflowEditorStore() {
         currentProcessDefinition,
         currentApiKey,
         currentSystemDiagrams,
+        currentDiagramMessages,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

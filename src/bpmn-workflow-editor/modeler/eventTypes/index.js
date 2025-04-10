@@ -51,7 +51,13 @@ export const EVENT_TYPE = Object.freeze({
     SAVE_SERVICE_TASK_FIELD: 'save-service-task-field',
     GET_BOUNDARY_EVENT_ELEMENTS: 'get-boundary-event-elements',  
     BOUNDARY_EVENT_ELEMENTS_READY: 'boundary-event-elements-ready',  
-    UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY: 'update-boundary-event-element-property',  
+    UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY: 'update-boundary-event-element-property',
+    CREATE_WORKFLOW_MESSAGE: 'create-workflow-message',
+    EDIT_WORKFLOW_MESSAGE: 'edit-workflow-message',
+    REMOVE_WORKFLOW_MESSAGE: 'remove-workflow-message',
+    ADD_CREATED_WORKFLOW_MESSAGE: 'add-created-workflow-message',
+    UPDATE_EDITED_WORKFLOW_MESSAGE: 'update-edited-workflow-message',
+    SAVE_WORKFLOW_MESSAGE: 'save-workflow-message'
 });
 
 

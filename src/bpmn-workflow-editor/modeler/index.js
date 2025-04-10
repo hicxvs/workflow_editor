@@ -7,7 +7,8 @@ import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
 import { workflowEditorSelectionEventsHandler } from './eventHandlers/workflowEditorSelectionEventsHandler';
 import { workflowElementEventsHandler } from './eventHandlers/workflowElementEventsHandler';
 import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workflowSubprocessNavigationEventsHandler';
-
+import { ELEMENT_TYPES } from './modelerTypes/elementTypes';
+import { PROCESS_TYPES } from './modelerTypes/processTypes';
 
 export function createWorkflowEditor(container) {
 
@@ -96,7 +97,7 @@ export function createWorkflowEditor(container) {
 
         for(let i = 0; i < elements.length; i++) {
             const tempElement = elements[i];
-            if(tempElement.type === 'bpmn:Process') {
+            if(tempElement.type === PROCESS_TYPES.PROCESS) {
                 return tempElement.businessObject;
             }
         }
@@ -141,7 +142,7 @@ export function createWorkflowEditor(container) {
         let extensionElements = elementProperties?.extensionElements;
 
         if(!extensionElements || !extensionElements.values) {
-            const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
+            const newExtensionElements = moddle.create(ELEMENT_TYPES.EXTENTION_ELEMENTS, {
                 values: []
             });
 
@@ -426,7 +427,7 @@ export function createWorkflowEditor(container) {
     }
 
     function createConditionExpression(selectedElement, expressionBody) {
-        const conditionExpression = moddle.create('bpmn:FormalExpression', {
+        const conditionExpression = moddle.create(ELEMENT_TYPES.FORMAL_EXPRESSION, {
             body: expressionBody
         });
         conditionExpression.$parent = selectedElement;
@@ -434,7 +435,7 @@ export function createWorkflowEditor(container) {
     }
 
     function createDocumentation(selectedElement, content) {
-        const documentation = moddle.create('bpmn:Documentation', {
+        const documentation = moddle.create(ELEMENT_TYPES.DOCUMENTATION, {
             text: content
         });
         documentation.$parent = selectedElement;
@@ -453,11 +454,42 @@ export function createWorkflowEditor(container) {
         }
 
         return rootElements.filter(element => {
-            return element.$type === 'bpmn:Message';
+            return element.$type === ELEMENT_TYPES.MESSAGE;
         });
     }
 
-    
+    function saveDiagramMessages(diagramMessagesToSave) {
+        /*const messagesToBeCreated = diagramMessagesToSave.filter(item => item.type && item.field);
+        const existentMessages = diagramMessagesToSave.filter(item => !(item.type && item.field));
+        const definitions = modeler.getDefinitions();
+
+        const messages = messagesToBeCreated.map(diagramMessage => {
+            const newDiagramMessage = createDiagramMessage(diagramMessage.field);            
+            newDiagramMessage.$parent = definitions;
+            return newDiagramMessage;
+        }); */
+
+        
+        const definitions = modeler.getDefinitions();
+
+        const messages = diagramMessagesToSave.map(diagramMessage => {
+            const messageItemToCreate = (diagramMessage.type && diagramMessage.field) ? diagramMessage.field : diagramMessage;
+            const newDiagramMessage = createDiagramMessage(messageItemToCreate);
+            newDiagramMessage.$parent = definitions;
+            return newDiagramMessage;
+        });
+
+        const rootElements = getDiagramRootElements();
+        const rootElementsWithoutMessageElements = rootElements.filter(element => element.$type !== ELEMENT_TYPES.MESSAGE);
+        modeler.getDefinitions().rootElements = [...rootElementsWithoutMessageElements, ...messages];
+    }
+
+    function createDiagramMessage(diagramMessageToCreate) {
+        return moddle.create(ELEMENT_TYPES.MESSAGE, {
+            id: diagramMessageToCreate.id,
+            name: diagramMessageToCreate.name
+        });
+    }
 
     return {
         modeler,
@@ -485,6 +517,7 @@ export function createWorkflowEditor(container) {
         saveElementField,
         updateBoundaryEventElementProperty,
         getDiagramRootElements,
-        getDiagramMessages
+        getDiagramMessages,
+        saveDiagramMessages
     };
 }
