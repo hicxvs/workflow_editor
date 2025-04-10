@@ -361,9 +361,7 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        //debugger;
         element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
-
         updateElementProperty(boundaryPropertyToUpdate);
     }
 
@@ -443,6 +441,22 @@ export function createWorkflowEditor(container) {
         return documentation;
     }
 
+    function getDiagramRootElements() {
+        return modeler.getDefinitions()?.rootElements || null;
+    }
+
+    function getDiagramMessages() {
+        const rootElements = getDiagramRootElements();
+
+        if(!rootElements) {
+            return;
+        }
+
+        return rootElements.filter(element => {
+            return element.$type === 'bpmn:Message';
+        });
+    }
+
     
 
     return {
@@ -469,6 +483,8 @@ export function createWorkflowEditor(container) {
         updateElementConditionExpression,
         updateElementDocumentation,
         saveElementField,
-        updateBoundaryEventElementProperty
+        updateBoundaryEventElementProperty,
+        getDiagramRootElements,
+        getDiagramMessages
     };
 }

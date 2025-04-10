@@ -29,6 +29,7 @@ export function WorkflowEditorStore() {
     const currentImportDiagramResults = ref(null);
     const currentApiKey = ref(null);
     const currentSystemDiagrams = ref(null);
+    const currentDiagramMessages = ref(null);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -182,6 +183,7 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
         currentModeler.value.fitCanvasToDiagram();
     }
     
@@ -279,6 +281,8 @@ export function WorkflowEditorStore() {
 
         const boundaryElements = currentProcessDefinition.value.flowElements.filter(element => element.$type === EVENT_TYPES.BOUNDARY_EVENT);
         EventBus.emit(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, boundaryElements);
+
+        console.log('DIAGRAM MESSAGES:::',currentDiagramMessages.value);
     }
 
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
