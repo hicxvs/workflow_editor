@@ -22,6 +22,7 @@ const boundaryEvent = ref(null);
 const eventDefinitions = ref(null);
 const cancelActivity = ref(null);
 const errorCode = ref(null);
+const workflowMessages = ref(null);
 const messageReference = ref(null);
 const canDisplayCancelActivity = ref(false);
 const canDisplayErrorCode = ref(false);
@@ -44,10 +45,12 @@ function canDisplay(eventDefinitions, requestedTypes) {
 
 onMounted(() => {
     EventBus.emit(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
+    EventBus.emit(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY);
+    EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
 });
 
 watch(
@@ -65,6 +68,15 @@ watch(
 
         cancelActivity.value = boundaryEvent.value?.cancelActivity || false;
         errorCode.value = '';
+    });
+
+    EventBus.on(EVENT_TYPE.WORKFLOW_MESSAGES_READY, (workflowMessagesCollection) => {
+        if(!workflowMessagesCollection || !workflowMessagesCollection.length) {
+            workflowMessages.value = null;
+            return;
+        }
+
+        workflowMessages.value = workflowMessagesCollection;
     });
 
 

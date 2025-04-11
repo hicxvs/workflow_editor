@@ -13,10 +13,9 @@
             </template>
 
             <template #content>
-                <div v-if="messageCopy.field">
-                    <TextInput v-model="messageCopy.field.id" :label="messageLabels.id" :clearable="isClearable" />
-                    <TextInput v-model="messageCopy.field.name" :label="messageLabels.name" :clearable="isClearable" />
-                </div>                
+                {{ messageCopy }}
+                <TextInput v-model="messageCopy.id" :label="messageLabels.id" :clearable="isClearable" />
+                <TextInput v-model="messageCopy.name" :label="messageLabels.name" :clearable="isClearable" />              
             </template>
 
         </Modal>
@@ -80,8 +79,8 @@ function initializeWorkflowMessage(workflowMessage) {
         workflowMessage.field = generateWorkflowMessage(workflowMessage);
     }
 
-    originalMessage.value = workflowMessage;
-    messageCopy.value = createDeepCopy(workflowMessage);
+    originalMessage.value = workflowMessage.field;
+    messageCopy.value = createDeepCopy(originalMessage.value);
 }
 
 function generateWorkflowMessage(workflowMessage) {

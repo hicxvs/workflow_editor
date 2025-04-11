@@ -28,6 +28,7 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 import Card from '../generic/Card.vue';
 import ConfigurationTable from '../generic/ConfigurationTable.vue';
+import field from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 
 const model = defineModel();
 const workflowMessages = ref(null);
@@ -54,26 +55,18 @@ const messageHandlers = {
             field: null
         });
     },
-    edit: (fieldItem) => {
-        EventBus.emit(EVENT_TYPE.EDIT_WORKFLOW_MESSAGE,  {
+    edit: (messageItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_WORKFLOW_MESSAGE, {
             type: ELEMENT_TYPES.MESSAGE,
-            field: fieldItem.item
+            field: messageItem.item
         });
     },
-    remove: (fieldItem) => {
-        const indexToRemove = fieldItem.index;
+    remove: (messageItem) => {
+        const indexToRemove = messageItem.index;
         workflowMessages.value = workflowMessages.value.filter((_, index) => index !== indexToRemove);
         EventBus.emit(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, workflowMessages.value);
     }
 };
-
-watch(
-  () => model, 
-  () => {
-    workflowMessages.value = model.value;
-  },
-  { immediate: true ,deep: true }
-);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.ADD_CREATED_WORKFLOW_MESSAGE, (newWorkflowMessage) => {
@@ -98,6 +91,14 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.ADD_CREATED_WORKFLOW_MESSAGE);
     EventBus.off(EVENT_TYPE.UPDATE_EDITED_WORKFLOW_MESSAGE);
 });
+
+watch(
+  () => model, 
+  () => {
+    workflowMessages.value = model.value;
+  },
+  { immediate: true ,deep: true }
+);
 
 </script>
 

@@ -453,23 +453,10 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        return rootElements.filter(element => {
-            return element.$type === ELEMENT_TYPES.MESSAGE;
-        });
+        return rootElements.filter(element => element.$type === ELEMENT_TYPES.MESSAGE) || [];
     }
 
     function saveDiagramMessages(diagramMessagesToSave) {
-        /*const messagesToBeCreated = diagramMessagesToSave.filter(item => item.type && item.field);
-        const existentMessages = diagramMessagesToSave.filter(item => !(item.type && item.field));
-        const definitions = modeler.getDefinitions();
-
-        const messages = messagesToBeCreated.map(diagramMessage => {
-            const newDiagramMessage = createDiagramMessage(diagramMessage.field);            
-            newDiagramMessage.$parent = definitions;
-            return newDiagramMessage;
-        }); */
-
-        
         const definitions = modeler.getDefinitions();
 
         const messages = diagramMessagesToSave.map(diagramMessage => {

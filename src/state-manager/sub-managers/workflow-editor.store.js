@@ -39,6 +39,7 @@ export function WorkflowEditorStore() {
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
+        getDiagramMessages();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);       
@@ -64,7 +65,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
         EventBus.on(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS, getAllBoundaryEvents);
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
-        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);       
+        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
+        EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -185,7 +187,7 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
-        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
+        getDiagramMessages();
         currentModeler.value.fitCanvasToDiagram();
     }
     
@@ -278,7 +280,7 @@ export function WorkflowEditorStore() {
     
     function saveDiagramMessages(diagramMessageToSave) {
         currentModeler.value.saveDiagramMessages(diagramMessageToSave);
-        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
+        getDiagramMessages();
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
@@ -294,6 +296,11 @@ export function WorkflowEditorStore() {
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
         currentModeler.value.updateBoundaryEventElementProperty(boundaryPropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function getDiagramMessages() {
+        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
+        EventBus.emit(EVENT_TYPE.WORKFLOW_MESSAGES_READY, currentDiagramMessages.value);
     }
   
     return {

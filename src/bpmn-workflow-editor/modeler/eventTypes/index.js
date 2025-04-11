@@ -57,7 +57,9 @@ export const EVENT_TYPE = Object.freeze({
     REMOVE_WORKFLOW_MESSAGE: 'remove-workflow-message',
     ADD_CREATED_WORKFLOW_MESSAGE: 'add-created-workflow-message',
     UPDATE_EDITED_WORKFLOW_MESSAGE: 'update-edited-workflow-message',
-    SAVE_WORKFLOW_MESSAGE: 'save-workflow-message'
+    SAVE_WORKFLOW_MESSAGE: 'save-workflow-message',
+    GET_WORKFLOW_MESSAGES: 'get-workflow-messages',
+    WORKFLOW_MESSAGES_READY: 'workflow-messages-ready'
 });
 
 
