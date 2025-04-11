@@ -2,7 +2,7 @@
     <div class="boundary-event-properties-editor-container" data-testid="boundary-event-properties-editor-container">
         <Checkbox v-if="canDisplayMessageEventDefinitionType" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
         <TextInput v-if="canDisplayErrorEventDefinitionType" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
-        <Select v-if="canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageRefence" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
+        <Select v-if="canDisplayMessageEventDefinitionType && canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageRefence" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
     </div>
 </template>
 
