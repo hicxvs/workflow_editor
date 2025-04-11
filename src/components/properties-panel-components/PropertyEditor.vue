@@ -29,7 +29,7 @@ const model = defineModel();
 const cardProps = {
     title: "Property Editor",
     subtitle: "",
-    text: "The Properties Panel provides detailed configuration options for BPMN elements. The panel updates automatically when you select an element in the diagram"
+    text: "The Properties Panel provides detailed configuration options for BPMN elements. The panel updates automatically when you select an element in the diagram."
 };
 
 </script>

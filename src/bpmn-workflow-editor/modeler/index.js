@@ -7,7 +7,8 @@ import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
 import { workflowEditorSelectionEventsHandler } from './eventHandlers/workflowEditorSelectionEventsHandler';
 import { workflowElementEventsHandler } from './eventHandlers/workflowElementEventsHandler';
 import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workflowSubprocessNavigationEventsHandler';
-
+import { ELEMENT_TYPES } from './modelerTypes/elementTypes';
+import { PROCESS_TYPES } from './modelerTypes/processTypes';
 
 export function createWorkflowEditor(container) {
 
@@ -96,7 +97,7 @@ export function createWorkflowEditor(container) {
 
         for(let i = 0; i < elements.length; i++) {
             const tempElement = elements[i];
-            if(tempElement.type === 'bpmn:Process') {
+            if(tempElement.type === PROCESS_TYPES.PROCESS) {
                 return tempElement.businessObject;
             }
         }
@@ -141,7 +142,7 @@ export function createWorkflowEditor(container) {
         let extensionElements = elementProperties?.extensionElements;
 
         if(!extensionElements || !extensionElements.values) {
-            const newExtensionElements = moddle.create('bpmn:ExtensionElements', {
+            const newExtensionElements = moddle.create(ELEMENT_TYPES.EXTENTION_ELEMENTS, {
                 values: []
             });
 
@@ -347,6 +348,51 @@ export function createWorkflowEditor(container) {
         }
     }
 
+    function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
+        const element = getSelectedBoundaryElement(boundaryPropertyToUpdate);
+
+        if(!element) {
+            console.error('Element not found!');
+            return;
+        }
+
+        element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
+        updateElementProperty(boundaryPropertyToUpdate);
+    }
+
+    function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
+        const element = getSelectedBoundaryElement(boundaryReferencePropertyToUpdate);
+
+        if(!element) {
+            console.error('Element not found!');
+            return;
+        }
+
+        const messages = getDiagramMessages();
+
+        if(!messages || !messages.length) {
+            return;
+        }
+
+        const selectedMessage = messages.find(message => message.id === boundaryReferencePropertyToUpdate.elementPropertyValue);
+
+        if(!selectedMessage) {
+            return;
+        }
+
+        element.eventDefinitions[0][boundaryReferencePropertyToUpdate.elementProperty] = selectedMessage;
+    }
+
+    function getSelectedBoundaryElement(selectedDetails) {
+        const processDefinition = getProcessDefinition();
+
+        if(!processDefinition.flowElements || !processDefinition.flowElements.length) {
+            return;
+        }
+
+        return processDefinition.flowElements.find(boundaryEvent => boundaryEvent.id === selectedDetails.elementId);
+    }
+
     function getElementAndBusinessObject(selectedDetails) {
         try {
             if (!selectedDetails.elementId || !selectedDetails.elementProperty || selectedDetails.elementPropertyValue === undefined) {
@@ -408,7 +454,7 @@ export function createWorkflowEditor(container) {
     }
 
     function createConditionExpression(selectedElement, expressionBody) {
-        const conditionExpression = moddle.create('bpmn:FormalExpression', {
+        const conditionExpression = moddle.create(ELEMENT_TYPES.FORMAL_EXPRESSION, {
             body: expressionBody
         });
         conditionExpression.$parent = selectedElement;
@@ -416,11 +462,46 @@ export function createWorkflowEditor(container) {
     }
 
     function createDocumentation(selectedElement, content) {
-        const documentation = moddle.create('bpmn:Documentation', {
+        const documentation = moddle.create(ELEMENT_TYPES.DOCUMENTATION, {
             text: content
         });
         documentation.$parent = selectedElement;
         return documentation;
+    }
+
+    function getDiagramRootElements() {
+        return modeler.getDefinitions()?.rootElements || null;
+    }
+
+    function getDiagramMessages() {
+        const rootElements = getDiagramRootElements();
+
+        if(!rootElements) {
+            return;
+        }
+
+        return rootElements.filter(element => element.$type === ELEMENT_TYPES.MESSAGE) || [];
+    }
+
+    function saveDiagramMessages(diagramMessagesToSave) {
+        const definitions = modeler.getDefinitions();
+
+        const messages = diagramMessagesToSave.map(diagramMessage => {
+            const newDiagramMessage = createDiagramMessage(diagramMessage);
+            newDiagramMessage.$parent = definitions;
+            return newDiagramMessage;
+        });
+
+        const rootElements = getDiagramRootElements();
+        const rootElementsWithoutMessageElements = rootElements.filter(element => element.$type !== ELEMENT_TYPES.MESSAGE);
+        modeler.getDefinitions().rootElements = [...rootElementsWithoutMessageElements, ...messages];
+    }
+
+    function createDiagramMessage(diagramMessageToCreate) {
+        return moddle.create(ELEMENT_TYPES.MESSAGE, {
+            id: diagramMessageToCreate.id,
+            name: diagramMessageToCreate.name
+        });
     }
 
     return {
@@ -446,6 +527,11 @@ export function createWorkflowEditor(container) {
         updateElementProperty,
         updateElementConditionExpression,
         updateElementDocumentation,
-        saveElementField
+        saveElementField,
+        updateBoundaryEventElementProperty,
+        updateBoundaryEventElementReferenceProperty,
+        getDiagramRootElements,
+        getDiagramMessages,
+        saveDiagramMessages
     };
 }

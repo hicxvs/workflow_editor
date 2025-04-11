@@ -1,5 +1,5 @@
 export default {
-    name: 'Value',
+    name: 'Message',
     superClass: ['Element'],
     properties: [
         { name: "id", type: "String" },

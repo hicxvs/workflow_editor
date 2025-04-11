@@ -1,8 +1,9 @@
 import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
+import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
-import EventBus from '../../eventbus';
+
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
@@ -10,6 +11,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
+import { EVENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -27,6 +29,7 @@ export function WorkflowEditorStore() {
     const currentImportDiagramResults = ref(null);
     const currentApiKey = ref(null);
     const currentSystemDiagrams = ref(null);
+    const currentDiagramMessages = ref(null);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -36,6 +39,7 @@ export function WorkflowEditorStore() {
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
+        getDiagramMessages();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);       
@@ -58,7 +62,11 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION, updateElementConditionExpression);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, updateElementDocumentation);
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
-        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);        
+        EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
+        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
+        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, updateBoundaryEventElementReferenceProperty);
+        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
+        EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -77,6 +85,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
+        EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY);
+        EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE); 
     }
 
     async function getWorkflowJavaClasses() {
@@ -176,6 +186,7 @@ export function WorkflowEditorStore() {
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        getDiagramMessages();
         currentModeler.value.fitCanvasToDiagram();
     }
     
@@ -265,6 +276,27 @@ export function WorkflowEditorStore() {
         currentModeler.value.saveElementField(serviceTaskToSave);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
+    
+    function saveDiagramMessages(diagramMessageToSave) {
+        currentModeler.value.saveDiagramMessages(diagramMessageToSave);
+        getDiagramMessages();
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
+        currentModeler.value.updateBoundaryEventElementProperty(boundaryPropertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
+        currentModeler.value.updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function getDiagramMessages() {
+        currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
+        EventBus.emit(EVENT_TYPE.WORKFLOW_MESSAGES_READY, currentDiagramMessages.value);
+    }
   
     return {
         currentModeler,
@@ -274,6 +306,7 @@ export function WorkflowEditorStore() {
         currentProcessDefinition,
         currentApiKey,
         currentSystemDiagrams,
+        currentDiagramMessages,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

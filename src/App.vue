@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <MessageConfigurator />
     <ServiceTaskFieldConfigurator />
     <FormPropertyConfigutator />
     <ListenerFieldConfigurator />
@@ -12,6 +13,7 @@
 </template>
 
 <script setup>
+import MessageConfigurator from './components/modal-components/MessageConfigurator.vue';
 import ServiceTaskFieldConfigurator from './components/modal-components/ServiceTaskFieldConfigurator.vue';
 import FormPropertyConfigutator from './components/modal-components/FormPropertyConfigutator.vue';
 import ListenerFieldConfigurator from './components/modal-components/ListenerFieldConfigurator.vue';

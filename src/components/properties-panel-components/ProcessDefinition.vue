@@ -1,6 +1,5 @@
 <template>
   <div class="process-definition-container" data-testid="process-definition-container">
-
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
       <template #content>
         <div class="input-group">

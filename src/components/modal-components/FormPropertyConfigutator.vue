@@ -162,8 +162,7 @@ function save() {
     }
 
     EventBus.emit(EVENT_TYPE.UPDATE_EDITED_FORM_PROPERTY, originalFormProperty.value);
-    showModal.value = false;
-   
+    showModal.value = false;   
 }
 
 function cancel() {

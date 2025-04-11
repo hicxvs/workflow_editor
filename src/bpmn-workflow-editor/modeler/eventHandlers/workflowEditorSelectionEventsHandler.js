@@ -1,5 +1,6 @@
 import { EVENT_TYPE } from '../eventTypes';
 import EventBus from '../../../eventbus';
+import { TASK_TYPES } from '../modelerTypes/taskTypes';
 
 export function workflowEditorSelectionEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
@@ -13,7 +14,7 @@ export function workflowEditorSelectionEventsHandler(modeler) {
             return;
         }
 
-        if(selectedElement.type === 'bpmn:ServiceTask') {
+        if(selectedElement.type === TASK_TYPES.SERVICE_TASK) {
             handleServiceTaskSelection(selectedElement);
         }
 
@@ -26,7 +27,7 @@ export function workflowEditorSelectionEventsHandler(modeler) {
 
     function handleServiceTaskSelection(selectedElement) {
 
-        if(selectedElement.type !== 'bpmn:ServiceTask') {
+        if(selectedElement.type !== TASK_TYPES.SERVICE_TASK) {
             return;
         }
 

@@ -39,6 +39,7 @@ import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes'
 import { ClassFilterer } from '../../../../bpmn-workflow-editor/utils/class-filterer';
 import { createDeepCopy } from '../../../../bpmn-workflow-editor/utils/create-deep-copy';
 import { FieldType } from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
+import { ELEMENT_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
 
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
@@ -185,6 +186,13 @@ function updateProperty(propertyKey, propertyValue) {
     );
 }
 
+function generateNewExtentionElements(listener) {
+    return {
+        $type: `${ELEMENT_TYPES.EXTENTION_ELEMENTS}`,
+        values: []
+    };
+}
+
 onMounted(() => {
     EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
 
@@ -230,8 +238,8 @@ watch(
     serviceTaskClass.value = model.value?.class || '';
     serviceTaskExpression.value = model.value?.expression || '';
     serviceTaskDelegateExpression.value = model.value?.delegateExpression || '';
-    originalServiceTaskExtentionElements.value = model.value?.extensionElements || null;
-    serviceTaskExtentionElementsCopy.value = createDeepCopy(model.value?.extensionElements);
+    originalServiceTaskExtentionElements.value = model.value?.extensionElements || generateNewExtentionElements();
+    serviceTaskExtentionElementsCopy.value = createDeepCopy(originalServiceTaskExtentionElements.value);
   },
   { immediate: true, deep: true }
 );
