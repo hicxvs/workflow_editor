@@ -63,8 +63,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, updateElementDocumentation);
         EventBus.on(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES, getWorkflowJavaClasses);
         EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
-        EventBus.on(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS, getAllBoundaryEvents);
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
+        EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, updateBoundaryEventElementReferenceProperty);
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
     }
@@ -85,7 +85,6 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
-        EventBus.off(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
         EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY);
         EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE); 
     }
@@ -284,17 +283,13 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
-    function getAllBoundaryEvents() {
-        if(!currentProcessDefinition.value?.flowElements || !currentProcessDefinition.value?.flowElements.length) {
-            return;
-        }
-
-        const boundaryElements = currentProcessDefinition.value.flowElements.filter(element => element.$type === EVENT_TYPES.BOUNDARY_EVENT);
-        EventBus.emit(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, boundaryElements);
-    }
-
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
         currentModeler.value.updateBoundaryEventElementProperty(boundaryPropertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
+        currentModeler.value.updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 

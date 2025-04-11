@@ -1,7 +1,8 @@
 <template>
     <div class="boundary-event-properties-editor-container" data-testid="boundary-event-properties-editor-container">
-        <Checkbox v-if="canDisplayCancelActivity" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
-        <TextInput v-if="canDisplayErrorCode" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
+        <Checkbox v-if="canDisplayMessageEventDefinitionType" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
+        <TextInput v-if="canDisplayErrorEventDefinitionType" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
+        <Select v-if="canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageRefence" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
     </div>
 </template>
 
@@ -11,21 +12,25 @@ import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
 
 import { EVENT_DEFINITION_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/eventDefinitionTypes';
-import { hasMatchingTypes } from '../../../../bpmn-workflow-editor/utils/has-matching-types';
+
 
 import Checkbox from '../../../generic/Checkbox.vue';
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
 
 const model = defineModel();
-const boundaryEvent = ref(null);
-const eventDefinitions = ref(null);
+const boundaryEventDefinitions = ref(null);
+const boundaryEventDefinitionType = ref(null);
+
+const canDisplayWorkflowMessages = ref(false);
+const canDisplayMessageEventDefinitionType = ref(false);
+const canDisplayErrorEventDefinitionType = ref(false);
+
+const workflowMessageOptions = ref(null);
+
 const cancelActivity = ref(null);
 const errorCode = ref(null);
-const workflowMessages = ref(null);
 const messageReference = ref(null);
-const canDisplayCancelActivity = ref(false);
-const canDisplayErrorCode = ref(false);
 
 const boundaryEventPropertiesLabels = {
     cancelActivity: 'Cancel Activity',
@@ -36,49 +41,43 @@ const boundaryEventPropertiesLabels = {
 const fieldKeys = {
     cancelActivity: 'cancelActivity',
     errorCode: 'errorCode',
-    messageRefence: 'messageRefence'
+    messageRefence: 'messageRef'
 };
 
-function canDisplay(eventDefinitions, requestedTypes) {
-    return hasMatchingTypes(eventDefinitions, requestedTypes);
-}
-
-onMounted(() => {
-    EventBus.emit(EVENT_TYPE.GET_BOUNDARY_EVENT_ELEMENTS);
-    EventBus.emit(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
+onMounted(() => { 
+    EventBus.emit(EVENT_TYPE.GET_WORKFLOW_MESSAGES);       
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY);
-    EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
+    EventBus.off(EVENT_TYPE.WORKFLOW_MESSAGES_READY);
 });
 
 watch(
   () => model, 
   () => {
-    EventBus.on(EVENT_TYPE.BOUNDARY_EVENT_ELEMENTS_READY, (boundaryEventElementsCollection) => {
-        if(!boundaryEventElementsCollection || !boundaryEventElementsCollection.length) {
-            return;
-        }
+    boundaryEventDefinitions.value = model.value.eventDefinitions;
 
-        boundaryEvent.value = boundaryEventElementsCollection.find(boundaryEvent => boundaryEvent.id === model.value.id);
-        eventDefinitions.value = boundaryEvent.value.eventDefinitions;
-        canDisplayCancelActivity.value = canDisplay(eventDefinitions.value, [EVENT_DEFINITION_TYPES.MESSAGE_EVENT_DEFINITION]);
-        canDisplayErrorCode.value = canDisplay(eventDefinitions.value, [EVENT_DEFINITION_TYPES.ERROR_EVENT_DEFINITION]);
+    cancelActivity.value = model.value?.cancelActivity || false;
+    errorCode.value = model.value?.errorCode || '';
+    messageReference.value = model.value.eventDefinitions[0]?.messageRef?.name || null;
 
-        cancelActivity.value = boundaryEvent.value?.cancelActivity || false;
-        errorCode.value = '';
-    });
-
+    boundaryEventDefinitionType.value = ( boundaryEventDefinitions.value[0]?.$type ) ? boundaryEventDefinitions.value[0].$type : null;
+    canDisplayMessageEventDefinitionType.value = (boundaryEventDefinitionType.value === EVENT_DEFINITION_TYPES.MESSAGE_EVENT_DEFINITION);
+    canDisplayErrorEventDefinitionType.value = (boundaryEventDefinitionType.value === EVENT_DEFINITION_TYPES.ERROR_EVENT_DEFINITION);
+    
     EventBus.on(EVENT_TYPE.WORKFLOW_MESSAGES_READY, (workflowMessagesCollection) => {
         if(!workflowMessagesCollection || !workflowMessagesCollection.length) {
-            workflowMessages.value = null;
+            canDisplayWorkflowMessages.value = false;
             return;
         }
 
-        workflowMessages.value = workflowMessagesCollection;
-    });
+        workflowMessageOptions.value = workflowMessagesCollection.map(message => ({
+            value: message.id,
+            label: message.name
+        }));
 
+        canDisplayWorkflowMessages.value = true;        
+    });
 
   },
   { immediate: true, deep: true }
@@ -87,7 +86,7 @@ watch(
 function updateCancelActivity() {
     EventBus.emit(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, 
         {
-            elementId: boundaryEvent.value?.id,
+            elementId: model.value?.id,
             elementProperty: fieldKeys.cancelActivity,
             elementPropertyValue: cancelActivity.value
         }
@@ -100,6 +99,22 @@ function updateErrorCode() {
             elementId: model.value?.id,
             elementProperty: fieldKeys.errorCode,
             elementPropertyValue: errorCode.value
+        }
+    );
+}
+
+function updateMessageReference() {
+    if(!messageReference.value) {
+        return;
+    }
+
+    const workflowMessage = workflowMessageOptions.value.find(message => message.label === messageReference.value).value;
+   
+    EventBus.emit(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, 
+        {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.messageRefence,
+            elementPropertyValue: workflowMessage
         }
     );
 }

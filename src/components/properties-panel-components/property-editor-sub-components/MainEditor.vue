@@ -46,7 +46,7 @@ watch(
   () => {
     mainProperties.value = model.value;
   },
-  { deep: true }
+  { immediate: true, deep: true }
 );
 
 </script>

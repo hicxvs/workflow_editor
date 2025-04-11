@@ -349,13 +349,7 @@ export function createWorkflowEditor(container) {
     }
 
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
-        const processDefinition = getProcessDefinition();
-
-        if(!processDefinition.flowElements || !processDefinition.flowElements.length) {
-            return;
-        }
-
-        const element = processDefinition.flowElements.find(boundaryEvent => boundaryEvent.id === boundaryPropertyToUpdate.elementId);
+        const element = getSelectedBoundaryElement(boundaryPropertyToUpdate);
 
         if(!element) {
             console.error('Element not found!');
@@ -364,6 +358,39 @@ export function createWorkflowEditor(container) {
 
         element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
         updateElementProperty(boundaryPropertyToUpdate);
+    }
+
+    function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
+        const element = getSelectedBoundaryElement(boundaryReferencePropertyToUpdate);
+
+        if(!element) {
+            console.error('Element not found!');
+            return;
+        }
+
+        const messages = getDiagramMessages();
+
+        if(!messages || !messages.length) {
+            return;
+        }
+
+        const selectedMessage = messages.find(message => message.id === boundaryReferencePropertyToUpdate.elementPropertyValue);
+
+        if(!selectedMessage) {
+            return;
+        }
+
+        element.eventDefinitions[0][boundaryReferencePropertyToUpdate.elementProperty] = selectedMessage;
+    }
+
+    function getSelectedBoundaryElement(selectedDetails) {
+        const processDefinition = getProcessDefinition();
+
+        if(!processDefinition.flowElements || !processDefinition.flowElements.length) {
+            return;
+        }
+
+        return processDefinition.flowElements.find(boundaryEvent => boundaryEvent.id === selectedDetails.elementId);
     }
 
     function getElementAndBusinessObject(selectedDetails) {
@@ -502,6 +529,7 @@ export function createWorkflowEditor(container) {
         updateElementDocumentation,
         saveElementField,
         updateBoundaryEventElementProperty,
+        updateBoundaryEventElementReferenceProperty,
         getDiagramRootElements,
         getDiagramMessages,
         saveDiagramMessages
