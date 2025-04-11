@@ -13,7 +13,6 @@
             </template>
 
             <template #content>
-                {{ messageCopy }}
                 <TextInput v-model="messageCopy.id" :label="messageLabels.id" :clearable="isClearable" />
                 <TextInput v-model="messageCopy.name" :label="messageLabels.name" :clearable="isClearable" />              
             </template>
@@ -74,7 +73,6 @@ function clearWorkflowMessage() {
 }
 
 function initializeWorkflowMessage(workflowMessage) {
-
     if(!workflowMessage.field) {
         workflowMessage.field = generateWorkflowMessage(workflowMessage);
     }

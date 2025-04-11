@@ -460,8 +460,7 @@ export function createWorkflowEditor(container) {
         const definitions = modeler.getDefinitions();
 
         const messages = diagramMessagesToSave.map(diagramMessage => {
-            const messageItemToCreate = (diagramMessage.type && diagramMessage.field) ? diagramMessage.field : diagramMessage;
-            const newDiagramMessage = createDiagramMessage(messageItemToCreate);
+            const newDiagramMessage = createDiagramMessage(diagramMessage);
             newDiagramMessage.$parent = definitions;
             return newDiagramMessage;
         });
