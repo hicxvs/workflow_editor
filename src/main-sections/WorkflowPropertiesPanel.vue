@@ -3,6 +3,7 @@
     <ActionButtonGroup class="mb-6"/>
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
     <MessageEditor v-model="currentDiagramMessages" class="mb-6" />
+    <ErrorMessageEditor v-model="currentDiagramErrorMessages" class="mb-6" />
     <PropertyEditor v-model="currentWorkingElementProperties" />
   </div>
 </template>
@@ -17,10 +18,11 @@ import { storeToRefs } from "pinia";
 import ActionButtonGroup from "../components/properties-panel-components/ActionButtonGroup.vue";
 import ProcessDefinition from "../components/properties-panel-components/ProcessDefinition.vue";
 import MessageEditor from "../components/properties-panel-components/MessageEditor.vue";
+import ErrorMessageEditor from "../components/properties-panel-components/ErrorMessageEditor.vue";
 import PropertyEditor from "../components/properties-panel-components/PropertyEditor.vue";
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
-const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages } = storeToRefs(workflowEditorStore);
+const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages, currentDiagramErrorMessages } = storeToRefs(workflowEditorStore);
 const { generateDiagram, clearWorkflowEditor } = workflowEditorStore;
 
 onMounted(() => {

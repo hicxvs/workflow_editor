@@ -474,34 +474,54 @@ export function createWorkflowEditor(container) {
     }
 
     function getDiagramMessages() {
+        return getMessagesByType(ELEMENT_TYPES.MESSAGE);
+    }
+
+    function getDiagramErrorMessages() {
+        return getMessagesByType(ELEMENT_TYPES.ERROR);
+    }
+
+    function getMessagesByType(MessageType) {
         const rootElements = getDiagramRootElements();
 
         if(!rootElements) {
             return;
         }
 
-        return rootElements.filter(element => element.$type === ELEMENT_TYPES.MESSAGE) || [];
+        return rootElements.filter(element => element.$type === MessageType) || [];
     }
 
     function saveDiagramMessages(diagramMessagesToSave) {
-        const definitions = modeler.getDefinitions();
-
-        const messages = diagramMessagesToSave.map(diagramMessage => {
-            const newDiagramMessage = createDiagramMessage(diagramMessage);
-            newDiagramMessage.$parent = definitions;
-            return newDiagramMessage;
-        });
-
-        const rootElements = getDiagramRootElements();
-        const rootElementsWithoutMessageElements = rootElements.filter(element => element.$type !== ELEMENT_TYPES.MESSAGE);
-        modeler.getDefinitions().rootElements = [...rootElementsWithoutMessageElements, ...messages];
+        saveDiagramElements(diagramMessagesToSave, ELEMENT_TYPES.MESSAGE, diagramMessage =>
+            createDiagramElement(diagramMessage, ELEMENT_TYPES.MESSAGE)
+        );
+    }
+    
+    function saveDiagramErrorMessages(diagramErrorMessagesToSave) {
+        saveDiagramElements(diagramErrorMessagesToSave, ELEMENT_TYPES.ERROR, diagramErrorMessage =>
+            createDiagramElement(diagramErrorMessage, ELEMENT_TYPES.ERROR)
+        );
     }
 
-    function createDiagramMessage(diagramMessageToCreate) {
-        return moddle.create(ELEMENT_TYPES.MESSAGE, {
-            id: diagramMessageToCreate.id,
-            name: diagramMessageToCreate.name
+    function createDiagramElement(diagramElementToCreate, elementType) {
+        return moddle.create(elementType, {
+            id: diagramElementToCreate.id,
+            name: diagramElementToCreate.name
         });
+    }
+
+    function saveDiagramElements(diagramElementsToSave, elementType, createElementFunction) {
+        const definitions = modeler.getDefinitions();
+    
+        const elements = diagramElementsToSave.map(diagramElement => {
+            const newElement = createElementFunction(diagramElement);
+            newElement.$parent = definitions;
+            return newElement;
+        });
+    
+        const rootElements = getDiagramRootElements();
+        const rootElementsWithoutSpecificElements = rootElements.filter(element => element.$type !== elementType);
+        modeler.getDefinitions().rootElements = [...rootElementsWithoutSpecificElements, ...elements];
     }
 
     return {
@@ -532,6 +552,8 @@ export function createWorkflowEditor(container) {
         updateBoundaryEventElementReferenceProperty,
         getDiagramRootElements,
         getDiagramMessages,
-        saveDiagramMessages
+        getDiagramErrorMessages,
+        saveDiagramMessages,
+        saveDiagramErrorMessages
     };
 }

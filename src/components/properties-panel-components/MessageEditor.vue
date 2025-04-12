@@ -28,7 +28,6 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 import Card from '../generic/Card.vue';
 import ConfigurationTable from '../generic/ConfigurationTable.vue';
-import field from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 
 const model = defineModel();
 const workflowMessages = ref(null);

@@ -52,13 +52,21 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY: 'update-boundary-event-element-property',
     UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY: 'update-boundary-event-element-reference-property',
     CREATE_WORKFLOW_MESSAGE: 'create-workflow-message',
+    CREATE_WORKFLOW_ERROR_MESSAGE: 'create-workflow-error-message',
     EDIT_WORKFLOW_MESSAGE: 'edit-workflow-message',
+    EDIT_WORKFLOW_ERROR_MESSAGE: 'edit-workflow-error-message',
     REMOVE_WORKFLOW_MESSAGE: 'remove-workflow-message',
+    REMOVE_WORKFLOW_ERROR_MESSAGE: 'remove-workflow-error-message',
     ADD_CREATED_WORKFLOW_MESSAGE: 'add-created-workflow-message',
+    ADD_CREATED_WORKFLOW_ERROR_MESSAGE: 'add-created-workflow-error-message',
     UPDATE_EDITED_WORKFLOW_MESSAGE: 'update-edited-workflow-message',
+    UPDATE_EDITED_WORKFLOW_ERROR_MESSAGE: 'update-edited-workflow-error-message',
     SAVE_WORKFLOW_MESSAGE: 'save-workflow-message',
+    SAVE_WORKFLOW_ERROR_MESSAGE: 'save-workflow-error-message',
     GET_WORKFLOW_MESSAGES: 'get-workflow-messages',
-    WORKFLOW_MESSAGES_READY: 'workflow-messages-ready'
+    GET_WORKFLOW_ERROR_MESSAGES: 'get-workflow-error-messages',
+    WORKFLOW_MESSAGES_READY: 'workflow-messages-ready',
+    WORKFLOW_ERROR_MESSAGES_READY: 'workflow-error-messages-ready'
 });
 
 
