@@ -30,6 +30,7 @@ export function WorkflowEditorStore() {
     const currentApiKey = ref(null);
     const currentSystemDiagrams = ref(null);
     const currentDiagramMessages = ref(null);
+    const currentDiagramErrorMessages = ref(null);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -40,6 +41,7 @@ export function WorkflowEditorStore() {
         await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = loadAPIKey();
         getDiagramMessages();
+        getDiagramErrorMessages();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);       
@@ -66,7 +68,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, updateBoundaryEventElementReferenceProperty);
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
+        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_ERROR_MESSAGE, saveDiagramErrorMessages);
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
+        EventBus.on(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES, getDiagramErrorMessages);       
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -86,7 +90,9 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_CONDITION_EXPRESSION);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION);
         EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY);
-        EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE); 
+        EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE);
+        EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
+        EventBus.off(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES); 
     }
 
     async function getWorkflowJavaClasses() {
@@ -187,6 +193,7 @@ export function WorkflowEditorStore() {
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
         currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
         getDiagramMessages();
+        getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
     }
     
@@ -283,6 +290,12 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
+    function saveDiagramErrorMessages(diagramMessageToSave) {
+        currentModeler.value.saveDiagramErrorMessages(diagramMessageToSave);
+        getDiagramErrorMessages();
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
         currentModeler.value.updateBoundaryEventElementProperty(boundaryPropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
@@ -297,6 +310,11 @@ export function WorkflowEditorStore() {
         currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
         EventBus.emit(EVENT_TYPE.WORKFLOW_MESSAGES_READY, currentDiagramMessages.value);
     }
+
+    function getDiagramErrorMessages() {
+        currentDiagramErrorMessages.value = currentModeler.value.getDiagramErrorMessages();
+        EventBus.emit(EVENT_TYPE.WORKFLOW_ERROR_MESSAGES_READY, currentDiagramErrorMessages.value);
+    }
   
     return {
         currentModeler,
@@ -307,6 +325,7 @@ export function WorkflowEditorStore() {
         currentApiKey,
         currentSystemDiagrams,
         currentDiagramMessages,
+        currentDiagramErrorMessages,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

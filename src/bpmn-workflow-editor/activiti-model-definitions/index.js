@@ -1,5 +1,6 @@
 import Value from './activiti-model-types/value';
 import Message from './activiti-model-types/message';
+import Error from './activiti-model-types/error';
 import FormProperty from './activiti-model-types/form-property';
 import UserTask from './activiti-model-types/user-task';
 import StartEvent from './activiti-model-types/start-event';
@@ -23,6 +24,7 @@ export default {
     types: [
         Value,
         Message,
+        Error,
         FormProperty,
         UserTask,
         StartEvent,
@@ -33,6 +35,6 @@ export default {
         TaskListener,
         ExecutionListener,
         Field,
-        ScriptTask,
+        ScriptTask
     ]
 };

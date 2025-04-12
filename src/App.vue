@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <ErrorMessageConfigurator />
     <MessageConfigurator />
     <ServiceTaskFieldConfigurator />
     <FormPropertyConfigutator />
@@ -13,6 +14,7 @@
 </template>
 
 <script setup>
+import ErrorMessageConfigurator from './components/modal-components/ErrorMessageConfigurator.vue';
 import MessageConfigurator from './components/modal-components/MessageConfigurator.vue';
 import ServiceTaskFieldConfigurator from './components/modal-components/ServiceTaskFieldConfigurator.vue';
 import FormPropertyConfigutator from './components/modal-components/FormPropertyConfigutator.vue';

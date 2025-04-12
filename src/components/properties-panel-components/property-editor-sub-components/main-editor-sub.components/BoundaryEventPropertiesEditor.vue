@@ -23,10 +23,12 @@ const boundaryEventDefinitions = ref(null);
 const boundaryEventDefinitionType = ref(null);
 
 const canDisplayWorkflowMessages = ref(false);
+const canDisplayWorkflowErrorMessages = ref(false);
 const canDisplayMessageEventDefinitionType = ref(false);
 const canDisplayErrorEventDefinitionType = ref(false);
 
 const workflowMessageOptions = ref(null);
+const workflowErrorMessageOptions = ref(null);
 
 const cancelActivity = ref(null);
 const errorCode = ref(null);
@@ -46,10 +48,12 @@ const fieldKeys = {
 
 onMounted(() => { 
     EventBus.emit(EVENT_TYPE.GET_WORKFLOW_MESSAGES);       
+    EventBus.emit(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES);       
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.WORKFLOW_MESSAGES_READY);
+    EventBus.off(EVENT_TYPE.WORKFLOW_ERROR_MESSAGES_READY);
 });
 
 watch(
@@ -77,6 +81,20 @@ watch(
         }));
 
         canDisplayWorkflowMessages.value = true;        
+    });
+
+    EventBus.on(EVENT_TYPE.WORKFLOW_ERROR_MESSAGES_READY, (workflowErrorMessagesCollection) => {
+        if(!workflowErrorMessagesCollection || !workflowErrorMessagesCollection.length) {
+            canDisplayWorkflowErrorMessages.value = false;
+            return;
+        }
+
+        workflowErrorMessageOptions.value = workflowErrorMessagesCollection.map(message => ({
+            value: message.id,
+            label: message.name
+        }));
+
+        canDisplayWorkflowErrorMessages.value = true;        
     });
 
   },

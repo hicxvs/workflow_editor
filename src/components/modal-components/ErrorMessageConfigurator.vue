@@ -1,5 +1,5 @@
 <template>
-    <div class="message-configurator-container" data-testid="message-configurator-container">
+    <div class="error-message-configurator-container" data-testid="error-message-configurator-container">
         <Modal
             :showCloseButton = "!showButton"
             :showSaveButton = "showButton"
@@ -36,7 +36,7 @@ const showButton = ref(true);
 const isClearable = ref(false);
 const showModal = ref(false);
 const requestedOperation = ref(null);
-const modalTitle = "Proccess Message Configuration";
+const modalTitle = "Proccess Error Message Configuration";
 
 const originalMessage = ref(null);
 const messageCopy = ref(null);
@@ -47,41 +47,41 @@ const messageLabels = {
 };
 
 onMounted(() => {
-    EventBus.on(EVENT_TYPE.CREATE_WORKFLOW_MESSAGE, (workflowMessage) => {
+    EventBus.on(EVENT_TYPE.CREATE_WORKFLOW_ERROR_MESSAGE, (workflowMessage) => {
         requestedOperation.value = OPERATION_TYPE.CREATE;
-        clearWorkflowMessage();
-        initializeWorkflowMessage(workflowMessage);
+        clearWorkflowErrorMessage();
+        initializeWorkflowErrorMessage(workflowMessage);
         showModal.value = true;
     });
 
-    EventBus.on(EVENT_TYPE.EDIT_WORKFLOW_MESSAGE, (workflowMessage) => {
+    EventBus.on(EVENT_TYPE.EDIT_WORKFLOW_ERROR_MESSAGE, (workflowMessage) => {
         requestedOperation.value = OPERATION_TYPE.EDIT;
-        clearWorkflowMessage();
-        initializeWorkflowMessage(workflowMessage);
+        clearWorkflowErrorMessage();
+        initializeWorkflowErrorMessage(workflowMessage);
         showModal.value = true;
     });
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.CREATE_WORKFLOW_MESSAGE);
-    EventBus.off(EVENT_TYPE.EDIT_WORKFLOW_MESSAGE);
+    EventBus.off(EVENT_TYPE.CREATE_WORKFLOW_ERROR_MESSAGE);
+    EventBus.off(EVENT_TYPE.EDIT_WORKFLOW_ERROR_MESSAGE);
 });
 
-function clearWorkflowMessage() {
+function clearWorkflowErrorMessage() {
     originalMessage.value = null;
     messageCopy.value = null;
 }
 
-function initializeWorkflowMessage(workflowMessage) {
+function initializeWorkflowErrorMessage(workflowMessage) {
     if(!workflowMessage.field) {
-        workflowMessage.field = generateWorkflowMessage(workflowMessage);
+        workflowMessage.field = generateWorkflowErrorMessage(workflowMessage);
     }
 
     originalMessage.value = workflowMessage.field;
     messageCopy.value = createDeepCopy(originalMessage.value);
 }
 
-function generateWorkflowMessage(workflowMessage) {
+function generateWorkflowErrorMessage(workflowMessage) {
     return {
         $type: workflowMessage.type,
         id: '',
@@ -97,12 +97,12 @@ function save() {
     saveChanges(originalMessage.value, messageCopy.value);
 
     if(requestedOperation.value === OPERATION_TYPE.CREATE) {
-        EventBus.emit(EVENT_TYPE.ADD_CREATED_WORKFLOW_MESSAGE, originalMessage.value);
+        EventBus.emit(EVENT_TYPE.ADD_CREATED_WORKFLOW_ERROR_MESSAGE, originalMessage.value);
         showModal.value = false;
         return;
     }
 
-    EventBus.emit(EVENT_TYPE.UPDATE_EDITED_WORKFLOW_MESSAGE, originalMessage.value);
+    EventBus.emit(EVENT_TYPE.UPDATE_EDITED_WORKFLOW_ERROR_MESSAGE, originalMessage.value);
     showModal.value = false;   
 }
 
