@@ -10,6 +10,7 @@
                     <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
                     <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
                     <BoundaryEventPropertiesEditor v-if="model.$type === EVENT_TYPES.BOUNDARY_EVENT" v-model="model" />
+                    <CatchEventPropertiesEditor v-if="model.$type === EVENT_TYPES.INTERMEDIATE_CATCH_EVENT" v-model="model" />
                 </div>
             </template>
         </Card>
@@ -29,6 +30,7 @@ import InitiatorPropertyEditor from './main-editor-sub.components/InitiatorPrope
 import ServiceTaskPropertiesEditor from './main-editor-sub.components/ServiceTaskPropertiesEditor.vue';
 import SequenceFlowPropertyEditor from './main-editor-sub.components/SequenceFlowPropertyEditor.vue';
 import BoundaryEventPropertiesEditor from './main-editor-sub.components/BoundaryEventPropertiesEditor.vue';
+import CatchEventPropertiesEditor from './main-editor-sub.components/CatchEventPropertiesEditor.vue';
 
 import Card from '../../generic/Card.vue';
 

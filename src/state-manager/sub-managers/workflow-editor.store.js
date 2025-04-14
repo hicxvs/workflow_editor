@@ -67,6 +67,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, saveServiceTaskFields);
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY, updateBoundaryEventElementProperty);
         EventBus.on(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, updateBoundaryEventElementReferenceProperty);
+        EventBus.on(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY, updateCatchEventElementReferenceProperty);
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_ERROR_MESSAGE, saveDiagramErrorMessages);
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
@@ -92,7 +93,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_PROPERTY);
         EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE);
         EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
-        EventBus.off(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES); 
+        EventBus.off(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES);
+        EventBus.off(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY);
     }
 
     async function getWorkflowJavaClasses() {
@@ -303,6 +305,11 @@ export function WorkflowEditorStore() {
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         currentModeler.value.updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateCatchEventElementReferenceProperty(catchReferencePropertyToUpdate) {
+        currentModeler.value.updateCatchEventElementReferenceProperty(catchReferencePropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 

@@ -349,7 +349,7 @@ export function createWorkflowEditor(container) {
     }
 
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
-        const element = getSelectedBoundaryElement(boundaryPropertyToUpdate);
+        const element = getSelectedFlowElement(boundaryPropertyToUpdate);
 
         if(!element) {
             console.error('Element not found!');
@@ -361,36 +361,45 @@ export function createWorkflowEditor(container) {
     }
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
-        const element = getSelectedBoundaryElement(boundaryReferencePropertyToUpdate);
+        updateEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
+    }
 
-        if(!element) {
+    function updateCatchEventElementReferenceProperty(catchReferencePropertyToUpdate) {
+        updateEventElementReferenceProperty(catchReferencePropertyToUpdate);
+    }
+
+    function updateEventElementReferenceProperty(referencePropertyToUpdate) {
+        const element = getSelectedFlowElement(referencePropertyToUpdate);
+    
+        if (!element) {
             console.error('Element not found!');
             return;
         }
-
+    
         const messages = getDiagramMessages();
-
-        if(!messages || !messages.length) {
+    
+        if (!messages || !messages.length) {
             return;
         }
-
-        const selectedMessage = messages.find(message => message.id === boundaryReferencePropertyToUpdate.elementPropertyValue);
-
-        if(!selectedMessage) {
+    
+        const selectedMessage = messages.find(message => message.id === referencePropertyToUpdate.elementPropertyValue);
+    
+        if (!selectedMessage) {
             return;
         }
-
-        element.eventDefinitions[0][boundaryReferencePropertyToUpdate.elementProperty] = selectedMessage;
+    
+        element.eventDefinitions[0][referencePropertyToUpdate.elementProperty] = selectedMessage;
     }
+    
 
-    function getSelectedBoundaryElement(selectedDetails) {
+    function getSelectedFlowElement(selectedDetails) {
         const processDefinition = getProcessDefinition();
 
         if(!processDefinition.flowElements || !processDefinition.flowElements.length) {
             return;
         }
 
-        return processDefinition.flowElements.find(boundaryEvent => boundaryEvent.id === selectedDetails.elementId);
+        return processDefinition.flowElements.find(flowEvent => flowEvent.id === selectedDetails.elementId);
     }
 
     function getElementAndBusinessObject(selectedDetails) {
@@ -550,6 +559,7 @@ export function createWorkflowEditor(container) {
         saveElementField,
         updateBoundaryEventElementProperty,
         updateBoundaryEventElementReferenceProperty,
+        updateCatchEventElementReferenceProperty,
         getDiagramRootElements,
         getDiagramMessages,
         getDiagramErrorMessages,
