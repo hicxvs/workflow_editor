@@ -5,9 +5,9 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue']);
 const model = defineModel(false);
-const props = defineProps({
+defineProps({
   label: {
     type: String,
     required: false,

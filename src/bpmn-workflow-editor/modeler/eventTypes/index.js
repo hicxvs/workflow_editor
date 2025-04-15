@@ -67,7 +67,7 @@ export const EVENT_TYPE = Object.freeze({
     GET_WORKFLOW_ERROR_MESSAGES: 'get-workflow-error-messages',
     WORKFLOW_MESSAGES_READY: 'workflow-messages-ready',
     WORKFLOW_ERROR_MESSAGES_READY: 'workflow-error-messages-ready',
-    UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY: 'update-catch-event-element-reference-property',
+    UPDATE_CATCH_EVENT_ELEMENT_PROPERTY: 'update-catch-event-element-property',
 });
 
 

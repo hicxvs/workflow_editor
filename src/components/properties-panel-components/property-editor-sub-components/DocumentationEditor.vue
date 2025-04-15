@@ -2,7 +2,7 @@
     <div class="documentation-editor" data-testid="documentation-editor">
         <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
             <template #content>
-                <div v-if="model"class="documentation-editor-content" data-testid="documentation-editor-content">
+                <div v-if="model" class="documentation-editor-content" data-testid="documentation-editor-content">
                     <TextArea :label="inputLabel.documentation" v-model="documentationText" @input="updateDocumentation" :clearHandler="updateDocumentation"/>
                 </div>
             </template>

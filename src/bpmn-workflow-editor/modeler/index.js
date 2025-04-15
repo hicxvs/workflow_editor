@@ -9,6 +9,7 @@ import { workflowElementEventsHandler } from './eventHandlers/workflowElementEve
 import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workflowSubprocessNavigationEventsHandler';
 import { ELEMENT_TYPES } from './modelerTypes/elementTypes';
 import { PROCESS_TYPES } from './modelerTypes/processTypes';
+import { EVENT_DEFINITION_TYPES } from './modelerTypes/eventDefinitionTypes';
 
 export function createWorkflowEditor(container) {
 
@@ -121,7 +122,6 @@ export function createWorkflowEditor(container) {
         createFormProperties(elementProperties, formProperties);
     }
 
-
     function saveListener(elementProperties, listeners) {
         if(!modeler) {
             console.error("Error: Workflow editor is not initialized.");
@@ -164,7 +164,6 @@ export function createWorkflowEditor(container) {
         const newFormProperties = createNewFormProperties(element, formProperties); 
         element.extensionElements.values = [...untargetedItems, ...newFormProperties];     
     }
-
 
     function createNewFormProperties(element, formProperties) {
 
@@ -209,7 +208,6 @@ export function createWorkflowEditor(container) {
             return newFormValue;
         });
     }
-
 
     function createListeners(element, listeners) {
 
@@ -289,13 +287,18 @@ export function createWorkflowEditor(container) {
             replace.replaceElement(element, {
                 [selectedType.elementField]: selectedType.elementType
             });
-        } 
-        catch (error) {
-            console.error(error);
+        } catch(error) {
+            const local = 'updateElementType';
+            console.error(local,error);
+            throw new Error(local,error); 
         }
     }
        
     function updateElementAttribute(selectedAttribute) {
+        if(!validatePropertyObject(selectedAttribute)) {
+            return;
+        }
+
         try {
             const {element, businessObject} = getElementAndBusinessObject(selectedAttribute);
     
@@ -305,8 +308,10 @@ export function createWorkflowEditor(container) {
     
             businessObject.$attrs[selectedAttribute.elementProperty] = selectedAttribute.elementPropertyValue;
             modeling.updateProperties(element, {});
-        } catch (error) {
-            console.error(error);
+        } catch(error) {
+            const local = 'updateElementAttribute';
+            console.error(local,error);
+            throw new Error(local,error); 
         }
     }
 
@@ -315,13 +320,19 @@ export function createWorkflowEditor(container) {
             const {element, businessObject} = getElementAndBusinessObject(selectedProperty);
             businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
             modeling.updateProperties(element, {});
-        } catch (error) {
-            console.error(error);
-        }        
+        } catch(error) {
+            const local = 'updateElementProperty';
+            console.error(local,error);
+            throw new Error(local,error); 
+        }      
     }
 
     function updateElementConditionExpression(conditionExpressionToUpdate) {
-        try{
+        if(!validatePropertyObject(conditionExpressionToUpdate)) {
+            return;
+        }
+
+        try {
             const {element, businessObject} = getElementAndBusinessObject(conditionExpressionToUpdate);
                         
             if (!businessObject.conditionExpression) {
@@ -332,63 +343,123 @@ export function createWorkflowEditor(container) {
 
             businessObject.conditionExpression.body = conditionExpressionToUpdate.elementPropertyValue;
             modeling.updateProperties(element, {});
-        } catch (error) {
-            console.error(error);
+
+        } catch(error) {
+            const local = 'updateElementConditionExpression';
+            console.error(local,error);
+            throw new Error(local,error); 
         }
     }
 
     function updateElementDocumentation(documentationToUpdate) {
+        if(!validatePropertyObject(documentationToUpdate)) {
+            return;
+        }
+
         try {
             const {element, businessObject} = getElementAndBusinessObject(documentationToUpdate);
             const documentation = createDocumentation(element, documentationToUpdate.elementPropertyValue);
             businessObject[documentationToUpdate.elementProperty] = [documentation];
             modeling.updateProperties(element, {});
         } catch(error) {
-            console.error(error);
+            const local = 'updateElementDocumentation';
+            console.error(local,error);
+            throw new Error(local,error); 
         }
     }
 
     function updateBoundaryEventElementProperty(boundaryPropertyToUpdate) {
-        const element = getSelectedFlowElement(boundaryPropertyToUpdate);
-
-        if(!element) {
-            console.error('Element not found!');
+        if(!validatePropertyObject(boundaryPropertyToUpdate)) {
             return;
         }
 
-        element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
-        updateElementProperty(boundaryPropertyToUpdate);
+        try {
+            const element = getSelectedFlowElement(boundaryPropertyToUpdate);
+
+            if(!element) {
+                console.error('Element not found!');
+                return;
+            }
+
+            element[boundaryPropertyToUpdate.elementProperty] = null;
+            element[boundaryPropertyToUpdate.elementProperty] = boundaryPropertyToUpdate.elementPropertyValue;
+            updateElementProperty(boundaryPropertyToUpdate);
+        
+        } catch(error) {
+            const local = 'updateBoundaryEventElementProperty';
+            console.error(local,error);
+            throw new Error(local,error); 
+        }        
+    }
+
+    function updateCatchEventElementProperty(catchPropertyToUpdate) {
+        if(!validatePropertyObject(catchPropertyToUpdate)) {
+            return;
+        }
+
+        try {
+            const element = getSelectedFlowElement(catchPropertyToUpdate);
+
+            if(!element) {
+                console.error('Element not found!');
+                return;
+            }
+
+            if(!element.eventDefinitions || !element.eventDefinitions.length) {
+                element.eventDefinitions = [createTimerEventDefinition(element)];
+            }
+
+            element.eventDefinitions[0][catchPropertyToUpdate.elementProperty] = null;
+            element.eventDefinitions[0][catchPropertyToUpdate.elementProperty] = createExpressionElement(element, catchPropertyToUpdate.elementPropertyValue);
+
+        } catch(error) {
+            const local = 'updateBoundaryEventElementProperty';
+            console.error(local,error);
+            throw new Error(local,error); 
+        }           
     }
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         updateEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
     }
 
+
     function updateCatchEventElementReferenceProperty(catchReferencePropertyToUpdate) {
         updateEventElementReferenceProperty(catchReferencePropertyToUpdate);
     }
 
     function updateEventElementReferenceProperty(referencePropertyToUpdate) {
-        const element = getSelectedFlowElement(referencePropertyToUpdate);
-    
-        if (!element) {
-            console.error('Element not found!');
+        if(!validatePropertyObject(referencePropertyToUpdate)) {
             return;
         }
+
+        try {
+            const element = getSelectedFlowElement(referencePropertyToUpdate);
     
-        const messages = getDiagramMessages();
-    
-        if (!messages || !messages.length) {
-            return;
-        }
-    
-        const selectedMessage = messages.find(message => message.id === referencePropertyToUpdate.elementPropertyValue);
-    
-        if (!selectedMessage) {
-            return;
-        }
-    
-        element.eventDefinitions[0][referencePropertyToUpdate.elementProperty] = selectedMessage;
+            if (!element) {
+                console.error('Element not found!');
+                return;
+            }
+        
+            const messages = getDiagramMessages();
+        
+            if (!messages || !messages.length) {
+                return;
+            }
+        
+            const selectedMessage = messages.find(message => message.id === referencePropertyToUpdate.elementPropertyValue);
+        
+            if (!selectedMessage) {
+                return;
+            }
+        
+            element.eventDefinitions[0][referencePropertyToUpdate.elementProperty] = selectedMessage;
+
+        } catch(error) {
+            const local = 'updateEventElementReferenceProperty';
+            console.error(local,error);
+            throw new Error(local,error); 
+        }        
     }
     
 
@@ -403,32 +474,26 @@ export function createWorkflowEditor(container) {
     }
 
     function getElementAndBusinessObject(selectedDetails) {
-        try {
-            if (!selectedDetails.elementId || !selectedDetails.elementProperty || selectedDetails.elementPropertyValue === undefined) {
-                console.error('Invalid property details');
-                return;
-            }
-    
-            const element = elementRegistry.get(selectedDetails.elementId);
-
-            if(!element) {
-                console.error('Element not found!');
-                return;
-            }
-
-            if(!element.businessObject) {
-                console.error("Element's business object no found!");
-                return;
-            }
-    
-            return {
-                element: element,
-                businessObject: element?.businessObject,
-            };
-
-        } catch(error) {
-            console.error(error);
+        if(!validatePropertyObject(selectedDetails)) {
+            return;
         }
+
+        const element = elementRegistry.get(selectedDetails.elementId);
+
+        if(!element) {
+            console.error('Element not found!');
+            return;
+        }
+
+        if(!element.businessObject) {
+            console.error("Element's business object no found!");
+            return;
+        }
+
+        return {
+            element: element,
+            businessObject: element?.businessObject,
+        };
     }
 
     function saveElementField(selectedElement) {
@@ -462,20 +527,26 @@ export function createWorkflowEditor(container) {
         });
     }
 
-    function createConditionExpression(selectedElement, expressionBody) {
-        const conditionExpression = moddle.create(ELEMENT_TYPES.FORMAL_EXPRESSION, {
-            body: expressionBody
-        });
-        conditionExpression.$parent = selectedElement;
-        return conditionExpression;
+    function createConditionExpression(selectedElement, conditionExpressionBody) {
+        return createElement(selectedElement, ELEMENT_TYPES.FORMAL_EXPRESSION, { body: conditionExpressionBody });;
+    }
+
+    function createExpressionElement(selectedElement, expressionBody) {
+        return createElement(selectedElement, ELEMENT_TYPES.EXPRESSION, { body: expressionBody });
     }
 
     function createDocumentation(selectedElement, content) {
-        const documentation = moddle.create(ELEMENT_TYPES.DOCUMENTATION, {
-            text: content
-        });
-        documentation.$parent = selectedElement;
-        return documentation;
+        return createElement(selectedElement, ELEMENT_TYPES.DOCUMENTATION, { text: content });
+    }
+
+    function createTimerEventDefinition(selectedElement) {
+        return createElement(selectedElement, EVENT_DEFINITION_TYPES.TIMER_EVENT_DEFINITION, {});
+    }
+
+    function createElement(selectedElement, elementType, elementProperties) {
+        const element = moddle.create(elementType, elementProperties);
+        element.$parent = selectedElement;
+        return element;
     }
 
     function getDiagramRootElements() {
@@ -533,6 +604,19 @@ export function createWorkflowEditor(container) {
         modeler.getDefinitions().rootElements = [...rootElementsWithoutSpecificElements, ...elements];
     }
 
+    function validatePropertyObject(propertyObjectToUpdate) {
+        if (
+            !propertyObjectToUpdate ||
+            !propertyObjectToUpdate.elementId ||
+            !propertyObjectToUpdate.elementProperty ||
+            propertyObjectToUpdate.elementPropertyValue === undefined
+        ) {
+            console.error('Invalid propertyObjectToUpdate object:', propertyObjectToUpdate);
+            return false;
+        }
+        return true;
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -559,6 +643,7 @@ export function createWorkflowEditor(container) {
         saveElementField,
         updateBoundaryEventElementProperty,
         updateBoundaryEventElementReferenceProperty,
+        updateCatchEventElementProperty,
         updateCatchEventElementReferenceProperty,
         getDiagramRootElements,
         getDiagramMessages,

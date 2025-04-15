@@ -2,8 +2,8 @@
   <div class="properties-panel" data-testid="properties-panel">
     <ActionButtonGroup class="mb-6"/>
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
-    <MessageEditor v-model="currentDiagramMessages" class="mb-6" />
-    <ErrorMessageEditor v-model="currentDiagramErrorMessages" class="mb-6" />
+    <MessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramMessages" class="mb-6" />
+    <ErrorMessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramErrorMessages" class="mb-6" />
     <PropertyEditor v-model="currentWorkingElementProperties" />
   </div>
 </template>

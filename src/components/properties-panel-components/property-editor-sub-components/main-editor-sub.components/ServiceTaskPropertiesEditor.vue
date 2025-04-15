@@ -186,7 +186,7 @@ function updateProperty(propertyKey, propertyValue) {
     );
 }
 
-function generateNewExtentionElements(listener) {
+function generateNewExtentionElements() {
     return {
         $type: `${ELEMENT_TYPES.EXTENTION_ELEMENTS}`,
         values: []

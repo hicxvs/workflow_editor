@@ -21,12 +21,8 @@
 
 <script setup>
 import { ref } from 'vue';
-
 const enableHover = ref(true);
-
-
 </script>
 
 <style scoped>
-
 </style>
