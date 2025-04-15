@@ -22,9 +22,8 @@
                             <th class="text-left">{{ tableHeader.processAction }}</th>
                         </tr>
                     </template>
-                    <template #body-content>
-                        <tr
-                            v-if="filteredDiagrams && filteredDiagrams.length"
+                    <template #body-content v-if="filteredDiagrams && filteredDiagrams.length">
+                        <tr                            
                             v-for="diagram in filteredDiagrams"
                             :key="diagram.name"
                         >

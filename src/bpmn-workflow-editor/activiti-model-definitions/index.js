@@ -1,3 +1,4 @@
+import Expression from './activiti-model-types/expression';
 import Value from './activiti-model-types/value';
 import Message from './activiti-model-types/message';
 import Error from './activiti-model-types/error';
@@ -22,6 +23,7 @@ export default {
     }, 
     associations: [],
     types: [
+        Expression,
         Value,
         Message,
         Error,

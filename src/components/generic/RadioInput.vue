@@ -1,8 +1,8 @@
 <template>
     <div class="radio-input-container" data-testid="radio-input-container">
         <p>{{ label }}</p>
-        <v-radio-group :inline="inline" v-model="model">
-            <v-radio v-if="radioOptionItems && radioOptionItems.length"
+        <v-radio-group :inline="inline" v-model="model" v-if="radioOptionItems && radioOptionItems.length">
+            <v-radio 
                     v-for="radioOptionItem in radioOptionItems"
                     :key="radioOptionItem" 
                     :label="radioOptionItem.label"
@@ -15,7 +15,7 @@
 <script setup>
 const model = defineModel();
 
-const props = defineProps({
+defineProps({
     label: {
         type: String,
         required: false,

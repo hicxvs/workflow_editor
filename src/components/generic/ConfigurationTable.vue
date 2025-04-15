@@ -5,9 +5,8 @@
 
         <Table>
             <template #head-content>
-                <tr>
-                    <th class="text-left" 
-                        v-if="headers && headers.length"
+                <tr v-if="headers && headers.length">
+                    <th class="text-left"                        
                         v-for="header in headers"
                         :key="header"
                     >
@@ -15,19 +14,22 @@
                     </th>
                 </tr>
             </template>
-            <template #body-content>
-                <tr
-                    v-if="items && items.length"
-                    v-for="(item, index) in items"
-                    :key="item"
-                    :class="{'active-row': selectedItem?.index === index}"
-                    @click="setSelectedItem(item, index)"
-                >
-                    <slot name="row" :item="item"></slot>
-                </tr>
-                <tr v-else>
-                    <td :colspan="headers.length" class="text-center">No items available</td>
-                </tr>
+            <template #body-content >
+                <template v-if="items?.length">
+                    <tr
+                        v-for="(item, index) in items"
+                        :key="index"
+                        :class="{ 'active-row': selectedItem?.index === index }"
+                        @click="setSelectedItem(item, index)"
+                    >
+                        <slot name="row" :item="item"></slot>
+                    </tr>
+                </template>
+                <template v-else>
+                    <tr>
+                        <td :colspan="headers?.length || 1" class="text-center">No items available 123</td>
+                    </tr>
+                </template>
             </template>
         </Table>
 

@@ -3,5 +3,6 @@ export const ELEMENT_TYPES = Object.freeze({
     MESSAGE: 'bpmn:Message',
     ERROR: 'bpmn:Error',
     FORMAL_EXPRESSION: 'bpmn:FormalExpression',
-    DOCUMENTATION: 'bpmn:Documentation'
+    DOCUMENTATION: 'bpmn:Documentation',
+    EXPRESSION: 'bpmn:Expression'
 });

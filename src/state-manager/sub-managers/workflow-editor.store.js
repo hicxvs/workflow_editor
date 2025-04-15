@@ -11,7 +11,6 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
-import { EVENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -71,7 +70,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_MESSAGE, saveDiagramMessages);
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_ERROR_MESSAGE, saveDiagramErrorMessages);
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
-        EventBus.on(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES, getDiagramErrorMessages);       
+        EventBus.on(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES, getDiagramErrorMessages);
+        EventBus.on(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_PROPERTY, updateCatchEventElementProperty);       
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -305,6 +305,11 @@ export function WorkflowEditorStore() {
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         currentModeler.value.updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function updateCatchEventElementProperty(catchPropertyToUpdate) {
+        currentModeler.value.updateCatchEventElementProperty(catchPropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
