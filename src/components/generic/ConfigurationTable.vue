@@ -27,7 +27,7 @@
                 </template>
                 <template v-else>
                     <tr>
-                        <td :colspan="headers?.length || 1" class="text-center">No items available 123</td>
+                        <td :colspan="headers?.length || 1" class="text-center">No items available</td>
                     </tr>
                 </template>
             </template>
