@@ -68,6 +68,7 @@ export const EVENT_TYPE = Object.freeze({
     WORKFLOW_MESSAGES_READY: 'workflow-messages-ready',
     WORKFLOW_ERROR_MESSAGES_READY: 'workflow-error-messages-ready',
     UPDATE_CATCH_EVENT_ELEMENT_PROPERTY: 'update-catch-event-element-property',
+    UPDATE_CALL_ACTIVITY_ELEMENT_PROPERTY: 'update-call-activity-element-property'
 });
 
 

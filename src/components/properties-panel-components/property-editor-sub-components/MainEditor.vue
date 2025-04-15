@@ -11,6 +11,7 @@
                     <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
                     <BoundaryEventPropertiesEditor v-if="model.$type === EVENT_TYPES.BOUNDARY_EVENT" v-model="model" />
                     <CatchEventPropertiesEditor v-if="model.$type === EVENT_TYPES.INTERMEDIATE_CATCH_EVENT" v-model="model" />
+                    <CallActivityPropertiesEditor v-if="model.$type === ACTIVITY_TYPES.CALL_ACTIVITY" v-model="model" />
                 </div>
             </template>
         </Card>
@@ -22,15 +23,17 @@ import { ref, watch } from 'vue';
 import { EVENT_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
 import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { FLOW_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
+import { ACTIVITY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/activityTypes';
 
-import ScriptTaskPropertiesEditor from './main-editor-sub.components/ScriptTaskPropertiesEditor.vue';
-import UserTaskPropertiesEditor from './main-editor-sub.components/UserTaskPropertiesEditor.vue';
-import FormKeyPropertyEditor from './main-editor-sub.components/FormKeyPropertyEditor.vue';
-import InitiatorPropertyEditor from './main-editor-sub.components/InitiatorPropertyEditor.vue';
-import ServiceTaskPropertiesEditor from './main-editor-sub.components/ServiceTaskPropertiesEditor.vue';
-import SequenceFlowPropertyEditor from './main-editor-sub.components/SequenceFlowPropertyEditor.vue';
-import BoundaryEventPropertiesEditor from './main-editor-sub.components/BoundaryEventPropertiesEditor.vue';
-import CatchEventPropertiesEditor from './main-editor-sub.components/CatchEventPropertiesEditor.vue';
+import ScriptTaskPropertiesEditor from './main-editor-sub-components/ScriptTaskPropertiesEditor.vue';
+import UserTaskPropertiesEditor from './main-editor-sub-components/UserTaskPropertiesEditor.vue';
+import FormKeyPropertyEditor from './main-editor-sub-components/FormKeyPropertyEditor.vue';
+import InitiatorPropertyEditor from './main-editor-sub-components/InitiatorPropertyEditor.vue';
+import ServiceTaskPropertiesEditor from './main-editor-sub-components/ServiceTaskPropertiesEditor.vue';
+import SequenceFlowPropertyEditor from './main-editor-sub-components/SequenceFlowPropertyEditor.vue';
+import BoundaryEventPropertiesEditor from './main-editor-sub-components/BoundaryEventPropertiesEditor.vue';
+import CatchEventPropertiesEditor from './main-editor-sub-components/CatchEventPropertiesEditor.vue';
+import CallActivityPropertiesEditor from './main-editor-sub-components/CallActivityPropertiesEditor.vue';
 
 import Card from '../../generic/Card.vue';
 
