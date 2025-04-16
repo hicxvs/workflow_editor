@@ -68,7 +68,19 @@ export const EVENT_TYPE = Object.freeze({
     WORKFLOW_MESSAGES_READY: 'workflow-messages-ready',
     WORKFLOW_ERROR_MESSAGES_READY: 'workflow-error-messages-ready',
     UPDATE_CATCH_EVENT_ELEMENT_PROPERTY: 'update-catch-event-element-property',
-    UPDATE_CALL_ACTIVITY_ELEMENT_PROPERTY: 'update-call-activity-element-property'
+    UPDATE_CALL_ACTIVITY_ELEMENT_PROPERTY: 'update-call-activity-element-property',
+    CREATE_CALL_ACTIVITY_INPUT_PARAMETER: 'create-call-activity-input-parameter',
+    ADD_CREATED_CALL_ACTIVITY_INPUT_PARAMETER: 'add-created-call-activity-input-parameter',
+    EDIT_CALL_ACTIVITY_INPUT_PARAMETER: 'edit-call-activity-input-parameter',
+    UPDATE_EDITED_CALL_ACTIVITY_INPUT_PARAMETER: 'update-edited-call-activity-input-parameter',
+    REMOVE_CALL_ACTIVITY_INPUT_PARAMETER: 'remove-call-activity-input-parameter',
+    SAVE_CALL_ACTIVITY_INPUT_PARAMETER: 'save-call-activity-input-parameter',
+    CREATE_CALL_ACTIVITY_OUTPUT_PARAMETER: 'create-call-activity-output-parameter',
+    ADD_CREATED_CALL_ACTIVITY_OUTPUT_PARAMETER: 'add-created-call-activity-output-parameter',
+    EDIT_CALL_ACTIVITY_OUTPUT_PARAMETER: 'edit-call-activity-output-parameter',
+    UPDATE_EDITED_CALL_ACTIVITY_OUTPUT_PARAMETER: 'update-edited-call-activity-output-parameter',
+    REMOVE_CALL_ACTIVITY_OUTPUT_PARAMETER: 'remove-call-activity-output-parameter',
+    SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER: 'save-call-activity-output-parameter',
 });
 
 
