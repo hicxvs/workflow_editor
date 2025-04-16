@@ -90,7 +90,7 @@ const inputParameterHandler = {
     },
     remove: (fieldItem) => {
         const indexToRemove = fieldItem.index;
-        copyInputParamenters.value.values = copyInputParamenters.value.values.filter((_, index) => index !== indexToRemove);
+        copyInputParamenters.value = copyInputParamenters.value.filter((_, index) => index !== indexToRemove);
         save(ACTIVITY_TYPES.IN);
     }
 };
@@ -110,7 +110,7 @@ const outputParameterHandler = {
     },
     remove: (fieldItem) => {
         const indexToRemove = fieldItem.index;
-        copyOutputParamenters.value.values = copyOutputParamenters.value.values.filter((_, index) => index !== indexToRemove);
+        copyOutputParamenters.value = copyOutputParamenters.value.filter((_, index) => index !== indexToRemove);
         save(ACTIVITY_TYPES.OUT);
     }
 };  
