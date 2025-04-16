@@ -147,7 +147,8 @@ export function createWorkflowEditor(container) {
             });
 
             newExtensionElements.$parent = elementProperties;
-            extensionElements = newExtensionElements;            
+            extensionElements = newExtensionElements;
+            return;            
         }
        
         elementProperties.extensionElements = extensionElements;
@@ -419,6 +420,42 @@ export function createWorkflowEditor(container) {
         }           
     }
 
+    
+    function saveCallActivityInputParameter(inputParamenterToSave) {
+        saveCallActivityParameter(inputParamenterToSave, 'saveCallActivityInputParameter');
+    }  
+
+    function saveCallActivityOutputParameter(outputParamenterToSave) {
+        saveCallActivityParameter(outputParamenterToSave, 'saveCallActivityOutputParameter');
+    }
+
+    function saveCallActivityParameter(parameterToSave, callerFunctionName) {
+        if (!validatePropertyObject(parameterToSave)) {
+            return;
+        }
+    
+        try {
+            const element = getSelectedFlowElement(parameterToSave);
+            manageExtensionElements(element);
+    
+            const itemsCollection = element.extensionElements.values;
+            const type = parameterToSave.elementPropertyValue[0].$type.split(':')[1];
+            const untargetedItems = getUntargetedItems(itemsCollection, type);
+            const newParameters = createCallActivityParameters(element, parameterToSave.elementPropertyValue);
+            element.extensionElements.values = [...untargetedItems, ...newParameters];
+    
+        } catch (error) {
+            console.error(callerFunctionName, error);
+            throw new Error(callerFunctionName, error);
+        }
+    }
+
+    function createCallActivityParameters(element, callActivityParameters) {
+        
+        debugger;
+    }
+
+
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         updateEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
     }
@@ -649,6 +686,8 @@ export function createWorkflowEditor(container) {
         getDiagramMessages,
         getDiagramErrorMessages,
         saveDiagramMessages,
-        saveDiagramErrorMessages
+        saveDiagramErrorMessages,
+        saveCallActivityInputParameter,
+        saveCallActivityOutputParameter
     };
 }

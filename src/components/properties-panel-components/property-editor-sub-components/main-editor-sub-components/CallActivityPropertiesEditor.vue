@@ -65,7 +65,8 @@ const callActivityPropertiesLabels = {
 };
 
 const fieldKeys = {
-    calledElement: 'calledElement'
+    calledElement: 'calledElement',
+    extensionElements: 'extensionElements'
 };
 
 const inputAndOutputParametersHeaders = [
@@ -182,7 +183,24 @@ function updateCalledElement() {
 }
 
 function save(collectionTypeToSave) {
-    console.log('selectedCollection To Save::', collectionTypeToSave);
+    if(collectionTypeToSave === ACTIVITY_TYPES.IN) {
+        saveChanges(originalInputParamenters.value, copyInputParamenters.value);
+
+        EventBus.emit(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.extensionElements,
+            elementPropertyValue: originalInputParamenters.value
+        });
+        return;
+    }
+
+    saveChanges(originalOutputParamenters.value, copyOutputParamenters.value);
+
+    EventBus.emit(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.extensionElements,
+            elementPropertyValue: originalOutputParamenters.value
+        });
 }
 
 </script>

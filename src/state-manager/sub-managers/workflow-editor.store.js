@@ -71,7 +71,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_ERROR_MESSAGE, saveDiagramErrorMessages);
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_MESSAGES, getDiagramMessages);       
         EventBus.on(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES, getDiagramErrorMessages);
-        EventBus.on(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_PROPERTY, updateCatchEventElementProperty);       
+        EventBus.on(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_PROPERTY, updateCatchEventElementProperty);
+        EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, saveCallActivityInputParameter);     
+        EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);     
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -95,6 +97,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
         EventBus.off(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES);
         EventBus.off(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY);
+        EventBus.on(EVENT_TYPE.EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
+        EventBus.on(EVENT_TYPE.EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
     }
 
     async function getWorkflowJavaClasses() {
@@ -318,6 +322,16 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
+    function saveCallActivityInputParameter(inputParamenterToSave) {
+        currentModeler.value.saveCallActivityInputParameter(inputParamenterToSave);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function saveCallActivityOutputParameter(outputParamenterToSave) {
+        currentModeler.value.saveCallActivityOutputParameter(outputParamenterToSave);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
     function getDiagramMessages() {
         currentDiagramMessages.value = currentModeler.value.getDiagramMessages();
         EventBus.emit(EVENT_TYPE.WORKFLOW_MESSAGES_READY, currentDiagramMessages.value);
@@ -327,6 +341,8 @@ export function WorkflowEditorStore() {
         currentDiagramErrorMessages.value = currentModeler.value.getDiagramErrorMessages();
         EventBus.emit(EVENT_TYPE.WORKFLOW_ERROR_MESSAGES_READY, currentDiagramErrorMessages.value);
     }
+
+    
   
     return {
         currentModeler,
