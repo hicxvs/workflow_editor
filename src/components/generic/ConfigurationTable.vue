@@ -59,7 +59,7 @@ const props = defineProps({
     headers: {
         type: Array,
         required: false,
-        default: []
+        default: () => []
     },
     createNewItemHandler: {
         type: Function,

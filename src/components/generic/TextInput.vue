@@ -33,7 +33,7 @@ defineProps({
     rules: {
         type: Array,
         required: false,
-        default: []
+        default: () => []
     },
     clearHandler: {
         type: Function,

@@ -24,7 +24,7 @@ defineProps({
     radioOptionItems: {
         type: Array,
         required: false,
-        default: []
+        default: () => []
     },
     inline: {
         type: Boolean,

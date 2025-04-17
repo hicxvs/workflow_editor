@@ -7,7 +7,7 @@
             :items="itemsLabels"
             :multiple="props.multiple"
             v-model="model"
-            :menu.sync="menuOpen"
+            :menu="menuOpen"
             @update:modelValue="handleSelectItemClick"
             @update:menu="handleMenuClick"
             @update:focused="handleMenuFocusChange"
@@ -52,7 +52,7 @@ const props = defineProps({
     selectOptionItems: {
         type: Array,
         required: false,
-        default: []
+        default: () => []
     },
     selectItemClickHandler: {
         type: Function,
