@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <CallActivityParameterConfigurator />
     <ErrorMessageConfigurator />
     <MessageConfigurator />
     <ServiceTaskFieldConfigurator />
@@ -14,6 +15,7 @@
 </template>
 
 <script setup>
+import CallActivityParameterConfigurator from './components/modal-components/CallActivityParameterConfigurator.vue';
 import ErrorMessageConfigurator from './components/modal-components/ErrorMessageConfigurator.vue';
 import MessageConfigurator from './components/modal-components/MessageConfigurator.vue';
 import ServiceTaskFieldConfigurator from './components/modal-components/ServiceTaskFieldConfigurator.vue';

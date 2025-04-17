@@ -1,9 +1,12 @@
 <template>
     <div class="catch-event-properties-editor-container" data-testid="catch-event-properties-editor-container">
         <Select v-if="canDisplayMessageEventDefinitionType" :label="catchEventPropertiesLabels.messageRefence" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
-        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeDuration" :label="catchEventPropertiesLabels.timeDuration"  @input="updateTimeDuration" :clearHandler="updateTimeDuration"/>
-        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeDate" :label="catchEventPropertiesLabels.timeDate"  @input="updateTimeDate" :clearHandler="updateTimeDate"/>
-        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeCycle" :label="catchEventPropertiesLabels.timeCycle"  @input="updateTimeCycle" :clearHandler="updateTimeCycle"/>
+        
+        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeDuration" :label="catchEventPropertiesLabels.timeDuration" :placeholder="timerCatchEventPropertiesPlaceholder.timeDuration" :hint="timerCatchEventPropertiesHint.timeDuration" @input="updateTimeDuration" :clearHandler="updateTimeDuration"/>
+
+        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeDate" :label="catchEventPropertiesLabels.timeDate" :placeholder="timerCatchEventPropertiesPlaceholder.timeDate" :hint="timerCatchEventPropertiesHint.timeDate" @input="updateTimeDate" :clearHandler="updateTimeDate"/>
+
+        <TextInput v-if="canDisplayTimerEventDefinitionType" v-model="timeCycle" :label="catchEventPropertiesLabels.timeCycle" :placeholder="timerCatchEventPropertiesPlaceholder.timeCycle" :hint="timerCatchEventPropertiesHint.timeCycle" @input="updateTimeCycle" :clearHandler="updateTimeCycle"/>
     </div>
 </template>
 
@@ -35,6 +38,18 @@ const catchEventPropertiesLabels = {
     timeDuration: 'Time Duration',
     timeDate: 'Time Date',
     timeCycle: 'Time Cycle'
+};
+
+const timerCatchEventPropertiesPlaceholder = {
+    timeDuration: 'ISO Duration (e.g., PT1H for 1 hour)',
+    timeDate: 'ISO Date or Expression',
+    timeCycle: 'ISO Recurring Time (e.g., R/PT1H for every hour)'
+};
+
+const timerCatchEventPropertiesHint = {
+    timeDuration: 'Specify a duration using ISO 8601 format',
+    timeDate: 'Specify a fixed date/time or use an expression',
+    timeCycle: 'Specify a recurring time pattern'
 };
 
 const fieldKeys = {

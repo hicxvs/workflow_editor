@@ -3,7 +3,9 @@
         <v-text-field
             clearable
             :rules="rules"
-            :label="label" 
+            :label="label"
+            :placeholder="placeholder"
+            :hint="hint"
             v-model="model"
             @click:clear="clearHandler"
         />
@@ -17,6 +19,16 @@ defineProps({
         type: String,
         required: false,
         default: 'Default text input label'
+    },
+    placeholder: {
+        type: String,
+        required: false,
+        default: ''
+    },
+    hint: {
+        type: String,
+        required: false,
+        default: ''
     },
     rules: {
         type: Array,

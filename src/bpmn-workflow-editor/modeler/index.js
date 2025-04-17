@@ -147,7 +147,8 @@ export function createWorkflowEditor(container) {
             });
 
             newExtensionElements.$parent = elementProperties;
-            extensionElements = newExtensionElements;            
+            extensionElements = newExtensionElements;
+            return;            
         }
        
         elementProperties.extensionElements = extensionElements;
@@ -418,6 +419,54 @@ export function createWorkflowEditor(container) {
             throw new Error(local,error); 
         }           
     }
+    
+    function saveCallActivityInputParameter(inputParamenterToSave) {
+        saveCallActivityParameter(inputParamenterToSave);
+    }  
+
+    function saveCallActivityOutputParameter(outputParamenterToSave) {
+        saveCallActivityParameter(outputParamenterToSave);
+    }
+
+    function saveCallActivityParameter(parameterToSave) {
+        if (!validatePropertyObject(parameterToSave)) {
+            return;
+        }
+    
+        try {
+
+            const element = getSelectedFlowElement(parameterToSave);
+            manageExtensionElements(element);
+    
+            const itemsCollection = element.extensionElements.values;
+            const type = parameterToSave.elementPropertyValue[0].$type.split(':')[1];
+            const untargetedItems = getUntargetedItems(itemsCollection, type);
+            const newParameters = createCallActivityParameters(element, parameterToSave.elementPropertyValue);
+            element.extensionElements.values = [...untargetedItems, ...newParameters];
+    
+        } catch (error) {
+            const local = 'saveCallActivityParameter';
+            console.error(local, error);
+            throw new Error(local, error);
+        }
+    }
+
+    function createCallActivityParameters(element, callActivityParameters) {        
+        return callActivityParameters.map(callActivityParameter => {
+            const newCallActivityParameter = createCallActivityParameter(callActivityParameter);
+            newCallActivityParameter.$parent = element;
+            return newCallActivityParameter;
+        });
+    }
+
+    function createCallActivityParameter(callActivityParameter) {
+        return moddle.create(callActivityParameter.$type, {
+            source: callActivityParameter?.source || '',
+            sourceExpression: callActivityParameter?.sourceExpression || '',
+            target: callActivityParameter?.target || '',
+            targetExpression: callActivityParameter?.targetExpression || '',
+        });
+    }
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         updateEventElementReferenceProperty(boundaryReferencePropertyToUpdate);
@@ -649,6 +698,8 @@ export function createWorkflowEditor(container) {
         getDiagramMessages,
         getDiagramErrorMessages,
         saveDiagramMessages,
-        saveDiagramErrorMessages
+        saveDiagramErrorMessages,
+        saveCallActivityInputParameter,
+        saveCallActivityOutputParameter
     };
 }
