@@ -1,8 +1,12 @@
 <template>
     <div class="boundary-event-properties-editor-container" data-testid="boundary-event-properties-editor-container">
         <Checkbox v-if="canDisplayMessageEventDefinitionType" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
+        
         <TextInput v-if="canDisplayErrorEventDefinitionType" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
-        <Select v-if="canDisplayMessageEventDefinitionType && canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageRefence" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
+
+        <Select v-if="canDisplayMessageEventDefinitionType && canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageReference" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
+
+        <Select v-if="canDisplayErrorEventDefinitionType" :label="boundaryEventPropertiesLabels.errorReference" v-model="errorCodeReference" :selectOptionItems="workflowErrorMessageOptions" :selectItemClickHandler="updateErrorCodeMessageReference" />
     </div>
 </template>
 
@@ -12,7 +16,6 @@ import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
 
 import { EVENT_DEFINITION_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/eventDefinitionTypes';
-
 
 import Checkbox from '../../../generic/Checkbox.vue';
 import Select from '../../../generic/Select.vue';
@@ -33,17 +36,20 @@ const workflowErrorMessageOptions = ref(null);
 const cancelActivity = ref(null);
 const errorCode = ref(null);
 const messageReference = ref(null);
+const errorCodeReference = ref(null);
 
 const boundaryEventPropertiesLabels = {
     cancelActivity: 'Cancel Activity',
     errorCode: 'Error Code',
-    messageRefence: 'Message Ref'
+    messageReference: 'Message Reference',
+    errorReference: 'Error Code Reference'
 };
 
 const fieldKeys = {
     cancelActivity: 'cancelActivity',
     errorCode: 'errorCode',
-    messageRefence: 'messageRef'
+    messageReference: 'messageRef',
+    errorReference: 'errorRef'
 };
 
 onMounted(() => { 
@@ -64,6 +70,7 @@ watch(
     cancelActivity.value = model.value?.cancelActivity || false;
     errorCode.value = model.value?.errorCode || '';
     messageReference.value = model.value.eventDefinitions[0]?.messageRef?.name || null;
+    errorCodeReference.value = model.value.eventDefinitions[0]?.errorRef?.name || null;
 
     boundaryEventDefinitionType.value = ( boundaryEventDefinitions.value[0]?.$type ) ? boundaryEventDefinitions.value[0].$type : null;
     canDisplayMessageEventDefinitionType.value = (boundaryEventDefinitionType.value === EVENT_DEFINITION_TYPES.MESSAGE_EVENT_DEFINITION);
@@ -121,20 +128,26 @@ function updateErrorCode() {
     );
 }
 
+function updateErrorCodeMessageReference() {
+    updateReference(errorCodeReference, workflowErrorMessageOptions, fieldKeys.errorReference);
+}
+
 function updateMessageReference() {
-    if(!messageReference.value) {
+    updateReference(messageReference, workflowMessageOptions, fieldKeys.messageReference);
+}
+
+function updateReference(reference, options, fieldKey) {
+    if (!reference.value) {
         return;
     }
 
-    const workflowMessage = workflowMessageOptions.value.find(message => message.label === messageReference.value).value;
-   
-    EventBus.emit(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, 
-        {
-            elementId: model.value?.id,
-            elementProperty: fieldKeys.messageRefence,
-            elementPropertyValue: workflowMessage
-        }
-    );
+    const workflowPropertyValue = options.value.find(item => item.label === reference.value).value;
+
+    EventBus.emit(EVENT_TYPE.UPDATE_BOUNDARY_EVENT_ELEMENT_REFERENCE_PROPERTY, {
+        elementId: model.value?.id,
+        elementProperty: fieldKey,
+        elementPropertyValue: workflowPropertyValue
+    });
 }
 
 </script>

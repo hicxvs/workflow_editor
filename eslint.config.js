@@ -16,7 +16,10 @@ export default [
     rules: {
         "no-unused-vars": "warn",
         "no-undef": "warn",
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "vue/multi-word-component-names": "off",
+        "vue/require-valid-default-prop": "warn",
+        "no-prototype-builtins": "off"
     }
   }
 ];
