@@ -419,22 +419,22 @@ export function createWorkflowEditor(container) {
             throw new Error(local,error); 
         }           
     }
-
     
     function saveCallActivityInputParameter(inputParamenterToSave) {
-        saveCallActivityParameter(inputParamenterToSave, 'saveCallActivityInputParameter');
+        saveCallActivityParameter(inputParamenterToSave);
     }  
 
     function saveCallActivityOutputParameter(outputParamenterToSave) {
-        saveCallActivityParameter(outputParamenterToSave, 'saveCallActivityOutputParameter');
+        saveCallActivityParameter(outputParamenterToSave);
     }
 
-    function saveCallActivityParameter(parameterToSave, callerFunctionName) {
+    function saveCallActivityParameter(parameterToSave) {
         if (!validatePropertyObject(parameterToSave)) {
             return;
         }
     
         try {
+
             const element = getSelectedFlowElement(parameterToSave);
             manageExtensionElements(element);
     
@@ -445,16 +445,28 @@ export function createWorkflowEditor(container) {
             element.extensionElements.values = [...untargetedItems, ...newParameters];
     
         } catch (error) {
-            console.error(callerFunctionName, error);
-            throw new Error(callerFunctionName, error);
+            const local = 'saveCallActivityParameter';
+            console.error(local, error);
+            throw new Error(local, error);
         }
     }
 
-    function createCallActivityParameters(element, callActivityParameters) {
-        
-        debugger;
+    function createCallActivityParameters(element, callActivityParameters) {        
+        return callActivityParameters.map(callActivityParameter => {
+            const newCallActivityParameter = createCallActivityParameter(callActivityParameter);
+            newCallActivityParameter.$parent = element;
+            return newCallActivityParameter;
+        });
     }
 
+    function createCallActivityParameter(callActivityParameter) {
+        return moddle.create(callActivityParameter.$type, {
+            source: callActivityParameter?.source || '',
+            sourceExpression: callActivityParameter?.sourceExpression || '',
+            target: callActivityParameter?.target || '',
+            targetExpression: callActivityParameter?.targetExpression || '',
+        });
+    }
 
     function updateBoundaryEventElementReferenceProperty(boundaryReferencePropertyToUpdate) {
         updateEventElementReferenceProperty(boundaryReferencePropertyToUpdate);

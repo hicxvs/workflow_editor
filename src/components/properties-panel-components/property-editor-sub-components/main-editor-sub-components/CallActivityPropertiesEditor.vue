@@ -42,7 +42,6 @@ import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
 import { ACTIVITY_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/activityTypes';
 import { createDeepCopy } from '../../../../bpmn-workflow-editor/utils/create-deep-copy';
-import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
 
 import TextInput from '../../../generic/TextInput.vue';
 import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
@@ -184,23 +183,19 @@ function updateCalledElement() {
 
 function save(collectionTypeToSave) {
     if(collectionTypeToSave === ACTIVITY_TYPES.IN) {
-        saveChanges(originalInputParamenters.value, copyInputParamenters.value);
-
         EventBus.emit(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, {
             elementId: model.value?.id,
             elementProperty: fieldKeys.extensionElements,
-            elementPropertyValue: originalInputParamenters.value
+            elementPropertyValue: copyInputParamenters.value
         });
         return;
     }
 
-    saveChanges(originalOutputParamenters.value, copyOutputParamenters.value);
-
     EventBus.emit(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, {
-            elementId: model.value?.id,
-            elementProperty: fieldKeys.extensionElements,
-            elementPropertyValue: originalOutputParamenters.value
-        });
+        elementId: model.value?.id,
+        elementProperty: fieldKeys.extensionElements,
+        elementPropertyValue: copyOutputParamenters.value
+    });
 }
 
 </script>

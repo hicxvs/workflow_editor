@@ -97,8 +97,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_WORKFLOW_MESSAGES);
         EventBus.off(EVENT_TYPE.GET_WORKFLOW_ERROR_MESSAGES);
         EventBus.off(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY);
-        EventBus.on(EVENT_TYPE.EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
-        EventBus.on(EVENT_TYPE.EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
+        EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
+        EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
     }
 
     async function getWorkflowJavaClasses() {
