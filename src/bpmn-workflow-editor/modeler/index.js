@@ -489,21 +489,26 @@ export function createWorkflowEditor(container) {
                 console.error('Element not found!');
                 return;
             }
-        
-            const messages = getDiagramMessages();
-        
-            if (!messages || !messages.length) {
+
+            const getDiagramReferenceItems = {
+                errorRef: getDiagramErrorMessages,
+                messageRef: getDiagramMessages
+            };
+
+            const diagramRefenceItems = getDiagramReferenceItems[referencePropertyToUpdate.elementProperty]();
+
+            if (!diagramRefenceItems || !diagramRefenceItems.length) {
                 return;
             }
-        
-            const selectedMessage = messages.find(message => message.id === referencePropertyToUpdate.elementPropertyValue);
-        
+    
+            const selectedMessage = diagramRefenceItems.find(item => item.id === referencePropertyToUpdate.elementPropertyValue);
+    
             if (!selectedMessage) {
                 return;
             }
-        
-            element.eventDefinitions[0][referencePropertyToUpdate.elementProperty] = selectedMessage;
 
+            element.eventDefinitions[0][referencePropertyToUpdate.elementProperty] = selectedMessage;
+    
         } catch(error) {
             const local = 'updateEventElementReferenceProperty';
             console.error(local,error);

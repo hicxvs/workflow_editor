@@ -56,7 +56,7 @@ export function modelerEventsHandler(modeler) {
     
         errorRefs.forEach(errorRef => {
             if (!findElement("error", { id: errorRef })) {
-                const newError = createElementNS("error", { id: errorRef, name: `Generated Error - ${errorRef}` });
+                const newError = createElementNS("error", { id: errorRef, name: errorRef });
                 definitionsElement.appendChild(newError);
             }
         });
@@ -68,7 +68,7 @@ export function modelerEventsHandler(modeler) {
     
         messageRefs.forEach(messageRef => {
             if (!findElement("message", { id: messageRef })) {
-                const newMessage = createElementNS("message", { id: messageRef, name: `Generated Message - ${messageRef}` });
+                const newMessage = createElementNS("message", { id: messageRef, name: messageRef });
                 definitionsElement.appendChild(newMessage);
             }
         });
