@@ -81,6 +81,12 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_EDITED_CALL_ACTIVITY_OUTPUT_PARAMETER: 'update-edited-call-activity-output-parameter',
     REMOVE_CALL_ACTIVITY_OUTPUT_PARAMETER: 'remove-call-activity-output-parameter',
     SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER: 'save-call-activity-output-parameter',
+    CREATE_FORM_VALUE: 'create-form-value',
+    ADD_CREATED_FORM_VALUE: 'add-created-form-value',
+    EDIT_FORM_VALUE: 'edit-form-value',
+    UPDATE_EDITED_FORM_VALUE: 'update-edited-form-value',
+    REMOVE_FORM_VALUE: 'remove-form-value',
+    SAVE_FORM_VALUE: 'save-form-value'
 });
 
 

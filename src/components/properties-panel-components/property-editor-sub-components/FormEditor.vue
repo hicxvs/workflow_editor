@@ -111,6 +111,7 @@ watch(
   () => model, 
   () => {
     formProperties.value = getFormProperties(FormPropertyType);
+    debugger;
   },
   { immediate:true, deep: true }
 );

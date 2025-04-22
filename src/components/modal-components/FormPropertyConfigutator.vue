@@ -23,7 +23,22 @@
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.required" :label="formPropertiesLabels.required" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.readable" :label="formPropertiesLabels.readable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.writable" :label="formPropertiesLabels.writable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
-                <TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/>
+                <!--<TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/> -->
+
+                <ConfigurationTable
+                    :title="formPropertiesLabels.formValue"
+                    :headers="formValueTableHeaders"
+                    v-model="formValue"
+                    :createNewItemHandler="formValueHandler.create"
+                    :editItemHandler="formValueHandler.edit"
+                    :removeItemHandler="formValueHandler.remove"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item?.id }}</td>
+                        <td>{{ item?.name }}</td>
+                    </template>
+                </ConfigurationTable>
+
             </template>
         </Modal>
     </div>
@@ -41,6 +56,7 @@ import { getItemNamesAsString } from '../../bpmn-workflow-editor/utils/get-item-
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
 import TextInput from '../generic/TextInput.vue';
+import ConfigurationTable from '../generic/ConfigurationTable.vue';
 
 const showButton = ref(true);
 const isClearable = ref(false);
@@ -75,6 +91,31 @@ const formPropertiesLabels = {
     readable: 'Readable',        
     writable: 'Writable',        
     formValue: 'Form value'
+};
+
+const formValueTableHeaders = [
+    'Id', 
+    'Name'
+];
+
+const formValueHandler = {
+    create: () => {
+        EventBus.emit(EVENT_TYPE.CREATE_FORM_VALUE, {
+            type: '',
+            field: null
+        });
+    },
+    edit: (fieldItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_FORM_VALUE,  {
+            type: '',
+            field: fieldItem.item
+        });
+    },
+    remove: (fieldItem) => {
+        const indexToRemove = fieldItem.index;
+        formPropertyCopy.value.formProperty.formValue = formPropertyCopy.value.formProperty.formValue.filter((_, index) => index !== indexToRemove);
+        formValue.value = formPropertyCopy.value.formProperty.formValue;
+    }
 };
 
 
@@ -112,7 +153,7 @@ function initializeFormProperty(formProperty) {
     
     originalFormProperty.value = formProperty;
     formPropertyCopy.value = createDeepCopy(formProperty);
-    formValue.value = getItemNamesAsString(formPropertyCopy.value.formProperty?.formValue) || '';
+    formValue.value = formPropertyCopy.value.formProperty?.formValue || []; //getItemNamesAsString(formPropertyCopy.value.formProperty?.formValue) || '';
 }
 
 function generateFormProperty(formProperty) {

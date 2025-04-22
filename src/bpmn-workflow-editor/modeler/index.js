@@ -160,7 +160,11 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        const itemsCollection = element.extensionElements.values;
+        if(!element.extensionElements) {
+            return;
+        }
+
+        const itemsCollection = element.extensionElements?.values;
         const untargetedItems = getUntargetedItems(itemsCollection, formProperties[0].type);
         const newFormProperties = createNewFormProperties(element, formProperties); 
         element.extensionElements.values = [...untargetedItems, ...newFormProperties];     
