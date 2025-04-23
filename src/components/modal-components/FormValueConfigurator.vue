@@ -102,7 +102,6 @@ function save() {
         return;
     }
 
-    EventBus.emit(EVENT_TYPE.UPDATE_EDITED_FORM_VALUE, originalFormValue.value);
     showModal.value = false;   
 }
 

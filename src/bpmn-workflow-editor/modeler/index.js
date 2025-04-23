@@ -204,7 +204,12 @@ export function createWorkflowEditor(container) {
         }
 
         return formValuesCollection.map(formValue => {
-            const newFormValue = moddle.create(`${formValue.$type}`, {
+
+            const formValueType = formValue.$type === 'activiti:Value' 
+            ? formValue.$type.split(':')[1] 
+            : formValue.$type;
+
+            const newFormValue = moddle.create(`activiti:${formValueType}`, {
                 id: formValue.id || '',
                 name: formValue.name || ''
             });
