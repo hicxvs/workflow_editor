@@ -4,6 +4,7 @@
     <ErrorMessageConfigurator />
     <MessageConfigurator />
     <ServiceTaskFieldConfigurator />
+    <FormValueConfigurator />
     <FormPropertyConfigutator />
     <ListenerFieldConfigurator />
     <ListenerConfigurator />
@@ -19,6 +20,7 @@ import CallActivityParameterConfigurator from './components/modal-components/Cal
 import ErrorMessageConfigurator from './components/modal-components/ErrorMessageConfigurator.vue';
 import MessageConfigurator from './components/modal-components/MessageConfigurator.vue';
 import ServiceTaskFieldConfigurator from './components/modal-components/ServiceTaskFieldConfigurator.vue';
+import FormValueConfigurator from './components/modal-components/FormValueConfigurator.vue';
 import FormPropertyConfigutator from './components/modal-components/FormPropertyConfigutator.vue';
 import ListenerFieldConfigurator from './components/modal-components/ListenerFieldConfigurator.vue';
 import ListenerConfigurator from './components/modal-components/ListenerConfigurator.vue';

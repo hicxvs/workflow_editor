@@ -1,3 +1,5 @@
+export const ValueType = 'Value';
+
 export default {
     name: 'Value',
     superClass: ['Element'],

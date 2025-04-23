@@ -28,7 +28,7 @@ const inputTaskPropertiesLabels = {
     assignee: "Assignee",
     candidateUsers: "Candidate Users ( comma separated )",
     candidateGroups: "Candidate Groups ( comma separated )",
-    dueDate: "Due Date",
+    dueDate: "Due Date ( variable )",
     priority: "Priority"
 };
 

@@ -160,7 +160,11 @@ export function createWorkflowEditor(container) {
             return;
         }
 
-        const itemsCollection = element.extensionElements.values;
+        if(!element.extensionElements) {
+            return;
+        }
+
+        const itemsCollection = element.extensionElements?.values;
         const untargetedItems = getUntargetedItems(itemsCollection, formProperties[0].type);
         const newFormProperties = createNewFormProperties(element, formProperties); 
         element.extensionElements.values = [...untargetedItems, ...newFormProperties];     
@@ -200,7 +204,12 @@ export function createWorkflowEditor(container) {
         }
 
         return formValuesCollection.map(formValue => {
-            const newFormValue = moddle.create(`${formValue.$type}`, {
+
+            const formValueType = formValue.$type === 'activiti:Value' 
+            ? formValue.$type.split(':')[1] 
+            : formValue.$type;
+
+            const newFormValue = moddle.create(`activiti:${formValueType}`, {
                 id: formValue.id || '',
                 name: formValue.name || ''
             });

@@ -23,7 +23,22 @@
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.required" :label="formPropertiesLabels.required" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.readable" :label="formPropertiesLabels.readable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.writable" :label="formPropertiesLabels.writable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
-                <TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/>
+                <!--<TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/> -->
+
+                <ConfigurationTable
+                    :title="formPropertiesLabels.formValue"
+                    :headers="formValueTableHeaders"
+                    v-model="formValue"
+                    :createNewItemHandler="formValueHandler.create"
+                    :editItemHandler="formValueHandler.edit"
+                    :removeItemHandler="formValueHandler.remove"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item?.id }}</td>
+                        <td>{{ item?.name }}</td>
+                    </template>
+                </ConfigurationTable>
+
             </template>
         </Modal>
     </div>
@@ -34,13 +49,14 @@ import {ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { OPERATION_TYPE } from '../../bpmn-workflow-editor/modeler/operationTypes';
+import { ValueType } from '../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/value';
 import { createDeepCopy } from '../../bpmn-workflow-editor/utils/create-deep-copy';
 import { saveChanges } from '../../bpmn-workflow-editor/utils/save-changes';
-import { getItemNamesAsString } from '../../bpmn-workflow-editor/utils/get-item-names-as-string';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
 import TextInput from '../generic/TextInput.vue';
+import ConfigurationTable from '../generic/ConfigurationTable.vue';
 
 const showButton = ref(true);
 const isClearable = ref(false);
@@ -77,6 +93,29 @@ const formPropertiesLabels = {
     formValue: 'Form value'
 };
 
+const formValueTableHeaders = [
+    'Id', 
+    'Name'
+];
+
+const formValueHandler = {
+    create: () => {
+        EventBus.emit(EVENT_TYPE.CREATE_FORM_VALUE, {
+            type: ValueType,
+            field: null
+        });
+    },
+    edit: (fieldItem) => {
+        EventBus.emit(EVENT_TYPE.EDIT_FORM_VALUE,  {
+            type: ValueType,
+            field: fieldItem.item
+        });
+    },
+    remove: (fieldItem) => {
+        const indexToRemove = fieldItem.index;
+        formValue.value = formValue.value.filter((_, index) => index !== indexToRemove);
+    }
+};
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.CREATE_FORM_PROPERTY, (formProperty) => {
@@ -92,11 +131,17 @@ onMounted(() => {
         initializeFormProperty(formProperty);
         showModal.value = true;
     });
+
+    EventBus.on(EVENT_TYPE.ADD_CREATED_FORM_VALUE, (newformValue) => {
+        formValue.value.push(newformValue);
+    });
+
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.CREATE_FORM_PROPERTY);
     EventBus.off(EVENT_TYPE.EDIT_FORM_PROPERTY);
+    EventBus.off(EVENT_TYPE.ADD_CREATED_FORM_VALUE);
 });
 
 function clearFormProperties() {
@@ -112,7 +157,7 @@ function initializeFormProperty(formProperty) {
     
     originalFormProperty.value = formProperty;
     formPropertyCopy.value = createDeepCopy(formProperty);
-    formValue.value = getItemNamesAsString(formPropertyCopy.value.formProperty?.formValue) || '';
+    formValue.value = formPropertyCopy.value.formProperty?.formValue || [];
 }
 
 function generateFormProperty(formProperty) {
@@ -134,18 +179,8 @@ function generateFormProperty(formProperty) {
     };
 }
 
-function updatesFormValue() {
-    formPropertyCopy.value.formProperty.formValue = generateActivitiValueCollection(formValue.value);
-}
-
-function generateActivitiValueCollection(input) {
-    const items = input.split(',').map(item => item.trim());
-    const collection = items.filter(item => item !== "").map((name, index) => ({
-        $type: 'activiti:Value',
-        id: `check${index + 1}`,
-        name: name
-    }));
-    return collection;
+function updateFormValue() {
+    formPropertyCopy.value.formProperty.formValue = formValue.value;
 }
 
 function save() {
@@ -153,6 +188,7 @@ function save() {
         return;
     }
 
+    updateFormValue();
     saveChanges(originalFormProperty.value.formProperty, formPropertyCopy.value.formProperty);
 
     if(requestedOperation.value === OPERATION_TYPE.CREATE) {
