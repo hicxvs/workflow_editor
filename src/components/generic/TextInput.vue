@@ -6,6 +6,7 @@
             :label="label"
             :placeholder="placeholder"
             :hint="hint"
+            :type="type"
             v-model="model"
             @click:clear="clearHandler"
         />
@@ -24,6 +25,11 @@ defineProps({
         type: String,
         required: false,
         default: ''
+    },
+    type: {
+        type: String,
+        required: false,
+        default: 'text'
     },
     hint: {
         type: String,

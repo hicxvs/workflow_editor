@@ -23,8 +23,7 @@
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.required" :label="formPropertiesLabels.required" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.readable" :label="formPropertiesLabels.readable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
                 <Select v-if="formPropertyCopy" v-model="formPropertyCopy.formProperty.writable" :label="formPropertiesLabels.writable" :selectOptionItems="formPropertySelectOptions" :clearable="isClearable" />
-                <!--<TextInput v-if="formPropertyCopy" v-model="formValue" :label="formPropertiesLabels.formValue"  @input="updatesFormValue" :clearHandler="updatesFormValue"/> -->
-
+                
                 <ConfigurationTable
                     :title="formPropertiesLabels.formValue"
                     :headers="formValueTableHeaders"

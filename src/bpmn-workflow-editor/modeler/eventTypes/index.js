@@ -85,7 +85,8 @@ export const EVENT_TYPE = Object.freeze({
     ADD_CREATED_FORM_VALUE: 'add-created-form-value',
     EDIT_FORM_VALUE: 'edit-form-value',
     REMOVE_FORM_VALUE: 'remove-form-value',
-    SAVE_FORM_VALUE: 'save-form-value'
+    SAVE_FORM_VALUE: 'save-form-value',
+    UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property'
 });
 
 
