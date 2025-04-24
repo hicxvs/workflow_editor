@@ -39,7 +39,9 @@ const fieldKeys = {
 watch(
   () => model, 
   () => {
+
     if(!model.value?.documentation) {
+        documentationText.value = '';
         return;
     }
 
