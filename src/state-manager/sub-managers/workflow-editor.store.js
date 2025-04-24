@@ -47,6 +47,7 @@ export function WorkflowEditorStore() {
     }
 
     function registerWorkflowEditorEventHandlers() {
+        EventBus.on(EVENT_TYPE.CREATE_NEW_DIAGRAM, createNewDiagram);
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, updateElement);    
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
@@ -78,6 +79,7 @@ export function WorkflowEditorStore() {
     }
 
     function unregisterWorkflowEditorEventHandlers() {
+        EventBus.off(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
@@ -101,6 +103,11 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
         EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);  
+    }
+
+    async function createNewDiagram() {
+        clearWorkflowEditor();
+        await importAndProcessDiagram(defaultDiagram);
     }
 
     async function getWorkflowJavaClasses() {

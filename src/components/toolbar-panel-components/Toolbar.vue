@@ -3,6 +3,7 @@
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
                 <v-toolbar-items>
+                    <v-btn flat @click="buttonClickHandlers.createNewDiagram">{{ buttonLabels.createNewDiagram }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.loadDiagramFromFile">{{ buttonLabels.loadDiagramFromFile }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.loadDiagramsFromSystem">{{ buttonLabels.loadDiagramsFromSystem }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.saveDiagram">{{ buttonLabels.saveDiagram }}</v-btn>
@@ -35,6 +36,7 @@ import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 
 const buttonLabels = {
+    createNewDiagram: "Create New Diagram",
     loadDiagramFromFile: "Load Diagram from File",
     loadDiagramsFromSystem: "Load Diagrams from System",
     saveDiagram: "Save Diagram",
@@ -46,6 +48,9 @@ const apiKey = ref('');
 const apiKeyLabel = "API KEY";
 
 const buttonClickHandlers = {
+    createNewDiagram: () => {
+        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+    },
     loadDiagramFromFile: () => {
         const fileTypes = ".bpmn,.xml";
         EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
