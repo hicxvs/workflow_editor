@@ -10,6 +10,8 @@ import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workf
 import { ELEMENT_TYPES } from './modelerTypes/elementTypes';
 import { PROCESS_TYPES } from './modelerTypes/processTypes';
 import { EVENT_DEFINITION_TYPES } from './modelerTypes/eventDefinitionTypes';
+import { INSTANCE_TYPES } from './modelerTypes/instanceTypes';
+import { ACTIVITY_TYPES } from './modelerTypes/activityTypes';
 
 export function createWorkflowEditor(container) {
 
@@ -428,6 +430,44 @@ export function createWorkflowEditor(container) {
             throw new Error(local,error); 
         }           
     }
+
+    function updateMultiInstanceElementProperty(multiIntancePropertyToUpdate) {
+        if(!validatePropertyObject(multiIntancePropertyToUpdate)) {
+            return;
+        }
+
+        try {
+            const element = getSelectedFlowElement(multiIntancePropertyToUpdate);
+
+            if(!element) {
+                console.error('Element not found!');
+                return;
+            }
+
+            element.loopCharacteristics = null;
+            element.loopCharacteristics = createLoopCharacteristicsElement(element, multiIntancePropertyToUpdate.elementPropertyValue);
+
+        } catch(error) {
+            const local = 'updateMultiInstanceElementProperty';
+            console.error(local,error);
+            throw new Error(local,error); 
+        } 
+    }
+
+    function createLoopCharacteristicsElement(element, multiIntancePropertiesValues) {
+        const newLoopCharacteristicsElement = moddle.create(INSTANCE_TYPES.MULTI_INSTANCE_LOOP_CHARACTERISTICS, {
+            isSequential: multiIntancePropertiesValues.isSequential || false
+        });
+
+        newLoopCharacteristicsElement.$attrs[ACTIVITY_TYPES.COLLECTION] =  multiIntancePropertiesValues.collection || '';
+        newLoopCharacteristicsElement.$attrs[ACTIVITY_TYPES.ELEMENT_VARIABLE] =  multiIntancePropertiesValues.elementVariable || '';
+
+        newLoopCharacteristicsElement.completionCondition = createExpressionElement(newLoopCharacteristicsElement, multiIntancePropertiesValues.completionCondition || '');
+        newLoopCharacteristicsElement.loopCardinality = createExpressionElement(newLoopCharacteristicsElement, multiIntancePropertiesValues.loopCardinality || '');
+        newLoopCharacteristicsElement.$parent = element;
+
+        return newLoopCharacteristicsElement;
+    }
     
     function saveCallActivityInputParameter(inputParamenterToSave) {
         saveCallActivityParameter(inputParamenterToSave);
@@ -708,6 +748,7 @@ export function createWorkflowEditor(container) {
         updateBoundaryEventElementReferenceProperty,
         updateCatchEventElementProperty,
         updateCatchEventElementReferenceProperty,
+        updateMultiInstanceElementProperty,
         getDiagramRootElements,
         getDiagramMessages,
         getDiagramErrorMessages,

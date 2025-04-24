@@ -1,11 +1,7 @@
 <template>
     <div class="boundary-event-properties-editor-container" data-testid="boundary-event-properties-editor-container">
-        <Checkbox v-if="canDisplayMessageEventDefinitionType" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>
-        
-        <TextInput v-if="canDisplayErrorEventDefinitionType" v-model="errorCode" :label="boundaryEventPropertiesLabels.errorCode"  @input="updateErrorCode" :clearHandler="updateErrorCode"/>
-
+        <Checkbox v-if="canDisplayMessageEventDefinitionType" v-model="cancelActivity" :label="boundaryEventPropertiesLabels.cancelActivity" @update:modelValue="updateCancelActivity"/>        
         <Select v-if="canDisplayMessageEventDefinitionType && canDisplayWorkflowMessages" :label="boundaryEventPropertiesLabels.messageReference" v-model="messageReference" :selectOptionItems="workflowMessageOptions" :selectItemClickHandler="updateMessageReference" />
-
         <Select v-if="canDisplayErrorEventDefinitionType" :label="boundaryEventPropertiesLabels.errorReference" v-model="errorCodeReference" :selectOptionItems="workflowErrorMessageOptions" :selectItemClickHandler="updateErrorCodeMessageReference" />
     </div>
 </template>
@@ -19,7 +15,6 @@ import { EVENT_DEFINITION_TYPES } from '../../../../bpmn-workflow-editor/modeler
 
 import Checkbox from '../../../generic/Checkbox.vue';
 import Select from '../../../generic/Select.vue';
-import TextInput from '../../../generic/TextInput.vue';
 
 const model = defineModel();
 const boundaryEventDefinitions = ref(null);
@@ -34,20 +29,17 @@ const workflowMessageOptions = ref(null);
 const workflowErrorMessageOptions = ref(null);
 
 const cancelActivity = ref(null);
-const errorCode = ref(null);
 const messageReference = ref(null);
 const errorCodeReference = ref(null);
 
 const boundaryEventPropertiesLabels = {
     cancelActivity: 'Cancel Activity',
-    errorCode: 'Error Code',
     messageReference: 'Message Reference',
     errorReference: 'Error Code Reference'
 };
 
 const fieldKeys = {
     cancelActivity: 'cancelActivity',
-    errorCode: 'errorCode',
     messageReference: 'messageRef',
     errorReference: 'errorRef'
 };
@@ -68,7 +60,6 @@ watch(
     boundaryEventDefinitions.value = model.value.eventDefinitions;
 
     cancelActivity.value = model.value?.cancelActivity || false;
-    errorCode.value = model.value?.errorCode || '';
     messageReference.value = model.value.eventDefinitions[0]?.messageRef?.name || null;
     errorCodeReference.value = model.value.eventDefinitions[0]?.errorRef?.name || null;
 
@@ -114,16 +105,6 @@ function updateCancelActivity() {
             elementId: model.value?.id,
             elementProperty: fieldKeys.cancelActivity,
             elementPropertyValue: cancelActivity.value
-        }
-    );
-}
-
-function updateErrorCode() {
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
-        {
-            elementId: model.value?.id,
-            elementProperty: fieldKeys.errorCode,
-            elementPropertyValue: errorCode.value
         }
     );
 }

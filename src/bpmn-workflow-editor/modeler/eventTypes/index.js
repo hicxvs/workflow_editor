@@ -4,6 +4,7 @@ export const EVENT_TYPE = Object.freeze({
     GENERATE_XML_DIAGRAM: 'generate-xml-diagram',
     GENERATED_XML_DIAGRAM_READY: 'generated-xml-diagram-ready',
     CLEAR_GENERATED_XML_DIAGRAM: 'clear-generated-xml-diagram',
+    CREATE_NEW_DIAGRAM: 'create-new-diagram',
     CLEAR_DIAGRAM: 'clear-diagram',
     SAVE_DIAGRAM: 'save-diagram',
     LOAD_FILE: 'load-file',
@@ -85,7 +86,8 @@ export const EVENT_TYPE = Object.freeze({
     ADD_CREATED_FORM_VALUE: 'add-created-form-value',
     EDIT_FORM_VALUE: 'edit-form-value',
     REMOVE_FORM_VALUE: 'remove-form-value',
-    SAVE_FORM_VALUE: 'save-form-value'
+    SAVE_FORM_VALUE: 'save-form-value',
+    UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property'
 });
 
 
