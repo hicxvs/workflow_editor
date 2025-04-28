@@ -16,7 +16,7 @@ export default defineConfig({
       entry: './src/main.js', // Adjust this to your entry file path
       name: 'WorkflowEditorApp',       // Global variable for your library
       formats: ['umd'],       // Output format as UMD
-      fileName: (format) => `x-workflow-editor.${format}.js`,
+      fileName: (format) => `x-workflow-editor.${format}.min.js`,
     },
     minify: true,
     rollupOptions: {
