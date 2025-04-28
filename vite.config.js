@@ -18,13 +18,12 @@ export default defineConfig({
       formats: ['umd'],       // Output format as UMD
       fileName: (format) => `x-workflow-editor.${format}.js`,
     },
+    minify: true,
     rollupOptions: {
-      // Externalize dependencies that shouldn't be bundled
-      external: ['vue'],
+      // Do NOT externalize Vue
+      external: [],
       output: {
-        globals: {
-          vue: 'Vue', // Ensure Vue is available globally
-        },
+        globals: {},
         assetFileNames: (assetInfo) => {
           if (assetInfo.name.endsWith('.css')) {
             return 'x-workflow-editor.css'; // Custom name for CSS files
