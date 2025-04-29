@@ -13,20 +13,19 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      entry: './src/main.js', // Adjust this to your entry file path
-      name: 'WorkflowEditorApp',       // Global variable for your library
-      formats: ['umd'],       // Output format as UMD
+      entry: './src/main.js',
+      name: 'WorkflowEditorApp',
+      formats: ['umd'],
       fileName: (format) => `x-workflow-editor.${format}.min.js`,
     },
     minify: true,
     rollupOptions: {
-      // Do NOT externalize Vue
       external: [],
       output: {
         globals: {},
         assetFileNames: (assetInfo) => {
           if (assetInfo.name.endsWith('.css')) {
-            return 'x-workflow-editor.css'; // Custom name for CSS files
+            return 'x-workflow-editor.css';
           }
           return assetInfo.name;
         },
