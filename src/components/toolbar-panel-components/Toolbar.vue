@@ -7,6 +7,8 @@
                     <v-btn flat @click="buttonClickHandlers.loadDiagramFromFile">{{ buttonLabels.loadDiagramFromFile }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.loadDiagramsFromSystem">{{ buttonLabels.loadDiagramsFromSystem }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.saveDiagram">{{ buttonLabels.saveDiagram }}</v-btn>
+                    <v-btn flat @click="buttonClickHandlers.downloadDiagram">{{ buttonLabels.downloadDiagram }}</v-btn>
+                    <v-btn flat @click="buttonClickHandlers.loadDiagramDraftsFromSystem">{{ buttonLabels.loadDiagramDraftsFromSystem }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.logElements">{{ buttonLabels.logElements }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.gapAnalysis">{{ buttonLabels.gapAnalysis }}</v-btn>
                 </v-toolbar-items>
@@ -40,6 +42,8 @@ const buttonLabels = {
     loadDiagramFromFile: "Load Diagram from File",
     loadDiagramsFromSystem: "Load Diagrams from System",
     saveDiagram: "Save Diagram",
+    downloadDiagram: "Download Diagram",
+    loadDiagramDraftsFromSystem: "Load Diagrams Drafts",
     logElements: "Log Elements",
     gapAnalysis: "Gap Analysis",
 };
@@ -60,6 +64,12 @@ const buttonClickHandlers = {
     },
     saveDiagram: () => {
         EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
+    },
+    downloadDiagram: () => {
+        EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
+    },
+    loadDiagramDraftsFromSystem: () => {
+        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
     },
     logElements: () => {
         console.log("Log Elements");

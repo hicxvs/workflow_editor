@@ -5,7 +5,7 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
-import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
+import { downloadWorkflowDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
@@ -14,7 +14,7 @@ import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/g
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
-const { getAllSystemDiagrams, getSystemDiagramByName, isApiKeyValid } = SystemDiagrams();
+const { getAllSystemDiagrams, getSystemDiagramById, isApiKeyValid, saveDiagramToSystem, getAllDiagramDrafts, getSystemDiagramDraftByName, saveDiagramDraft } = SystemDiagrams();
 const { getAllJavaClasses } = ClassListing();
 
 export function WorkflowEditorStore() {
@@ -52,7 +52,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
+        EventBus.on(EVENT_TYPE.DOWNLOAD_DIAGRAM, downloadDiagram);
         EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM, loadAllDiagramsDraftsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
@@ -79,11 +81,14 @@ export function WorkflowEditorStore() {
     }
 
     function unregisterWorkflowEditorEventHandlers() {
+        EventBus.off(EVENT_TYPE.SAVE_DIAGRAM);
+        EventBus.off(EVENT_TYPE.DOWNLOAD_DIAGRAM);
         EventBus.off(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
@@ -166,6 +171,15 @@ export function WorkflowEditorStore() {
         await importAndProcessDiagram(fileData.content);
     }
 
+    async function loadAllDiagramsDraftsFromSystem() {
+        if(!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return;
+        }
+
+        const res =  await getAllDiagramDrafts(currentApiKey.value);
+    }
+
     async function loadAllDiagramsFromSystem() {
         if(!currentApiKey.value) {
             console.error("No API key provided. Please provide an API key to load a diagram from the system.");
@@ -182,12 +196,12 @@ export function WorkflowEditorStore() {
             return;
         }
 
-        if(!diagram || !diagram.name) {
+        if(!diagram || !diagram.id) {
             console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
             return;
         }
 
-       const loadedDiagramContent = await getSystemDiagramByName(currentApiKey.value, diagram.name);
+       const loadedDiagramContent = await getSystemDiagramById(currentApiKey.value, diagram.id);
        await importAndProcessDiagram(loadedDiagramContent);
        EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
     } 
@@ -258,9 +272,24 @@ export function WorkflowEditorStore() {
     }
 
     async function saveDiagram() { 
+        const diagramXMLContent = await currentModeler.value.saveDiagram();
+        const {xml} = diagramXMLContent;
+
+        await saveDiagramToSystem(currentApiKey.value, {
+            id: currentProcessDefinition.value.id,
+            content: xml
+        });
+
+        /*await saveDiagramDraft(currentApiKey.value, {
+            id: currentProcessDefinition.value.id,
+            content: xml
+        }); */
+    }
+
+    async function downloadDiagram() {
         const fileName = 'diagram';
         const diagramXMLContent = await currentModeler.value.saveDiagram();
-        downloadDiagram(fileName, diagramXMLContent);
+        downloadWorkflowDiagram(fileName, diagramXMLContent);
     }
 
     async function generateXMLDiagram() {

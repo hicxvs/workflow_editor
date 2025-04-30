@@ -25,9 +25,9 @@
                     <template #body-content v-if="filteredDiagrams && filteredDiagrams.length">
                         <tr                            
                             v-for="diagram in filteredDiagrams"
-                            :key="diagram.name"
+                            :key="diagram.id"
                         >
-                            <td>{{ diagram.name }}</td>
+                            <td>{{ diagram.id }}</td>
                             <td>{{ diagram.version }}</td>
                             <td class="text-right">
                                 <Button 
@@ -61,9 +61,9 @@ const showButton = ref(true);
 const showModal = ref(false);  
 
 const modalTitle = "Workflow Search";
-const inputLabel = "Search process name";
+const inputLabel = "Search process id";
 const tableHeader = {
-    processName: 'Process Name',
+    processName: 'Process Id',
     processVersion: 'Version',
     processAction: ''
 };
@@ -97,7 +97,7 @@ function filterDiagrams(event) {
     }
 
     const result = systemDiagrams.value.filter(item =>
-        item.name.toLowerCase().includes(filterText.toLowerCase())
+        item.id.toLowerCase().includes(filterText.toLowerCase())
     );
 
     filteredDiagrams.value = result.length > 0 ? result : null;
