@@ -1,0 +1,64 @@
+import ApiEngine from '../../api-engine';
+import { API_BASE_URL, API_RESOURCE_DRAFT_PUBLISH_ENDPOINT, API_RESOURCE_DRAFT_ENDPOINT
+} from '../../config';
+import { DiagramsApiUtils } from './diagrams-api-utils';
+
+export function DraftDiagrams() {
+
+    const apiEngine = new ApiEngine(`${API_BASE_URL}`);
+    const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
+
+    async function getAllDiagramDrafts(apiKey) {
+        try {
+            console.log('Not implemented by the backend yet!');
+            /*
+            checkApiKey(apiKey);
+            const requestPayload = generateRequestPayload(null);
+            const response = await apiEngine.post(`${API_RESOURCE_DRAFT_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
+            debugger;
+            
+            
+            return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
+                version: diagram?.version,
+                id: diagram?.key_
+            })) || null;
+            
+            
+            */            
+        } catch (error) {            
+            console.error('Error get all diagram drafts', error);
+            throw error;
+        }
+    }
+
+    async function saveDiagramDraft(apiKey, diagramXML) {
+        try {            
+            checkApiKey(apiKey);
+            const {id, content} = diagramXML;
+            const isXMLContent = true;
+            const response = await apiEngine.post(`${API_RESOURCE_DRAFT_PUBLISH_ENDPOINT}`, content, getRequestHeaders(apiKey, isXMLContent));
+            return atob(response?.data?.result?.content);
+        } catch (error) {
+            console.error('Error get system diagram draft by name', error);
+            throw error;
+        }
+    }
+
+    async function getSystemDiagramDraftByName(apiKey, diagramXML) {
+        try {            
+            checkApiKey(apiKey);
+            const {id} = diagramXML;
+            const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
+            return atob(response?.data?.result?.content);
+        } catch (error) {
+            console.error('Error get system diagram draft by name', error);
+            throw error;
+        }
+    }
+
+    return {
+        getAllDiagramDrafts,
+        saveDiagramDraft
+
+    };
+}

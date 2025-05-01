@@ -7,14 +7,18 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
 import { downloadWorkflowDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
+import { DiagramsApiUtils } from '../../bpmn-workflow-editor/diagrams/diagrams-api-utils';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
+import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
-const { getAllSystemDiagrams, getSystemDiagramById, isApiKeyValid, saveDiagramToSystem, getAllDiagramDrafts, getSystemDiagramDraftByName, saveDiagramDraft } = SystemDiagrams();
+const { isApiKeyValid } = DiagramsApiUtils();
+const { getAllSystemDiagrams, getSystemDiagramById, saveDiagramToSystem } = SystemDiagrams();
+const { getAllDiagramDrafts, saveDiagramDraft } = DraftDiagrams();
 const { getAllJavaClasses } = ClassListing();
 
 export function WorkflowEditorStore() {
