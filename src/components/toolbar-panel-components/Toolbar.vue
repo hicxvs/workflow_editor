@@ -9,6 +9,7 @@
                     <v-btn flat @click="buttonClickHandlers.saveDiagram">{{ buttonLabels.saveDiagram }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.downloadDiagram">{{ buttonLabels.downloadDiagram }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.loadDiagramDraftsFromSystem">{{ buttonLabels.loadDiagramDraftsFromSystem }}</v-btn>
+                    <v-btn flat @click="buttonClickHandlers.saveDiagramDraft">{{ buttonLabels.saveDiagramDraft }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.logElements">{{ buttonLabels.logElements }}</v-btn>
                     <v-btn flat @click="buttonClickHandlers.gapAnalysis">{{ buttonLabels.gapAnalysis }}</v-btn>
                 </v-toolbar-items>
@@ -44,6 +45,7 @@ const buttonLabels = {
     saveDiagram: "Save Diagram",
     downloadDiagram: "Download Diagram",
     loadDiagramDraftsFromSystem: "Load Diagrams Drafts",
+    saveDiagramDraft: "Save Diagram Draft",
     logElements: "Log Elements",
     gapAnalysis: "Gap Analysis",
 };
@@ -70,6 +72,9 @@ const buttonClickHandlers = {
     },
     loadDiagramDraftsFromSystem: () => {
         EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
+    },
+    saveDiagramDraft: () => {
+        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
     },
     logElements: () => {
         console.log("Log Elements");

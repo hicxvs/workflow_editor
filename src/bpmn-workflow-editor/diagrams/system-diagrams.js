@@ -10,7 +10,7 @@ export function SystemDiagrams() {
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
     const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
 
-    async function getAllSystemDiagrams(apiKey) {
+    async function getAllDiagramsFromSystem(apiKey) {
         try {
             checkApiKey(apiKey);
             const requestPayload = generateRequestPayload(null);
@@ -27,7 +27,7 @@ export function SystemDiagrams() {
         }
     }
 
-    async function getSystemDiagramById(apiKey, id) {
+    async function getDiagramByIdFromSystem(apiKey, id) {
         try {            
             checkApiKey(apiKey);
             const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
@@ -38,12 +38,11 @@ export function SystemDiagrams() {
         }
     }
 
-    async function saveDiagramToSystem(apiKey, diagramXML) {
+    async function saveDiagramToSystem(apiKey, diagramXMLContent) {
         try {
             checkApiKey(apiKey);
-            const {content} = diagramXML;
             const isXMLContent = true;
-            await apiEngine.post(`${API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT}`, content, getRequestHeaders(apiKey, isXMLContent));
+            await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, getRequestHeaders(apiKey, isXMLContent));
         } catch (error) {
             console.error('Error saving diagram to the System', error);
             throw error;
@@ -51,8 +50,8 @@ export function SystemDiagrams() {
     }
 
     return {
-        getAllSystemDiagrams,
-        getSystemDiagramById,
+        getAllDiagramsFromSystem,
+        getDiagramByIdFromSystem,
         saveDiagramToSystem
     };
 }

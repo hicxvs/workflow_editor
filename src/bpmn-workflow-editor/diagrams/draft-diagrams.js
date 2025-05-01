@@ -8,12 +8,13 @@ export function DraftDiagrams() {
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
     const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
 
-    async function getAllDiagramDrafts(apiKey) {
+    async function getAllDiagramsFromDraft(apiKey) {
         try {
             console.log('Not implemented by the backend yet!');
-            /*
+            
             checkApiKey(apiKey);
             const requestPayload = generateRequestPayload(null);
+            /*
             const response = await apiEngine.post(`${API_RESOURCE_DRAFT_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
             debugger;
             
@@ -21,8 +22,7 @@ export function DraftDiagrams() {
             return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
                 version: diagram?.version,
                 id: diagram?.key_
-            })) || null;
-            
+            })) || null;            
             
             */            
         } catch (error) {            
@@ -31,34 +31,31 @@ export function DraftDiagrams() {
         }
     }
 
-    async function saveDiagramDraft(apiKey, diagramXML) {
+    async function getDiagramByIdFromDraft(apiKey, id) {
         try {            
             checkApiKey(apiKey);
-            const {id, content} = diagramXML;
-            const isXMLContent = true;
-            const response = await apiEngine.post(`${API_RESOURCE_DRAFT_PUBLISH_ENDPOINT}`, content, getRequestHeaders(apiKey, isXMLContent));
+            const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
             return atob(response?.data?.result?.content);
         } catch (error) {
-            console.error('Error get system diagram draft by name', error);
+            console.error('Error get system diagram from draft', error);
             throw error;
         }
     }
 
-    async function getSystemDiagramDraftByName(apiKey, diagramXML) {
+    async function saveDiagramToDraft(apiKey, diagramXMLContent) {
         try {            
             checkApiKey(apiKey);
-            const {id} = diagramXML;
-            const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
-            return atob(response?.data?.result?.content);
+            const isXMLContent = true;
+            await apiEngine.post(`${API_RESOURCE_DRAFT_ENDPOINT}`, diagramXMLContent, getRequestHeaders(apiKey, isXMLContent));
         } catch (error) {
-            console.error('Error get system diagram draft by name', error);
+            console.error('Error save diagram to draft', error);
             throw error;
         }
     }
 
     return {
-        getAllDiagramDrafts,
-        saveDiagramDraft
-
+        getAllDiagramsFromDraft,
+        getDiagramByIdFromDraft,
+        saveDiagramToDraft
     };
 }
