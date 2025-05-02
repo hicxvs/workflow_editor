@@ -2,17 +2,10 @@
     <div class="toolbar-container" data-testid="toolbar-container">
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
-                <v-toolbar-items>
-                    <v-btn flat @click="buttonClickHandlers.createNewDiagram">{{ buttonLabels.createNewDiagram }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.loadDiagramFromFile">{{ buttonLabels.loadDiagramFromFile }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.loadDiagramsFromSystem">{{ buttonLabels.loadDiagramsFromSystem }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.saveDiagram">{{ buttonLabels.saveDiagram }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.downloadDiagram">{{ buttonLabels.downloadDiagram }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.loadDiagramDraftsFromSystem">{{ buttonLabels.loadDiagramDraftsFromSystem }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.saveDiagramDraft">{{ buttonLabels.saveDiagramDraft }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.logElements">{{ buttonLabels.logElements }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.gapAnalysis">{{ buttonLabels.gapAnalysis }}</v-btn>
-                </v-toolbar-items>
+                <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
+                <MenuButtonList :label="workflowMenuGroup.label" :items="workflowMenuGroup.items"/>
+                <MenuButtonList :label="extrasMenuGroup.label" :items="extrasMenuGroup.items"/>
+                
                 <div class="api-key-input-container" data-testid="api-key-input-container">
                     <v-text-field 
                         :label="apiKeyLabel"
@@ -37,51 +30,74 @@
 import { ref } from 'vue';
 import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
-
-const buttonLabels = {
-    createNewDiagram: "Create New Diagram",
-    loadDiagramFromFile: "Load Diagram from File",
-    loadDiagramsFromSystem: "Load Diagrams from System",
-    saveDiagram: "Save Diagram",
-    downloadDiagram: "Download Diagram",
-    loadDiagramDraftsFromSystem: "Load Diagrams Drafts",
-    saveDiagramDraft: "Save Diagram Draft",
-    logElements: "Log Elements",
-    gapAnalysis: "Gap Analysis",
-};
+import MenuButtonList from '../generic/MenuButtonList.vue';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
 
-const buttonClickHandlers = {
-    createNewDiagram: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
-    },
-    loadDiagramFromFile: () => {
-        const fileTypes = ".bpmn,.xml";
-        EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
-    },
-    loadDiagramsFromSystem: () => {
-        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
-    },
-    saveDiagram: () => {
-        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
-    },
-    downloadDiagram: () => {
-        EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
-    },
-    loadDiagramDraftsFromSystem: () => {
-        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
-    },
-    saveDiagramDraft: () => {
-        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
-    },
-    logElements: () => {
-        console.log("Log Elements");
-    },
-    gapAnalysis: () => {
-        console.log("Gap Analysis");
-    }
+const bpmnMenuGroup = {
+    label: 'BPMN MANAGEMENT',
+    items: [
+        {
+            label: 'Create New BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM)
+        },
+        {
+            label: 'Load BPMN From File',
+            handler: () => {
+                const fileTypes = ".bpmn,.xml";
+                EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
+            }
+        },
+        {
+            label: 'Load BPMN From System',
+            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
+        },
+        {
+            label: 'Save BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
+        },
+        {
+            label: 'Download BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
+        }      
+    ]
+};
+
+const workflowMenuGroup = {
+    label: 'WORKFLOW OPERATIONS',
+    items: [
+        {
+            label: 'Get draft(s) workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM)
+        },
+        {
+            label: 'Save draft workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT)
+        },
+        {
+            label: 'Delete draft workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT)
+        },
+        {
+            label: 'Deploy workflow/BPMN',
+            handler: () => {} //EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
+        }    
+    ]
+};
+
+const extrasMenuGroup = {
+    label: 'ANALYSIS & LOGGING',
+    items: [
+        {
+            label: 'Log elements',
+            handler: () => {} 
+        },
+        {
+            label: 'Gap analysis',
+            handler: () => {}
+        }    
+    ]
 };
 
 function update() {    

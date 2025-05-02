@@ -53,9 +53,20 @@ export function DraftDiagrams() {
         }
     }
 
+    async function deleteDiagramFromDraft(apiKey, id) {
+        try {            
+            checkApiKey(apiKey);
+            await apiEngine.delete(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
+        } catch (error) {
+            console.error('Error delete diagram to draft', error);
+            throw error;
+        }
+    }
+
     return {
         getAllDiagramsFromDraft,
         getDiagramByIdFromDraft,
-        saveDiagramToDraft
+        saveDiagramToDraft,
+        deleteDiagramFromDraft
     };
 }
