@@ -186,7 +186,7 @@ export function WorkflowEditorStore() {
             return;
         }
 
-       await getAllDiagramDrafts(currentApiKey.value);
+       await DraftService.getAllDiagramsFromDraft(currentApiKey.value);
     }
 
     async function loadAllDiagramsFromSystem() {

@@ -14,20 +14,16 @@ export function DraftDiagrams() {
             
             checkApiKey(apiKey);
             const requestPayload = generateRequestPayload(null);
-            /*
-            const response = await apiEngine.post(`${API_RESOURCE_DRAFT_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
-            debugger;
             
+            const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
             
             return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
                 version: diagram?.version,
                 id: diagram?.key_
-            })) || null;            
+            })) || null;         
             
-            */            
         } catch (error) {            
-            console.error('Error get all diagram drafts', error);
-            throw error;
+            console.error('Error get all diagram from drafts', error);
         }
     }
 
@@ -37,8 +33,7 @@ export function DraftDiagrams() {
             const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
             return atob(response?.data?.result?.content);
         } catch (error) {
-            console.error('Error get system diagram from draft', error);
-            throw error;
+            console.error('Error get diagram from draft', error);
         }
     }
 
@@ -49,7 +44,6 @@ export function DraftDiagrams() {
             await apiEngine.post(`${API_RESOURCE_DRAFT_ENDPOINT}`, diagramXMLContent, getRequestHeaders(apiKey, isXMLContent));
         } catch (error) {
             console.error('Error save diagram to draft', error);
-            throw error;
         }
     }
 
@@ -59,7 +53,6 @@ export function DraftDiagrams() {
             await apiEngine.delete(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
         } catch (error) {
             console.error('Error delete diagram to draft', error);
-            throw error;
         }
     }
 
