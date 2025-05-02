@@ -4,7 +4,7 @@
             <div class="toolbar-content">
                 <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
                 <MenuButtonList :label="workflowMenuGroup.label" :items="workflowMenuGroup.items"/>
-                <MenuButtonList :label="extrasMenuGroup.label" :items="extrasMenuGroup.items"/>
+                <MenuButtonList :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
                 
                 <div class="api-key-input-container" data-testid="api-key-input-container">
                     <v-text-field 
@@ -86,7 +86,7 @@ const workflowMenuGroup = {
     ]
 };
 
-const extrasMenuGroup = {
+const analisesAndLoginMenuGroup = {
     label: 'ANALYSIS & LOGGING',
     items: [
         {
