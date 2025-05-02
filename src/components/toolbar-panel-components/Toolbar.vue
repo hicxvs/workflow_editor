@@ -43,15 +43,15 @@ const bpmnMenuGroup = {
             handler: () => EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM)
         },
         {
+            label: 'Load BPMN From System',
+            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
+        },
+        {
             label: 'Load BPMN From File',
             handler: () => {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
             }
-        },
-        {
-            label: 'Load BPMN From System',
-            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
         },
         {
             label: 'Save BPMN',
@@ -60,7 +60,11 @@ const bpmnMenuGroup = {
         {
             label: 'Download BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
-        }      
+        },
+        {
+            label: 'Delete BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM)
+        },      
     ]
 };
 

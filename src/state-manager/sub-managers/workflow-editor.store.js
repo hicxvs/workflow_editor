@@ -54,6 +54,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, updateElement);    
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
+        EventBus.on(EVENT_TYPE.DELETE_DIAGRAM, deleteDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagramToSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM_DRAFT, saveDiagramToDraft);
         EventBus.on(EVENT_TYPE.DELETE_DIAGRAM_DRAFT, deleteDiagramFromDraft);
@@ -86,6 +87,7 @@ export function WorkflowEditorStore() {
     }
 
     function unregisterWorkflowEditorEventHandlers() {
+        EventBus.off(EVENT_TYPE.DELETE_DIAGRAM);
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM);
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
         EventBus.off(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
@@ -231,6 +233,11 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
+    }
+
+    async function deleteDiagramFromSystem() {
+        await SystemService.deleteDiagramByIdFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
+        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
     
     function saveListener(listeners) {

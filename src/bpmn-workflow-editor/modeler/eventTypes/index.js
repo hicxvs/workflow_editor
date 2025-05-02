@@ -7,6 +7,7 @@ export const EVENT_TYPE = Object.freeze({
     CREATE_NEW_DIAGRAM: 'create-new-diagram',
     CLEAR_DIAGRAM: 'clear-diagram',
     SAVE_DIAGRAM: 'save-diagram',
+    DELETE_DIAGRAM: 'delete-diagram',
     SAVE_DIAGRAM_DRAFT: 'save-diagram-draft',
     DELETE_DIAGRAM_DRAFT: 'delete-diagram-draft',
     DOWNLOAD_DIAGRAM: 'download-diagram',

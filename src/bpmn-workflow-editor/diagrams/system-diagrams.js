@@ -49,9 +49,20 @@ export function SystemDiagrams() {
         }
     }
 
+    async function deleteDiagramByIdFromSystem(apiKey, id) {
+        try {            
+            checkApiKey(apiKey);
+            await apiEngine.delete(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
+        } catch (error) {
+            console.error('Error deleting system diagram', error);
+            throw error;
+        }
+    }
+
     return {
         getAllDiagramsFromSystem,
         getDiagramByIdFromSystem,
-        saveDiagramToSystem
+        saveDiagramToSystem,
+        deleteDiagramByIdFromSystem
     };
 }
