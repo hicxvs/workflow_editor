@@ -1,7 +1,6 @@
 import ApiEngine from '../../api-engine';
 import { API_BASE_URL, API_RESOURCE_EVENTS_PUBLISH_ENDPOINT,
-         API_RESOURCE_DEFINITION_ENDPOINT,
-         API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT
+         API_RESOURCE_DEFINITION_ENDPOINT
     } from '../../config';
 import { DiagramsApiUtils } from './diagrams-api-utils';
 
@@ -49,20 +48,9 @@ export function SystemDiagrams() {
         }
     }
 
-    async function deleteDiagramByIdFromSystem(apiKey, id) {
-        try {            
-            checkApiKey(apiKey);
-            await apiEngine.delete(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
-        } catch (error) {
-            console.error('Error deleting system diagram', error);
-            throw error;
-        }
-    }
-
     return {
         getAllDiagramsFromSystem,
         getDiagramByIdFromSystem,
-        saveDiagramToSystem,
-        deleteDiagramByIdFromSystem
+        saveDiagramToSystem
     };
 }

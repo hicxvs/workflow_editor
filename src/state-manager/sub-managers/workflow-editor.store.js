@@ -54,7 +54,6 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, updateElement);    
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
-        EventBus.on(EVENT_TYPE.DELETE_DIAGRAM, deleteDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagramToSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM_DRAFT, saveDiagramToDraft);
         EventBus.on(EVENT_TYPE.DELETE_DIAGRAM_DRAFT, deleteDiagramFromDraft);
@@ -87,7 +86,6 @@ export function WorkflowEditorStore() {
     }
 
     function unregisterWorkflowEditorEventHandlers() {
-        EventBus.off(EVENT_TYPE.DELETE_DIAGRAM);
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM);
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
         EventBus.off(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
@@ -181,17 +179,15 @@ export function WorkflowEditorStore() {
     }
 
     async function loadAllDiagramsDraftsFromSystem() {
-        if(!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
-            return;
-        }
+       if (!apiKeyExists()) {
+           return;
+       }
 
        await DraftService.getAllDiagramsFromDraft(currentApiKey.value);
     }
 
     async function loadAllDiagramsFromSystem() {
-        if(!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+        if (!apiKeyExists()) {
             return;
         }
 
@@ -200,8 +196,7 @@ export function WorkflowEditorStore() {
     }
 
     async function loadDiagramFromSystem(diagram) {
-        if(!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+        if (!apiKeyExists()) {
             return;
         }
 
@@ -233,11 +228,6 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
-    }
-
-    async function deleteDiagramFromSystem() {
-        await SystemService.deleteDiagramByIdFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
-        EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
     
     function saveListener(listeners) {
@@ -304,7 +294,7 @@ export function WorkflowEditorStore() {
     }
 
     async function downloadDiagram() {
-        const fileName = 'diagram';
+        const fileName = `${currentProcessDefinition.value.id}_draft`;
         const diagramXMLContent = await currentModeler.value.saveDiagram();
         downloadWorkflowDiagram(fileName, diagramXMLContent);
     }
@@ -400,6 +390,14 @@ export function WorkflowEditorStore() {
     function updateMultiInstanceElementProperty(multiIntancePropertyToUpdate) {
         currentModeler.value.updateMultiInstanceElementProperty(multiIntancePropertyToUpdate);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
+    }
+
+    function apiKeyExists() {
+        if (!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return false;
+        }
+        return true;    
     }
 
     

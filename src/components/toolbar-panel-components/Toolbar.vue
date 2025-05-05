@@ -61,11 +61,7 @@ const bpmnMenuGroup = {
         {
             label: 'Download workflow/BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
-        },
-        /*{
-            label: 'Delete BPMN',
-            handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM)
-        }, */ //TODO: Remove this flow     
+        }
     ]
 };
 
