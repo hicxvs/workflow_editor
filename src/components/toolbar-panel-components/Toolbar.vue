@@ -3,7 +3,7 @@
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
                 <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
-                <MenuButtonList :label="workflowMenuGroup.label" :items="workflowMenuGroup.items"/>
+                <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items"/>
                 <MenuButtonList :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
                 
                 <div class="api-key-input-container" data-testid="api-key-input-container">
@@ -34,6 +34,7 @@ import MenuButtonList from '../generic/MenuButtonList.vue';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
+const showDraftMenuGroup = ref(false);
 
 const bpmnMenuGroup = {
     label: 'BPMN MANAGEMENT',
@@ -54,27 +55,23 @@ const bpmnMenuGroup = {
             }
         },
         {
-            label: 'Save BPMN',
-            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
+            label: 'Deploy workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM) 
         },
         {
-            label: 'Download BPMN',
+            label: 'Download workflow/BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
         },
-        {
+        /*{
             label: 'Delete BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM)
-        },      
+        }, */ //TODO: Remove this flow     
     ]
 };
 
-const workflowMenuGroup = {
-    label: 'WORKFLOW OPERATIONS',
+const draftMenuGroup = {
+    label: 'DRAFT OPERATIONS',
     items: [
-        {
-            label: 'Get draft(s) workflow/BPMN',
-            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM)
-        },
         {
             label: 'Save draft workflow/BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT)
@@ -83,10 +80,6 @@ const workflowMenuGroup = {
             label: 'Delete draft workflow/BPMN',
             handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT)
         },
-        {
-            label: 'Deploy workflow/BPMN',
-            handler: () => {} //EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
-        }    
     ]
 };
 
