@@ -1,19 +1,23 @@
 import ApiEngine from '../../api-engine';
-import { API_BASE_URL, API_RESOURCE_PUBLISH_ENDPOINT } from '../../config';
+import { API_BASE_URL, API_RESOURCE_EVENTS_PUBLISH_ENDPOINT,
+         API_RESOURCE_DEFINITION_ENDPOINT
+    } from '../../config';
+import { DiagramsApiUtils } from './diagrams-api-utils';
 
 export function SystemDiagrams() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
+    const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
 
-    async function getAllSystemDiagrams(apiKey) {
+    async function getAllDiagramsFromSystem(apiKey) {
         try {
             checkApiKey(apiKey);
             const requestPayload = generateRequestPayload(null);
-            const response = await apiEngine.post(`${API_RESOURCE_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
+            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
 
             return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
                 version: diagram?.version,
-                name: diagram?.key_
+                id: diagram?.key_
             })) || null;
             
         } catch (error) {            
@@ -22,57 +26,31 @@ export function SystemDiagrams() {
         }
     }
 
-    async function getSystemDiagramByName(apiKey, name) {
+    async function getDiagramByIdFromSystem(apiKey, id) {
         try {            
             checkApiKey(apiKey);
-            const requestPayload = generateRequestPayload(name);
-            const response = await apiEngine.post(`${API_RESOURCE_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
-            return atob(response?.data?.entity?.data?.bpmn_details?.content);
+            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
+            return atob(response?.data?.result?.content);
         } catch (error) {
-            console.error('Error loading system diagram by name', error);
+            console.error('Error loading system diagram by id', error);
             throw error;
         }
     }
 
-    function generateRequestPayload(diagramBPMNName) {
-        return {
-            "eClass": "/hicxapi/2#//Event",
-            "code": "STREAMBPMN.SYNC",
-            "name": "not needed",
-            "sourceSystem": "UI",
-            "_resolveDataItemsCodes": true,
-            "data": diagramBPMNName ? { "bpmn": diagramBPMNName } : {}
-        };
-    }
-
-    function getRequestHeaders(apiKey) {
-        return {
-            headers: {
-                'HICX-API-KEY': apiKey
-            }
-        };
-    }
-
-    function checkApiKey(apiKey) {
-        if(!apiKey?.trim()) {
-            console.error("API key is required");
-            return;
+    async function saveDiagramToSystem(apiKey, diagramXMLContent) {
+        try {
+            checkApiKey(apiKey);
+            const isXMLContent = true;
+            await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, getRequestHeaders(apiKey, isXMLContent));
+        } catch (error) {
+            console.error('Error saving diagram to the System', error);
+            throw error;
         }
-
-        if(!isApiKeyValid(apiKey)) {
-            console.error("API key is invalid");
-            return;
-        }        
-    }
-
-    function isApiKeyValid(apikey) {
-        const apiKeyPattern = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
-        return apiKeyPattern.test(apikey);
     }
 
     return {
-        getAllSystemDiagrams,
-        getSystemDiagramByName,
-        isApiKeyValid
+        getAllDiagramsFromSystem,
+        getDiagramByIdFromSystem,
+        saveDiagramToSystem
     };
 }

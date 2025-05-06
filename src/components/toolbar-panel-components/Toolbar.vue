@@ -2,14 +2,10 @@
     <div class="toolbar-container" data-testid="toolbar-container">
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
-                <v-toolbar-items>
-                    <v-btn flat @click="buttonClickHandlers.createNewDiagram">{{ buttonLabels.createNewDiagram }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.loadDiagramFromFile">{{ buttonLabels.loadDiagramFromFile }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.loadDiagramsFromSystem">{{ buttonLabels.loadDiagramsFromSystem }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.saveDiagram">{{ buttonLabels.saveDiagram }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.logElements">{{ buttonLabels.logElements }}</v-btn>
-                    <v-btn flat @click="buttonClickHandlers.gapAnalysis">{{ buttonLabels.gapAnalysis }}</v-btn>
-                </v-toolbar-items>
+                <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
+                <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items"/>
+                <MenuButtonList :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
+                
                 <div class="api-key-input-container" data-testid="api-key-input-container">
                     <v-text-field 
                         :label="apiKeyLabel"
@@ -34,39 +30,67 @@
 import { ref } from 'vue';
 import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
-
-const buttonLabels = {
-    createNewDiagram: "Create New Diagram",
-    loadDiagramFromFile: "Load Diagram from File",
-    loadDiagramsFromSystem: "Load Diagrams from System",
-    saveDiagram: "Save Diagram",
-    logElements: "Log Elements",
-    gapAnalysis: "Gap Analysis",
-};
+import MenuButtonList from '../generic/MenuButtonList.vue';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
+const showDraftMenuGroup = ref(false);
 
-const buttonClickHandlers = {
-    createNewDiagram: () => {
-        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
-    },
-    loadDiagramFromFile: () => {
-        const fileTypes = ".bpmn,.xml";
-        EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
-    },
-    loadDiagramsFromSystem: () => {
-        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
-    },
-    saveDiagram: () => {
-        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
-    },
-    logElements: () => {
-        console.log("Log Elements");
-    },
-    gapAnalysis: () => {
-        console.log("Gap Analysis");
-    }
+const bpmnMenuGroup = {
+    label: 'BPMN MANAGEMENT',
+    items: [
+        {
+            label: 'Create New BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM)
+        },
+        {
+            label: 'Load BPMN From System',
+            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
+        },
+        {
+            label: 'Load BPMN From File',
+            handler: () => {
+                const fileTypes = ".bpmn,.xml";
+                EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
+            }
+        },
+        {
+            label: 'Deploy workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM) 
+        },
+        {
+            label: 'Download workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
+        }
+    ]
+};
+
+const draftMenuGroup = {
+    label: 'DRAFT OPERATIONS',
+    items: [
+        {
+            label: 'Save draft workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT)
+        },
+        {
+            label: 'Delete draft workflow/BPMN',
+            handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT)
+        },
+    ]
+};
+
+const analisesAndLoginMenuGroup = {
+    label: 'ANALYSIS & LOGGING',
+    items: [
+        {
+            label: 'Log elements',
+            handler: () => {} 
+        },
+        {
+            label: 'Gap analysis',
+            handler: () => {}
+        }    
+    ]
 };
 
 function update() {    

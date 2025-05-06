@@ -2,20 +2,23 @@ import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
-
-
 import defaultDiagram from '../../bpmn-workflow-editor/diagrams/default-diagram';
-import { downloadDiagram } from '../../bpmn-workflow-editor/utils/downloader';
+import { downloadWorkflowDiagram } from '../../bpmn-workflow-editor/utils/downloader';
 import { Storage } from '../../bpmn-workflow-editor/utils/storage';
+import { DiagramsApiUtils } from '../../bpmn-workflow-editor/diagrams/diagrams-api-utils';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
+import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
-const { getAllSystemDiagrams, getSystemDiagramByName, isApiKeyValid } = SystemDiagrams();
+const { isApiKeyValid } = DiagramsApiUtils();
 const { getAllJavaClasses } = ClassListing();
+
+const SystemService = SystemDiagrams();
+const DraftService = DraftDiagrams();
 
 export function WorkflowEditorStore() {
 
@@ -51,8 +54,12 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_ELEMENT, updateElement);    
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
-        EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagram);
+        EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagramToSystem);
+        EventBus.on(EVENT_TYPE.SAVE_DIAGRAM_DRAFT, saveDiagramToDraft);
+        EventBus.on(EVENT_TYPE.DELETE_DIAGRAM_DRAFT, deleteDiagramFromDraft);
+        EventBus.on(EVENT_TYPE.DOWNLOAD_DIAGRAM, downloadDiagram);
         EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM, loadAllDiagramsDraftsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
@@ -79,11 +86,16 @@ export function WorkflowEditorStore() {
     }
 
     function unregisterWorkflowEditorEventHandlers() {
+        EventBus.off(EVENT_TYPE.SAVE_DIAGRAM);
+        EventBus.off(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
+        EventBus.off(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
+        EventBus.off(EVENT_TYPE.DOWNLOAD_DIAGRAM);
         EventBus.off(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         EventBus.off(EVENT_TYPE.UPDATE_ELEMENT);
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
@@ -166,28 +178,34 @@ export function WorkflowEditorStore() {
         await importAndProcessDiagram(fileData.content);
     }
 
+    async function loadAllDiagramsDraftsFromSystem() {
+       if (!apiKeyExists()) {
+           return;
+       }
+
+       await DraftService.getAllDiagramsFromDraft(currentApiKey.value);
+    }
+
     async function loadAllDiagramsFromSystem() {
-        if(!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+        if (!apiKeyExists()) {
             return;
         }
 
-        currentSystemDiagrams.value = await getAllSystemDiagrams(currentApiKey.value);
+        currentSystemDiagrams.value = await SystemService.getAllDiagramsFromSystem(currentApiKey.value);
         EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
     }
 
     async function loadDiagramFromSystem(diagram) {
-        if(!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+        if (!apiKeyExists()) {
             return;
         }
 
-        if(!diagram || !diagram.name) {
+        if(!diagram || !diagram.id) {
             console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
             return;
         }
 
-       const loadedDiagramContent = await getSystemDiagramByName(currentApiKey.value, diagram.name);
+       const loadedDiagramContent = await SystemService.getDiagramByIdFromSystem(currentApiKey.value, diagram.id);
        await importAndProcessDiagram(loadedDiagramContent);
        EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
     } 
@@ -257,10 +275,28 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
-    async function saveDiagram() { 
-        const fileName = 'diagram';
+    async function saveDiagram(saveFunction) {
         const diagramXMLContent = await currentModeler.value.saveDiagram();
-        downloadDiagram(fileName, diagramXMLContent);
+        const {xml} = diagramXMLContent;
+        await saveFunction(currentApiKey.value, xml);
+    }
+
+    async function saveDiagramToSystem() {         
+        await saveDiagram(SystemService.saveDiagramToSystem);
+    }
+
+    async function saveDiagramToDraft() {
+        await saveDiagram(DraftService.saveDiagramToDraft);
+    }
+
+    async function deleteDiagramFromDraft() {
+       await DraftService.deleteDiagramFromDraft( currentApiKey.value, currentProcessDefinition.value.id);
+    }
+
+    async function downloadDiagram() {
+        const fileName = `${currentProcessDefinition.value.id}_draft`;
+        const diagramXMLContent = await currentModeler.value.saveDiagram();
+        downloadWorkflowDiagram(fileName, diagramXMLContent);
     }
 
     async function generateXMLDiagram() {
@@ -356,6 +392,14 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
+    function apiKeyExists() {
+        if (!currentApiKey.value) {
+            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            return false;
+        }
+        return true;    
+    }
+
     
   
     return {
@@ -373,7 +417,6 @@ export function WorkflowEditorStore() {
         registerWorkflowEditorEventHandlers,
         unregisterWorkflowEditorEventHandlers,
         generateDiagram,
-        clearWorkflowEditor,
-        saveDiagram
+        clearWorkflowEditor
     };
 }   

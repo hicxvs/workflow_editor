@@ -1,4 +1,4 @@
-export function downloadDiagram(fileName, fileContent) {
+export function downloadWorkflowDiagram(fileName, fileContent) {
 
     try {
         const {xml} = fileContent;

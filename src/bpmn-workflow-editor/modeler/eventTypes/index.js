@@ -7,6 +7,10 @@ export const EVENT_TYPE = Object.freeze({
     CREATE_NEW_DIAGRAM: 'create-new-diagram',
     CLEAR_DIAGRAM: 'clear-diagram',
     SAVE_DIAGRAM: 'save-diagram',
+    REMOVE_DIAGRAM: 'remove-diagram',
+    SAVE_DIAGRAM_DRAFT: 'save-diagram-draft',
+    DELETE_DIAGRAM_DRAFT: 'delete-diagram-draft',
+    DOWNLOAD_DIAGRAM: 'download-diagram',
     LOAD_FILE: 'load-file',
     LOAD_FILE_SUCCESS: 'load-file-success',
     LOAD_FILE_ERROR: 'load-file-error',
@@ -15,6 +19,8 @@ export const EVENT_TYPE = Object.freeze({
     API_KEY_LOADED: 'api-key-loaded',
     API_KEY_SAVED: 'api-key-saved',
     API_KEY_CLEARED: 'api-key-cleared',
+    LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM: 'load-diagrams-drafts-from-system',
+    LOAD_DIAGRAM_DRAFT_FROM_SYSTEM: 'load-diagram-draft-from-system',
     LOAD_DIAGRAMS_FROM_SYSTEM: 'load-diagrams-from-system',
     LOAD_DIAGRAM_FROM_SYSTEM: 'load-diagram-from-system',
     SHOW_DIAGRAMS_FROM_SYSTEM: 'show-diagrams-from-system',
@@ -87,7 +93,8 @@ export const EVENT_TYPE = Object.freeze({
     EDIT_FORM_VALUE: 'edit-form-value',
     REMOVE_FORM_VALUE: 'remove-form-value',
     SAVE_FORM_VALUE: 'save-form-value',
-    UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property'
+    UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property',
+    LOAD_CODE_SCRIPT: 'load-code-script'
 });
 
 

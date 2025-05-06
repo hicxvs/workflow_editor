@@ -3,6 +3,7 @@
         <Select v-model="scriptTaskFormat" :label="scriptTaskPropertiesLabels.scriptFormat" :selectOptionItems="scriptFormatSelectOptions" :selectItemClickHandler="updatesScriptFormat"/>
         <Checkbox v-model="scriptTaskAutoStoreVariables" :label="scriptTaskPropertiesLabels.autoStoreVariables" @update:modelValue="updateAutoStoreVariables"/>
         <TextInput :label="scriptTaskPropertiesLabels.script" v-model="scriptTaskScript" @input="updateScript" :clearHandler="updateScript"/>
+        <Button :label="scriptTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.grey" @click="retrieveScript" class="retrive-script-button"/>
     </div>
 </template>
 
@@ -16,6 +17,7 @@ import ScriptTask from '../../../../bpmn-workflow-editor/activiti-model-definiti
 import Select from '../../../generic/Select.vue';
 import Checkbox from '../../../generic/Checkbox.vue';
 import TextInput from '../../../generic/TextInput.vue';
+import Button from '../../../generic/Button.vue';
 
 const model = defineModel();
 const scriptTaskFormat = ref(null);
@@ -25,7 +27,12 @@ const scriptTaskScript = ref (null);
 const scriptTaskPropertiesLabels = {
     scriptFormat: 'Script Format',
     autoStoreVariables: 'Auto Store Variables',
-    script: 'Script'
+    script: 'Script',
+    retrieveScript: 'Retrieve Script'
+};
+
+const buttonColors = {
+    grey: 'grey'
 };
 
 const scriptFormatSelectOptions = ref([
@@ -99,8 +106,18 @@ function updateScript() {
     );
 }
 
+function retrieveScript() {
+    EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+        codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions[0].value,
+        codeScript: scriptTaskScript.value
+    });
+}
+
 </script>
 
 <style scoped>
+.retrive-script-button {
+    margin-bottom: 16px;
+}
 
 </style>
