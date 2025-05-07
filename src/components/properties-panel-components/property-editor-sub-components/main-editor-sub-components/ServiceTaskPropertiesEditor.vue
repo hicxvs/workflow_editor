@@ -25,6 +25,9 @@
                 <td>{{ item?.name }}</td>
                 <td>{{ item?.string }}</td>
                 <td>{{ item?.expression }}</td>
+                <td>
+                    <Button v-if="isValidScriptId(item?.string)" :label="serviceTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.grey" @click="() => {retrieveScript(item?.string)}" />
+                </td>
             </template>
         </ConfigurationTable>
     </div>
@@ -40,9 +43,11 @@ import { ClassFilterer } from '../../../../bpmn-workflow-editor/utils/class-filt
 import { createDeepCopy } from '../../../../bpmn-workflow-editor/utils/create-deep-copy';
 import { FieldType } from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/field';
 import { ELEMENT_TYPES } from '../../../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
+import { isValidScriptId } from '../../../../bpmn-workflow-editor/utils/is-valid-script-id';
 
 import Select from '../../../generic/Select.vue';
 import TextInput from '../../../generic/TextInput.vue';
+import Button from '../../../generic/Button.vue';
 import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
 import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
 import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
@@ -77,13 +82,18 @@ const serviceTaskExpressionTypeSelectOptions = ref([
     }
 ]);
 
+const buttonColors = {
+    grey: 'grey'
+};
+
 const originalServiceTaskExtentionElements = ref(null);
 const serviceTaskExtentionElementsCopy = ref(null);
 
 const fieldsHeaders = [
     'Field name',
     'String value',
-    'Expression'
+    'Expression',
+    'Script'
 ];
 
 const serviceTaskPropertiesLabels = {
@@ -92,7 +102,8 @@ const serviceTaskPropertiesLabels = {
     class: 'Class Name',
     expression: 'Expression',
     delegateExpression: 'Delegate Expression',
-    fields: 'Fields'
+    fields: 'Fields',
+    retrieveScript: 'Retrieve Script'
 };
 
 const fieldKeys = {
@@ -193,6 +204,14 @@ function generateNewExtentionElements() {
     };
 }
 
+function retrieveScript(scriptId) {
+    if(!scriptId) {
+        return;
+    }
+
+    EventBus.emit(EVENT_TYPE.GET_SCRIPT_CODE, scriptId);
+}
+
 onMounted(() => {
     EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
 
@@ -250,6 +269,8 @@ function save() {
     EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value);
 }
 </script>
+
+
 
 <style scoped>
 
