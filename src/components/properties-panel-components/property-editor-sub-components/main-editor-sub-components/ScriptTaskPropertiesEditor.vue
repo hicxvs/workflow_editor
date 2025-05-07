@@ -18,6 +18,7 @@ import Select from '../../../generic/Select.vue';
 import Checkbox from '../../../generic/Checkbox.vue';
 import TextInput from '../../../generic/TextInput.vue';
 import Button from '../../../generic/Button.vue';
+import { extractScriptId } from '../../../../bpmn-workflow-editor/utils/extract-script-id';
 
 const model = defineModel();
 const scriptTaskFormat = ref(null);
@@ -107,10 +108,21 @@ function updateScript() {
 }
 
 function retrieveScript() {
-    EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
-        codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions[0].value,
-        codeScript: scriptTaskScript.value
-    });
+
+    const targetStartString = 'scripts.execute';
+    const scriptId = extractScriptId(scriptTaskScript.value);
+
+    if(!scriptTaskScript.value.startsWith(targetStartString)) {
+        EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+            codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions[0].value,
+            codeScript: scriptTaskScript.value,
+            codeScriptId: scriptId 
+        });
+
+        return;
+    }
+
+    EventBus.emit(EVENT_TYPE.GET_SCRIPT_CODE, scriptId);
 }
 
 </script>

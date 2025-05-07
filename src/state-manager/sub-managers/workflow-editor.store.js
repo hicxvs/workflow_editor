@@ -8,6 +8,7 @@ import { Storage } from '../../bpmn-workflow-editor/utils/storage';
 import { DiagramsApiUtils } from '../../bpmn-workflow-editor/diagrams/diagrams-api-utils';
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
+import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scripts';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
@@ -19,6 +20,7 @@ const { getAllJavaClasses } = ClassListing();
 
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
+const ScriptService = DiagramScripts()
 
 export function WorkflowEditorStore() {
 
@@ -82,7 +84,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_PROPERTY, updateCatchEventElementProperty);
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, saveCallActivityInputParameter);     
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);
-        EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);    
+        EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
+        EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);    
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -114,7 +117,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_CATCH_EVENT_ELEMENT_REFERENCE_PROPERTY);
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
-        EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);  
+        EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);
+        EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE); 
     }
 
     async function createNewDiagram() {
@@ -228,6 +232,19 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
+    }
+
+    async function getScriptCode(scriptId) {
+        if (!apiKeyExists()) {
+            return;
+        }
+
+        if(!scriptId) {
+            return;
+        }
+
+        const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
+        EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
     }
     
     function saveListener(listeners) {

@@ -29,7 +29,7 @@ import Modal from '../generic/Modal.vue';
 
 const showButton = ref(true);
 const showModal = ref(false);
-const modalTitle = "Script Content";
+const modalTitle = ref('');
 
 const editorEngine = EditorEngine();
 const editorCanvas = ref(null);
@@ -48,8 +48,10 @@ onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
         editorInstanceCode.value = {
             code: codeSettings.codeScript || '',
-            language: codeSettings.codeLanguage || 'java'
+            language: codeSettings.codeLanguage || 'java'            
         };
+
+        modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
 
         showModal.value = true;
     });    
@@ -65,6 +67,7 @@ watch(
         if(!editorCanvas.value) {
             editorInstance.value = null;
             editorInstanceCode.value = null;
+            modalTitle.value = '';
             return;
         }
 
