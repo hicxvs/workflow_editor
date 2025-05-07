@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "staging": "vite --mode staging",
     "test": "vitest --environment jsdom --root src/",
     "test:cov": "vitest run --environment jsdom --coverage",
     "lint": "eslint --ext .js,.vue src",

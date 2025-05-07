@@ -12,6 +12,7 @@ import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scri
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
+import { IS_APP_IN_MODE_DEV } from '../../config';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -43,7 +44,7 @@ export function WorkflowEditorStore() {
 
         currentModeler.value = createWorkflowEditor(canvas);
         await importAndProcessDiagram(defaultDiagram);
-        currentApiKey.value = loadAPIKey();
+        currentApiKey.value = (IS_APP_IN_MODE_DEV) ? loadAPIKey() : null;
         getDiagramMessages();
         getDiagramErrorMessages();
         EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
@@ -183,7 +184,7 @@ export function WorkflowEditorStore() {
     }
 
     async function loadAllDiagramsDraftsFromSystem() {
-       if (!apiKeyExists()) {
+       if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
            return;
        }
 
@@ -191,7 +192,7 @@ export function WorkflowEditorStore() {
     }
 
     async function loadAllDiagramsFromSystem() {
-        if (!apiKeyExists()) {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
 
@@ -200,7 +201,7 @@ export function WorkflowEditorStore() {
     }
 
     async function loadDiagramFromSystem(diagram) {
-        if (!apiKeyExists()) {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
 
@@ -235,7 +236,7 @@ export function WorkflowEditorStore() {
     }
 
     async function getScriptCode(scriptId) {
-        if (!apiKeyExists()) {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
 

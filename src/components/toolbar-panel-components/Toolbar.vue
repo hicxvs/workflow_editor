@@ -5,8 +5,7 @@
                 <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
                 <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items"/>
                 <MenuButtonList v-if="showAnalisisAndLogginMenuGroup" :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
-                
-                <div class="api-key-input-container" data-testid="api-key-input-container">
+                <div v-if="IS_APP_IN_MODE_DEV" class="api-key-input-container" data-testid="api-key-input-container">
                     <v-text-field 
                         :label="apiKeyLabel"
                         density="compact"
@@ -30,6 +29,7 @@
 import { ref } from 'vue';
 import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
+import { IS_APP_IN_MODE_DEV } from '../../config';
 import MenuButtonList from '../generic/MenuButtonList.vue';
 
 const apiKey = ref('');

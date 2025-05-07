@@ -3,6 +3,7 @@ import { API_BASE_URL, API_RESOURCE_EVENTS_PUBLISH_ENDPOINT,
          API_RESOURCE_DEFINITION_ENDPOINT
     } from '../../config';
 import { DiagramsApiUtils } from './diagrams-api-utils';
+import { IS_APP_IN_MODE_DEV } from '../../config';
 
 export function SystemDiagrams() {
 
@@ -10,10 +11,14 @@ export function SystemDiagrams() {
     const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
 
     async function getAllDiagramsFromSystem(apiKey) {
-        try {
-            checkApiKey(apiKey);
+        try {            
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
+
             const requestPayload = generateRequestPayload(null);
-            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_PUBLISH_ENDPOINT}`, requestPayload, getRequestHeaders(apiKey));
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_PUBLISH_ENDPOINT}`, requestPayload, requestHeaders);
 
             return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
                 version: diagram?.version,
@@ -28,8 +33,11 @@ export function SystemDiagrams() {
 
     async function getDiagramByIdFromSystem(apiKey, id) {
         try {            
-            checkApiKey(apiKey);
-            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, getRequestHeaders(apiKey));
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
             console.error('Error loading system diagram by id', error);
@@ -39,9 +47,12 @@ export function SystemDiagrams() {
 
     async function saveDiagramToSystem(apiKey, diagramXMLContent) {
         try {
-            checkApiKey(apiKey);
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
             const isXMLContent = true;
-            await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, getRequestHeaders(apiKey, isXMLContent));
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey, isXMLContent) : getRequestHeaders(null, isXMLContent);
+            await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, requestHeaders);
         } catch (error) {
             console.error('Error saving diagram to the System', error);
             throw error;
