@@ -94,7 +94,8 @@ export const EVENT_TYPE = Object.freeze({
     REMOVE_FORM_VALUE: 'remove-form-value',
     SAVE_FORM_VALUE: 'save-form-value',
     UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property',
-    LOAD_CODE_SCRIPT: 'load-code-script'
+    LOAD_CODE_SCRIPT: 'load-code-script',
+    GET_SCRIPT_CODE: 'get-script-code'
 });
 
 
