@@ -4,8 +4,6 @@
             :showCloseButton = "showButton"
             :showSaveButton = "!showButton"
             :showCancelButton = "!showButton"
-            :saveButtonClickHandler = "save"
-            :cancelButtonClickHandler = "cancel"
             v-model="showModal"
         >
             <template #title>
@@ -36,14 +34,6 @@ const editorCanvas = ref(null);
 const editorInstance = ref(null);
 const editorInstanceCode = ref(null);
 
-function save() {
-
-}
-
-function cancel() {
-    showModal.value = false;
-}
-
 onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
         editorInstanceCode.value = {
@@ -52,7 +42,6 @@ onMounted(() => {
         };
 
         modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
-
         showModal.value = true;
     });    
 });
@@ -75,8 +64,6 @@ watch(
     },
     { deep:true }
 );
-
-
 
 </script>
 

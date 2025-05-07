@@ -20,7 +20,7 @@ const { getAllJavaClasses } = ClassListing();
 
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
-const ScriptService = DiagramScripts()
+const ScriptService = DiagramScripts();
 
 export function WorkflowEditorStore() {
 

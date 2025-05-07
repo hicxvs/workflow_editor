@@ -1,5 +1,5 @@
 import ApiEngine from '../../api-engine';
-import { API_BASE_URL, API_RESOURCE_DRAFT_PUBLISH_ENDPOINT, API_RESOURCE_DRAFT_ENDPOINT
+import { API_BASE_URL, API_RESOURCE_DRAFT_ENDPOINT
 } from '../../config';
 import { DiagramsApiUtils } from './diagrams-api-utils';
 

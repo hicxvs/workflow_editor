@@ -12,6 +12,7 @@ import { ref, watch } from 'vue';
 
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
+import { isValidScriptId } from '../../../../bpmn-workflow-editor/utils/is-valid-script-id';
 import ScriptTask from '../../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/script-task';
 
 import Select from '../../../generic/Select.vue';
@@ -112,9 +113,13 @@ function retrieveScript() {
     const targetStartString = 'scripts.execute';
     const scriptId = extractScriptId(scriptTaskScript.value);
 
+    if(!isValidScriptId(scriptId)) {
+        return;
+    }
+
     if(!scriptTaskScript.value.startsWith(targetStartString)) {
         EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
-            codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions[0].value,
+            codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value,
             codeScript: scriptTaskScript.value,
             codeScriptId: scriptId 
         });
