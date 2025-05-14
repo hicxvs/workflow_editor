@@ -1,5 +1,6 @@
 import ApiEngine from '../../api-engine';
 import { API_LOCAL_BASE_URL, API_RESOURCE_CLASS_LISTING_URL } from "../../config";
+import JavasClasses from './fw-class-listing.json';
 
 export function ClassListing() {
 
@@ -15,7 +16,17 @@ export function ClassListing() {
         }
     }
 
+    function getAllInMemoryJavaClasses() {
+        try {
+            return JavasClasses.files || [];
+        } catch (error) {
+            console.error('Error loading in memory java classes', error);
+            throw error;
+        }
+    }
+
     return {
-        getAllJavaClasses
+        getAllJavaClasses,
+        getAllInMemoryJavaClasses
     };
 }

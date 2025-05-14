@@ -1,6 +1,5 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
-    <ActionButtonGroup class="mb-6"/>
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
     <MessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramMessages" class="mb-6" />
     <ErrorMessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramErrorMessages" class="mb-6" />
@@ -12,7 +11,6 @@
 import StateManager from "../state-manager";
 import { storeToRefs } from "pinia";
 
-import ActionButtonGroup from "../components/properties-panel-components/ActionButtonGroup.vue";
 import ProcessDefinition from "../components/properties-panel-components/ProcessDefinition.vue";
 import MessageEditor from "../components/properties-panel-components/MessageEditor.vue";
 import ErrorMessageEditor from "../components/properties-panel-components/ErrorMessageEditor.vue";
@@ -24,7 +22,7 @@ const { currentProcessDefinition, currentWorkingElementProperties, currentDiagra
 
 <style scoped>
 .properties-panel {
-  padding: 0 16px;
+  padding: 16px;
   width: 98%;
   height: 96vh;
 }
