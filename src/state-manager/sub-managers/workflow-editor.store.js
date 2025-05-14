@@ -17,7 +17,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
 const { isApiKeyValid } = DiagramsApiUtils();
-const { getAllJavaClasses } = ClassListing();
+const { getAllInMemoryJavaClasses } = ClassListing();
 
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
@@ -127,8 +127,8 @@ export function WorkflowEditorStore() {
         await importAndProcessDiagram(defaultDiagram);
     }
 
-    async function getWorkflowJavaClasses() {
-        const javaClasses = await getAllJavaClasses();
+    function getWorkflowJavaClasses() {
+        const javaClasses = getAllInMemoryJavaClasses();
         EventBus.emit(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY, javaClasses);
     }
 
