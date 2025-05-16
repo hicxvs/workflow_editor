@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.host;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const API_RESOURCE_EVENTS_ENDPOINT = import.meta.env.VITE_API_RESOURCE_EVENTS_ENDPOINT || '/template/hicxesm-manager/app/rest/api/v2/events';
 export const API_RESOURCE_EVENTS_PUBLISH_ENDPOINT = import.meta.env.VITE_API_RESOURCE_EVENTS_PUBLISH_ENDPOINT || `${API_RESOURCE_EVENTS_ENDPOINT}/publish`;

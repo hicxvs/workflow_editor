@@ -312,7 +312,7 @@ export function WorkflowEditorStore() {
     }
 
     async function downloadDiagram() {
-        const fileName = `${currentProcessDefinition.value.id}_draft`;
+        const fileName = `${currentProcessDefinition.value.id}`;
         const diagramXMLContent = await currentModeler.value.saveDiagram();
         downloadWorkflowDiagram(fileName, diagramXMLContent);
     }
