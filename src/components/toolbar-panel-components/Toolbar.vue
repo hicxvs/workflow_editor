@@ -47,22 +47,22 @@ const bpmnMenuGroup = {
         {
             label: 'Load BPMN From System',
             handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
+        },        
+        {
+            label: 'Deploy BPMN to system',
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM) 
         },
         {
-            label: 'Load BPMN From File',
+            label: 'Load BPMN From Local',
             handler: () => {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
             }
         },
         {
-            label: 'Deploy workflow/BPMN',
-            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM) 
-        },
-        {
-            label: 'Download workflow/BPMN',
+            label: 'Download BPMN to Local',
             handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
-        }
+        }        
     ]
 };
 
@@ -70,11 +70,11 @@ const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
     items: [
         {
-            label: 'Save draft workflow/BPMN',
+            label: 'Save BPMN Draft to system',
             handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT)
         },
         {
-            label: 'Delete draft workflow/BPMN',
+            label: 'Delete BPMN Draft from system',
             handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT)
         },
     ]
