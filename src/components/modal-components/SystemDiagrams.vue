@@ -17,9 +17,9 @@
                 <Table>
                     <template #head-content>
                         <tr>
-                            <th class="text-left">{{ tableHeader.processName }}</th>
-                            <th class="text-left">{{ tableHeader.processVersion }}</th>
+                            <th class="text-left">{{ tableHeader.processName }}</th>                            
                             <th class="text-left">{{ tableHeader.processAction }}</th>
+                            <th class="text-left">{{ tableHeader.processDraft }}</th>
                         </tr>
                     </template>
                     <template #body-content v-if="filteredDiagrams && filteredDiagrams.length">
@@ -28,12 +28,25 @@
                             :key="diagram.id"
                         >
                             <td>{{ diagram.id }}</td>
-                            <td>{{ diagram.version }}</td>
                             <td class="text-right">
                                 <Button 
-                                    :buttonColor="buttonColor"
-                                    :label="buttonLabel"
+                                    :buttonColor="buttons.loadDiagram.color"
+                                    :label="buttons.loadDiagram.label"
                                     @click="() => { EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram); }"
+                                />
+                            </td>
+                            <td class="text-right">
+                                <Button 
+                                    :buttonColor="(diagram.hasDraft) ? buttons.loadDiagramDraft.activeColor : buttons.loadDiagramDraft.inactiveColor"
+                                    :label="buttons.loadDiagramDraft.label"
+                                    :disabled="!diagram.hasDraft"
+                                    @click="() => { 
+                                        if(!diagram.hasDraft) {
+                                            return;
+                                        }                                       
+
+                                        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_DRAFT_FROM_SYSTEM, diagram);
+                                    }"
                                 />
                             </td>
                         </tr>
@@ -64,8 +77,8 @@ const modalTitle = "Workflow Search";
 const inputLabel = "Search process id";
 const tableHeader = {
     processName: 'Process Id',
-    processVersion: 'Version',
-    processAction: ''
+    processAction: '',
+    processDraft: ''
 };
 
 const foundedTotalOf = 'Found a total of ';
@@ -73,8 +86,17 @@ const found = 'Found: ';
 const matchingFiles = 'matching file(s).';
 const searchedMatchingFiles = 'searched matching file(s).';
 
-const buttonColor = 'green';
-const buttonLabel = 'Load Diagram';
+const buttons = {
+    loadDiagram: {
+        label: 'Load Diagram',
+        color: 'green'
+    },
+    loadDiagramDraft: {
+        label: 'Load Draft',
+        activeColor: 'green',
+        inactiveColor: 'grey'
+    },
+};
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, (diagrams) => {

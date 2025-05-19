@@ -19,7 +19,6 @@ export const EVENT_TYPE = Object.freeze({
     API_KEY_LOADED: 'api-key-loaded',
     API_KEY_SAVED: 'api-key-saved',
     API_KEY_CLEARED: 'api-key-cleared',
-    LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM: 'load-diagrams-drafts-from-system',
     LOAD_DIAGRAM_DRAFT_FROM_SYSTEM: 'load-diagram-draft-from-system',
     LOAD_DIAGRAMS_FROM_SYSTEM: 'load-diagrams-from-system',
     LOAD_DIAGRAM_FROM_SYSTEM: 'load-diagram-from-system',
@@ -95,7 +94,9 @@ export const EVENT_TYPE = Object.freeze({
     SAVE_FORM_VALUE: 'save-form-value',
     UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY: 'update-multi-instance-element-property',
     LOAD_CODE_SCRIPT: 'load-code-script',
-    GET_SCRIPT_CODE: 'get-script-code'
+    GET_SCRIPT_CODE: 'get-script-code',
+    SHOW_SYSTEM_DRAFT_OPTIONS: 'show-system-draft-options',
+    HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options'
 });
 
 

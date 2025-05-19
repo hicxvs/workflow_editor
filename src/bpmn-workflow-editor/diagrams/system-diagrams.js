@@ -1,5 +1,5 @@
 import ApiEngine from '../../api-engine';
-import { API_BASE_URL, API_RESOURCE_EVENTS_PUBLISH_ENDPOINT,
+import { API_BASE_URL,
          API_RESOURCE_DEFINITION_ENDPOINT
     } from '../../config';
 import { DiagramsApiUtils } from './diagrams-api-utils';
@@ -16,13 +16,12 @@ export function SystemDiagrams() {
                 checkApiKey(apiKey);
             }
 
-            const requestPayload = generateRequestPayload(null);
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
-            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_PUBLISH_ENDPOINT}`, requestPayload, requestHeaders);
+            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}`, requestHeaders);
 
-            return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
-                version: diagram?.version,
-                id: diagram?.key_
+            return response?.data?.result.map(diagram => ({
+                id: diagram?.fileName,
+                hasDraft: diagram?.draft
             })) || null;
             
         } catch (error) {            

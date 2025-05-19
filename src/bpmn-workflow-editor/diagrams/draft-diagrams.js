@@ -7,29 +7,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export function DraftDiagrams() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
-    const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
-
-    async function getAllDiagramsFromDraft(apiKey) {
-        try {
-            console.log('Not implemented by the backend yet!');
-            
-            if(IS_APP_IN_MODE_DEV) {
-                checkApiKey(apiKey);
-            }
-            const requestPayload = generateRequestPayload(null);
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders();
-            
-            const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}`, requestPayload, requestHeaders);
-            
-            return response?.data?.entity?.data?.bpmn_details.map(diagram => ({
-                version: diagram?.version,
-                id: diagram?.key_
-            })) || null;         
-            
-        } catch (error) {            
-            console.error('Error get all diagram from drafts', error);
-        }
-    }
+    const { checkApiKey, getRequestHeaders } = DiagramsApiUtils();
 
     async function getDiagramByIdFromDraft(apiKey, id) {
         try {            
@@ -70,7 +48,6 @@ export function DraftDiagrams() {
     }
 
     return {
-        getAllDiagramsFromDraft,
         getDiagramByIdFromDraft,
         saveDiagramToDraft,
         deleteDiagramFromDraft
