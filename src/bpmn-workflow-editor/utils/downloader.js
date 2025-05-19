@@ -1,5 +1,4 @@
 export function downloadWorkflowDiagram(fileName, fileContent) {
-
     try {
         const {xml} = fileContent;
         const blob = new Blob([xml], { type: 'text/xml' });
@@ -11,10 +10,8 @@ export function downloadWorkflowDiagram(fileName, fileContent) {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        
     } catch (error) {
         console.error("Error during diagram download:", error);
         throw error;
     }
 }
-

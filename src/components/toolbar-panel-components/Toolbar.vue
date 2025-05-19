@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 import { IS_APP_IN_MODE_DEV } from '../../config';
@@ -42,29 +42,73 @@ const bpmnMenuGroup = {
     items: [
         {
             label: 'Create New BPMN',
-            handler: () => EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+            }
         },
         {
             label: 'Load BPMN From System',
-            handler: () => EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
+                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+            }
         },        
         {
             label: 'Deploy BPMN to system',
-            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM) 
+            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
         },
         {
             label: 'Load BPMN From Local',
             handler: () => {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
+                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
             }
         },
         {
             label: 'Download BPMN to Local',
-            handler: () => EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
+            }
         }        
     ]
 };
+
+if ('showOpenFilePicker' in window) {
+  bpmnMenuGroup.items.push({
+        label: 'Save BPMN to Local as',
+        handler: () => {
+            EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
+            EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
+
+                const fileName = diagramData?.id || 'workflow_bpmn';
+                const {xml} = diagramData?.xmlContent || '<xml></xml>';
+
+                try {
+                const options = {
+                    suggestedName: `${fileName}.bpmn`,
+                    types: [{
+                        description: "XML Files",
+                        accept: { "text/xml": [".xml", ".bpmn"] }
+                    }]
+                };
+
+                const fileHandle = await window.showSaveFilePicker(options);
+                const writable = await fileHandle.createWritable();
+
+                await writable.write(xml);
+                await writable.close();
+
+                } catch (error) {
+                    console.error("Error saving file:", error);
+                    throw error;
+                }
+
+            });
+        }
+    });
+}
 
 const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
@@ -75,7 +119,11 @@ const draftMenuGroup = {
         },
         {
             label: 'Delete BPMN Draft from system',
-            handler: () => EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
+                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+                EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+            }
         },
     ]
 };
@@ -100,6 +148,22 @@ function update() {
 
 EventBus.on(EVENT_TYPE.API_KEY_LOADED, (loadedApiKey) => {
     apiKey.value = loadedApiKey;
+});
+
+onMounted(() => {
+    EventBus.on(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS, () => {
+        showDraftMenuGroup.value = true;
+    });
+
+    EventBus.on(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS, () => {
+        showDraftMenuGroup.value = false;
+    });
+});
+
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+    EventBus.off(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
 });
 
 </script>

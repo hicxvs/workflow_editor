@@ -62,9 +62,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.DELETE_DIAGRAM_DRAFT, deleteDiagramFromDraft);
         EventBus.on(EVENT_TYPE.DOWNLOAD_DIAGRAM, downloadDiagram);
         EventBus.on(EVENT_TYPE.SET_API_KEY, setApiKey);
-        EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM, loadAllDiagramsDraftsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM, loadAllDiagramsFromSystem);
         EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, loadDiagramFromSystem);
+        EventBus.on(EVENT_TYPE.LOAD_DIAGRAM_DRAFT_FROM_SYSTEM, loadDiagramDraftFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_LISTENER, saveListener);
         EventBus.on(EVENT_TYPE.SAVE_FORM_PROPERTY, saveFormProperty);
         EventBus.on(EVENT_TYPE.GENERATE_XML_DIAGRAM, generateXMLDiagram);
@@ -86,7 +86,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, saveCallActivityInputParameter);     
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);
         EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
-        EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);    
+        EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);   
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -99,9 +100,9 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_NAVIGATION_PATH);
         EventBus.off(EVENT_TYPE.LOAD_FILE_SUCCESS);
         EventBus.off(EVENT_TYPE.SET_API_KEY);
-        EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_DRAFTS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM);
+        EventBus.off(EVENT_TYPE.LOAD_DIAGRAM_DRAFT_FROM_SYSTEM);
         EventBus.off(EVENT_TYPE.SAVE_LISTENER);
         EventBus.off(EVENT_TYPE.SAVE_FORM_PROPERTY);
         EventBus.off(EVENT_TYPE.GENERATE_XML_DIAGRAM);
@@ -119,7 +120,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
         EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);
-        EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE); 
+        EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
+        EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
     }
 
     async function createNewDiagram() {
@@ -183,13 +185,6 @@ export function WorkflowEditorStore() {
         await importAndProcessDiagram(fileData.content);
     }
 
-    async function loadAllDiagramsDraftsFromSystem() {
-       if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
-           return;
-       }
-
-       await DraftService.getAllDiagramsFromDraft(currentApiKey.value);
-    }
 
     async function loadAllDiagramsFromSystem() {
         if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
@@ -200,20 +195,29 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
     }
 
-    async function loadDiagramFromSystem(diagram) {
+    async function loadDiagram(diagram, serviceFunction) {
         if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
-
-        if(!diagram || !diagram.id) {
+    
+        if (!diagram || !diagram.id) {
             console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
             return;
         }
+    
+        const loadedDiagramContent = await serviceFunction(currentApiKey.value, diagram.id);
+        await importAndProcessDiagram(loadedDiagramContent);
+        EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
+        EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+    }
 
-       const loadedDiagramContent = await SystemService.getDiagramByIdFromSystem(currentApiKey.value, diagram.id);
-       await importAndProcessDiagram(loadedDiagramContent);
-       EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
+    async function loadDiagramFromSystem(diagram) {
+        await loadDiagram(diagram, SystemService.getDiagramByIdFromSystem);
     } 
+
+    async function loadDiagramDraftFromSystem(diagram) {
+        await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+    }
 
     async function importAndProcessDiagram(diagramContent) {
         if(!diagramContent || !currentModeler.value) {
@@ -293,9 +297,20 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
+    async function getDiagramData() { 
+        const diagramData = {
+            id: `${currentProcessDefinition.value.id}`,
+            xmlContent: await currentModeler.value.saveDiagram()
+        };
+
+        EventBus.emit(EVENT_TYPE.DIAGRAM_DATA_READY, diagramData);
+
+        return diagramData;
+    }
+
     async function saveDiagram(saveFunction) {
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        const {xml} = diagramXMLContent;
+        const {xmlContent} = await getDiagramData();
+        const {xml} = xmlContent;
         await saveFunction(currentApiKey.value, xml);
     }
 
@@ -312,14 +327,13 @@ export function WorkflowEditorStore() {
     }
 
     async function downloadDiagram() {
-        const fileName = `${currentProcessDefinition.value.id}`;
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        downloadWorkflowDiagram(fileName, diagramXMLContent);
+        const {id, xmlContent} = await getDiagramData();
+        downloadWorkflowDiagram(id, xmlContent);
     }
 
     async function generateXMLDiagram() {
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        const {xml} = diagramXMLContent;
+        const {xmlContent} = await getDiagramData();
+        const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
     }
 
