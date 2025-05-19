@@ -86,7 +86,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER, saveCallActivityInputParameter);     
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);
         EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
-        EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);    
+        EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);   
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -119,7 +120,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_INPUT_PARAMETER);     
         EventBus.off(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER);
         EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);
-        EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE); 
+        EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
+        EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
     }
 
     async function createNewDiagram() {
@@ -295,9 +297,20 @@ export function WorkflowEditorStore() {
         currentDiagram.value = await currentModeler.value.generateDiagram();
     }
 
+    async function getDiagramData() { 
+        const diagramData = {
+            id: `${currentProcessDefinition.value.id}`,
+            xmlContent: await currentModeler.value.saveDiagram()
+        };
+
+        EventBus.emit(EVENT_TYPE.DIAGRAM_DATA_READY, diagramData);
+
+        return diagramData;
+    }
+
     async function saveDiagram(saveFunction) {
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        const {xml} = diagramXMLContent;
+        const {xmlContent} = await getDiagramData();
+        const {xml} = xmlContent;
         await saveFunction(currentApiKey.value, xml);
     }
 
@@ -314,14 +327,13 @@ export function WorkflowEditorStore() {
     }
 
     async function downloadDiagram() {
-        const fileName = `${currentProcessDefinition.value.id}`;
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        downloadWorkflowDiagram(fileName, diagramXMLContent);
+        const {id, xmlContent} = await getDiagramData();
+        downloadWorkflowDiagram(id, xmlContent);
     }
 
     async function generateXMLDiagram() {
-        const diagramXMLContent = await currentModeler.value.saveDiagram();
-        const {xml} = diagramXMLContent;
+        const {xmlContent} = await getDiagramData();
+        const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
     }
 

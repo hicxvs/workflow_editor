@@ -96,7 +96,9 @@ export const EVENT_TYPE = Object.freeze({
     LOAD_CODE_SCRIPT: 'load-code-script',
     GET_SCRIPT_CODE: 'get-script-code',
     SHOW_SYSTEM_DRAFT_OPTIONS: 'show-system-draft-options',
-    HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options'
+    HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options',
+    GET_DIAGRAM_DATA: 'get-diagram-data',
+    DIAGRAM_DATA_READY: 'diagram-data-ready',
 });
 
 

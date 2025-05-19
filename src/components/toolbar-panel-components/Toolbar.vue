@@ -70,11 +70,45 @@ const bpmnMenuGroup = {
             label: 'Download BPMN to Local',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
             }
         }        
     ]
 };
+
+if ('showOpenFilePicker' in window) {
+  bpmnMenuGroup.items.push({
+        label: 'Save BPMN to Local as',
+        handler: () => {
+            EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
+            EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
+
+                const fileName = diagramData?.id || 'workflow_bpmn';
+                const {xml} = diagramData?.xmlContent || '<xml></xml>';
+
+                try {
+                const options = {
+                    suggestedName: `${fileName}.bpmn`,
+                    types: [{
+                        description: "XML Files",
+                        accept: { "text/xml": [".xml", ".bpmn"] }
+                    }]
+                };
+
+                const fileHandle = await window.showSaveFilePicker(options);
+                const writable = await fileHandle.createWritable();
+
+                await writable.write(xml);
+                await writable.close();
+
+                } catch (error) {
+                    console.error("Error saving file:", error);
+                    throw error;
+                }
+
+            });
+        }
+    });
+}
 
 const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
@@ -129,6 +163,7 @@ onMounted(() => {
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     EventBus.off(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
 });
 
 </script>
