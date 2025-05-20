@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-container">
+  <div class="layout-container" @click="handleLayoutClick">
     <div class="section-navbar">
       <WorkflowToolbar />
     </div>
@@ -21,6 +21,8 @@
 
 <script setup>
 import { ref } from 'vue';
+import EventBus from '../eventbus';
+import { EVENT_TYPE } from '../bpmn-workflow-editor/modeler/eventTypes';
 import WorkflowToolbar from '../main-sections/WorkflowToolbar.vue';
 import WorkflowEditor from '../main-sections/WorkflowEditor.vue';
 import WorkflowPropertiesPanel from '../main-sections/WorkflowPropertiesPanel.vue';
@@ -70,6 +72,14 @@ function startResizing(event) {
 
   window.addEventListener('mousemove', updatePanelSizes);
   window.addEventListener('mouseup', stopResizing);
+}
+
+function handleLayoutClick(event) {
+  EventBus.emit(EVENT_TYPE.BACKGROUNG_SELECTED, false);
+
+  if(event?.srcElement?.dataset?.elementId) {
+    EventBus.emit(EVENT_TYPE.BACKGROUNG_SELECTED, true);
+  }
 }
 
 </script>

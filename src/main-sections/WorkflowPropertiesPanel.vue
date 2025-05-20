@@ -1,8 +1,8 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
-    <MessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramMessages" class="mb-6" />
-    <ErrorMessageEditor v-if="currentWorkingElementProperties" v-model="currentDiagramErrorMessages" class="mb-6" />
+    <MessageEditor v-if="isBackgroundSelected" v-model="currentDiagramMessages" class="mb-6" />
+    <ErrorMessageEditor v-if="isBackgroundSelected" v-model="currentDiagramErrorMessages" class="mb-6" />
     <PropertyEditor v-model="currentWorkingElementProperties" />
   </div>
 </template>
@@ -17,7 +17,7 @@ import ErrorMessageEditor from "../components/properties-panel-components/ErrorM
 import PropertyEditor from "../components/properties-panel-components/PropertyEditor.vue";
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
-const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages, currentDiagramErrorMessages } = storeToRefs(workflowEditorStore);
+const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages, currentDiagramErrorMessages, isBackgroundSelected } = storeToRefs(workflowEditorStore);
 </script>
 
 <style scoped>
