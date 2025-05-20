@@ -51,7 +51,7 @@ const bpmnMenuGroup = {
             label: 'Load BPMN From System',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
-                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+               
             }
         },        
         {
@@ -74,8 +74,6 @@ const bpmnMenuGroup = {
         }        
     ]
 };
-
-addSaveAsIfSupported(bpmnMenuGroup.items, 'Save BPMN to Local as');
 
 const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
@@ -125,19 +123,21 @@ onMounted(() => {
     EventBus.on(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS, () => {
         showDraftMenuGroup.value = false;
     });
+
+    addSaveAsIfSupported(bpmnMenuGroup.items, 'Save BPMN to Local as');
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     EventBus.off(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
-    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
 });
 
 function addSaveAsIfSupported(itemsCollection, buttonLabel) {
     if ('showOpenFilePicker' in window) {
         itemsCollection.push({
-        label: buttonLabel,
+        label: buttonLabel || 'Save as',
         handler: () => {
+
             EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
             EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
 
@@ -158,8 +158,10 @@ function addSaveAsIfSupported(itemsCollection, buttonLabel) {
 
                 await writable.write(xml);
                 await writable.close();
+                EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
 
                 } catch (error) {
+                    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
                     throw error;
                 }
 

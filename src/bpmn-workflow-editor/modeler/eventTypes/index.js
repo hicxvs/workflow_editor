@@ -99,6 +99,7 @@ export const EVENT_TYPE = Object.freeze({
     HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options',
     GET_DIAGRAM_DATA: 'get-diagram-data',
     DIAGRAM_DATA_READY: 'diagram-data-ready',
+    BACKGROUNG_SELECTED: 'background-selected'
 });
 
 
