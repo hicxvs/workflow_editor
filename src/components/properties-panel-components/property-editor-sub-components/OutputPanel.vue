@@ -1,15 +1,16 @@
 <template>
-    <div class="output-panel-container" data-testid="output-panel-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div class="output-panel-content" data-testid="output-panel-content">
-                    <pre v-if="model" class="formatted-pre">
-                        {{ xmlDiagramContent }}
-                    </pre>                    
-                </div>                
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div class="output-panel-content" data-testid="output-panel-content">
+                <pre v-if="model" class="formatted-pre">
+                    {{ xmlDiagramContent }}
+                </pre>                    
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
@@ -17,16 +18,10 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
-import Card from '../../generic/Card.vue';
-
 const model = defineModel();
 const xmlDiagramContent = ref(null);
 
-const cardProps = {
-    title: "Output",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Output';
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, (xmlContent) => {
@@ -42,15 +37,11 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY);
     EventBus.off(EVENT_TYPE.CLEAR_GENERATED_XML_DIAGRAM);
 });
-
-
 </script>
-
 
 <style scoped>
 .output-panel-content {
     padding: 0 16px;
-
 }
 
 .formatted-pre {

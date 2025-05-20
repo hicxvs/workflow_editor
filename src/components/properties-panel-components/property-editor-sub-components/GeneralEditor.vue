@@ -1,19 +1,20 @@
 <template>
-    <div class="general-editor-container" data-testid="general-editor-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div v-if="generalProperties" class="general-editor-content" data-testid="general-editor-content">
-                    <h2 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h2>
-                    <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
-                    <TextInput :label="inputLabel.name" v-model="generalProperties.name" />
-                    <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
-                    <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
-                    <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
-                    <Select v-if="isGatewayType(generalType)" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
-                </div>                
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div v-if="generalProperties" class="general-editor-content" data-testid="general-editor-content">
+                <h4 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h4>
+                <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
+                <TextInput :label="inputLabel.name" v-model="generalProperties.name" />
+                <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
+                <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
+                <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
+                <Select v-if="isGatewayType(generalType)" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
+            </div>          
+        </v-expansion-panel-text>
+    </v-expansion-panel>    
 </template>
 
 <script setup>
@@ -23,7 +24,6 @@ import { GATEWAY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerType
 import EventBus from "../../../eventbus";
 import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
 
-import Card from '../../generic/Card.vue';
 import TextInput from "../../generic/TextInput.vue";
 import Checkbox from "../../generic/Checkbox.vue";
 import Select from "../../generic/Select.vue";
@@ -36,11 +36,7 @@ const gatewayTypes = ref(null);
 const selectedTaskType = ref(null);
 const selectedGatewayType = ref(null);
 
-const cardProps = {
-    title: "General",
-    subtitle:"",
-    text: ""
-};
+const panelTitle = 'General';
 
 const propertiesLabel = 'Properties: ';
 
@@ -154,7 +150,7 @@ watch(
     setSelectedType(generalProperties.value, taskTypes, selectedTaskType, 'task');
     setSelectedType(generalProperties.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
-  { deep: true }
+  { immediate:true, deep: true }
 );
 
 </script>

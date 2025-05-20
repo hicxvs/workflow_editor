@@ -8,7 +8,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export function SystemDiagrams() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
-    const { checkApiKey, getRequestHeaders, generateRequestPayload } = DiagramsApiUtils();
+    const { checkApiKey, getRequestHeaders} = DiagramsApiUtils();
 
     async function getAllDiagramsFromSystem(apiKey) {
         try {            
