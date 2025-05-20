@@ -3,6 +3,18 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
           <div class="property-editor-content" data-testid="property-editor-content">
+
+
+
+            <v-expansion-panels>
+              
+
+              
+            </v-expansion-panels>
+
+
+
+
             <GeneralEditor v-model="model"/>
             <MainEditor v-model="model" />            
             <DocumentationEditor v-model="model" />
@@ -17,6 +29,9 @@
 </template>
 
 <script setup>
+
+import ExpansionPanel from "../generic/ExpansionPanel.vue";
+
 import Card from "../generic/Card.vue";
 import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
 import MainEditor from "./property-editor-sub-components/MainEditor.vue";

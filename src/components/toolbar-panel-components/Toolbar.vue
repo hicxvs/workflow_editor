@@ -50,8 +50,7 @@ const bpmnMenuGroup = {
         {
             label: 'Load BPMN From System',
             handler: () => {
-                EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
-               
+                EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);           
             }
         },        
         {
