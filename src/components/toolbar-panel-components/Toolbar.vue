@@ -160,7 +160,6 @@ function addSaveAsIfSupported(itemsCollection, buttonLabel) {
                 await writable.close();
 
                 } catch (error) {
-                    console.error("Error saving file:", error);
                     throw error;
                 }
 
