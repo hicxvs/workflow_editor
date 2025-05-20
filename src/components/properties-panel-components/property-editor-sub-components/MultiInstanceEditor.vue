@@ -1,17 +1,18 @@
 <template>
-    <div class="multi-instance-panel-container" data-testid="multi-instance-panel-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div v-if="model" class="main-instance-content" data-testid="main-instance-content">
-                    <Checkbox v-model="multiInstance.isSequential" :label="multiInstanceLabels.isSequential" @update:modelValue="updateMultiInstanceProperty"/>
-                    <TextInput v-model="multiInstance.loopCardinality" :label="multiInstanceLabels.loopCardinality" @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" :type="textInputTypeNumber" />
-                    <TextInput v-model="multiInstance.collection" :label="multiInstanceLabels.collection"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
-                    <TextInput v-model="multiInstance.elementVariable" :label="multiInstanceLabels.elementVariable"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
-                    <TextInput v-model="multiInstance.completionCondition" :label="multiInstanceLabels.completionCondition"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
-                </div>
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div v-if="model" class="main-instance-content" data-testid="main-instance-content">
+                <Checkbox v-model="multiInstance.isSequential" :label="multiInstanceLabels.isSequential" @update:modelValue="updateMultiInstanceProperty"/>
+                <TextInput v-model="multiInstance.loopCardinality" :label="multiInstanceLabels.loopCardinality" @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" :type="textInputTypeNumber" />
+                <TextInput v-model="multiInstance.collection" :label="multiInstanceLabels.collection"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
+                <TextInput v-model="multiInstance.elementVariable" :label="multiInstanceLabels.elementVariable"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
+                <TextInput v-model="multiInstance.completionCondition" :label="multiInstanceLabels.completionCondition"  @input="updateMultiInstanceProperty" :clearHandler="updateMultiInstanceProperty" :clearable="isClearable" />
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
@@ -20,7 +21,6 @@ import { ACTIVITY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTyp
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
-import Card from '../../generic/Card.vue';
 import Checkbox from "../../generic/Checkbox.vue";
 import TextInput from "../../generic/TextInput.vue";
 
@@ -29,11 +29,7 @@ const multiInstance = ref(null);
 const isClearable = ref(true);
 const textInputTypeNumber = ref('number');
 
-const cardProps = {
-    title: "Multi Instance",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Multi Instance';
 
 const multiInstanceLabels = {
     isSequential: 'Sequential',
@@ -51,7 +47,7 @@ function extractMultiInstanceValues(multiInstance) {
     return {
         isSequential: (multiInstance) ? multiInstance?.isSequential : false,
         completionCondition: (multiInstance) ? multiInstance?.completionCondition?.body : '',
-        loopCardinality: (multiInstance) ? multiInstance?.loopCardinality.body : '',
+        loopCardinality: (multiInstance) ? multiInstance?.loopCardinality?.body : '',
         collection: (multiInstance) ? multiInstance?.$attrs[ACTIVITY_TYPES.COLLECTION] : '',
         elementVariable: (multiInstance) ? multiInstance?.$attrs[ACTIVITY_TYPES.ELEMENT_VARIABLE] : ''
     };

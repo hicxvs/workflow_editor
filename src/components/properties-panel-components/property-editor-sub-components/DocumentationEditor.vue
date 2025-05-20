@@ -1,13 +1,14 @@
 <template>
-    <div class="documentation-editor" data-testid="documentation-editor">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div v-if="model" class="documentation-editor-content" data-testid="documentation-editor-content">
-                    <TextArea :label="inputLabel.documentation" v-model="documentationText" @input="updateDocumentation" :clearHandler="updateDocumentation"/>
-                </div>
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div v-if="model" class="documentation-editor-content" data-testid="documentation-editor-content">
+                <TextArea :label="inputLabel.documentation" v-model="documentationText" @input="updateDocumentation" :clearHandler="updateDocumentation"/>
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template> 
 
 <script setup>
@@ -15,18 +16,12 @@ import { ref, watch } from 'vue';
 import { createParagraphs } from '../../../bpmn-workflow-editor/utils/create-paragraphs';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
-
-import Card from "../../generic/Card.vue";
 import TextArea from "../../generic/TextArea.vue";
 
 const model = defineModel();
 const documentationText = ref(null);
 
-const cardProps = {
-    title: "Documentation",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Documentation';
 
 const inputLabel = {
     documentation: "Documentation"
@@ -60,7 +55,6 @@ function updateDocumentation() {
         }
     );
 }
-
 </script>
 
 <style scoped>

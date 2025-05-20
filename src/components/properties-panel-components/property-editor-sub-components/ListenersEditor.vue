@@ -1,44 +1,44 @@
 <template>
-    <div class="listeners-editor-container" data-testid="listeners-editor-container">
-        
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <ConfigurationTable
-                    v-if="model"
-                    :title="taskListenersTitle"
-                    :headers="listnersHeaders"
-                    v-model="taskListeners"
-                    :createNewItemHandler="taskListenersHandlers.create"
-                    :editItemHandler="taskListenersHandlers.edit"
-                    :removeItemHandler="taskListenersHandlers.remove"
-                >
-                    <template #row="{ item }">
-                        <td>{{ item?.listener?.class }}</td>
-                        <td>{{ item?.listener?.$type }}</td>
-                        <td>{{ item?.listener?.event }}</td>
-                        <td>{{ item?.listener?.fields?.length || 0 }}</td>
-                    </template>
-                </ConfigurationTable>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <ConfigurationTable
+                v-if="model"
+                :title="taskListenersTitle"
+                :headers="listnersHeaders"
+                v-model="taskListeners"
+                :createNewItemHandler="taskListenersHandlers.create"
+                :editItemHandler="taskListenersHandlers.edit"
+                :removeItemHandler="taskListenersHandlers.remove"
+            >
+                <template #row="{ item }">
+                    <td>{{ item?.listener?.class }}</td>
+                    <td>{{ item?.listener?.$type }}</td>
+                    <td>{{ item?.listener?.event }}</td>
+                    <td>{{ item?.listener?.fields?.length || 0 }}</td>
+                </template>
+            </ConfigurationTable>
 
-                <ConfigurationTable
-                    v-if="model"
-                    :title="executionListenersTitle"
-                    :headers="listnersHeaders"
-                    v-model="executionListeners"
-                    :createNewItemHandler="executionListenersHandlers.create"
-                    :editItemHandler="executionListenersHandlers.edit"
-                    :removeItemHandler="executionListenersHandlers.remove"
-                >
-                    <template #row="{ item }">
-                        <td>{{ item?.listener?.class }}</td>
-                        <td>{{ item?.listener?.$type }}</td>
-                        <td>{{ item?.listener?.event }}</td>
-                        <td>{{ item?.listener?.fields?.length || 0 }}</td>
-                    </template>
-                </ConfigurationTable>
-            </template>
-        </Card>        
-    </div>
+            <ConfigurationTable
+                v-if="model"
+                :title="executionListenersTitle"
+                :headers="listnersHeaders"
+                v-model="executionListeners"
+                :createNewItemHandler="executionListenersHandlers.create"
+                :editItemHandler="executionListenersHandlers.edit"
+                :removeItemHandler="executionListenersHandlers.remove"
+            >
+                <template #row="{ item }">
+                    <td>{{ item?.listener?.class }}</td>
+                    <td>{{ item?.listener?.$type }}</td>
+                    <td>{{ item?.listener?.event }}</td>
+                    <td>{{ item?.listener?.fields?.length || 0 }}</td>
+                </template>
+            </ConfigurationTable>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
@@ -48,18 +48,13 @@ import { ExecutionListenerType } from '../../../bpmn-workflow-editor/activiti-mo
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
-import Card from '../../generic/Card.vue';
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
 const model = defineModel();
 const taskListeners = ref(null);
 const executionListeners = ref(null);
 
-const cardProps = {
-    title: "Listeners",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Listeners';
 
 const listnersHeaders = [
     'Listener implementation',

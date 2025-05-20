@@ -1,35 +1,36 @@
 <template>
-    <div class="form-editor-container" data-testid="form-editor-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div class="form-editor-content" data-testid="form-editor-content">
-                    <ConfigurationTable
-                        v-if="model"
-                        :title="formPropertiesTableSettings.title"
-                        :headers="formPropertiesTableSettings.headers"
-                        v-model="formProperties"
-                        :createNewItemHandler="formPropertiesHandlers.create"
-                        :editItemHandler="formPropertiesHandlers.edit"
-                        :removeItemHandler="formPropertiesHandlers.remove"
-                    >
-                        <template #row="{ item }">
-                            <td>{{ item.formProperty.id }}</td>
-                            <td>{{ item.formProperty.name }}</td>
-                            <td>{{ item.formProperty.type }}</td>
-                            <td>{{ item.formProperty.expression }}</td>
-                            <td>{{ item.formProperty.variable }}</td>
-                            <td>{{ item.formProperty.default }}</td>
-                            <td>{{ item.formProperty.pattern }}</td>
-                            <td>{{ item.formProperty.required }}</td>
-                            <td>{{ item.formProperty.readable }}</td>
-                            <td>{{ item.formProperty.writable }}</td>
-                            <td>{{ getItemIdAndNamesAsString(item.formProperty.formValue) }}</td>
-                        </template>
-                    </ConfigurationTable>
-                </div>
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div class="form-editor-content" data-testid="form-editor-content">
+                <ConfigurationTable
+                    v-if="model"
+                    :title="formPropertiesTableSettings.title"
+                    :headers="formPropertiesTableSettings.headers"
+                    v-model="formProperties"
+                    :createNewItemHandler="formPropertiesHandlers.create"
+                    :editItemHandler="formPropertiesHandlers.edit"
+                    :removeItemHandler="formPropertiesHandlers.remove"
+                >
+                    <template #row="{ item }">
+                        <td>{{ item.formProperty.id }}</td>
+                        <td>{{ item.formProperty.name }}</td>
+                        <td>{{ item.formProperty.type }}</td>
+                        <td>{{ item.formProperty.expression }}</td>
+                        <td>{{ item.formProperty.variable }}</td>
+                        <td>{{ item.formProperty.default }}</td>
+                        <td>{{ item.formProperty.pattern }}</td>
+                        <td>{{ item.formProperty.required }}</td>
+                        <td>{{ item.formProperty.readable }}</td>
+                        <td>{{ item.formProperty.writable }}</td>
+                        <td>{{ getItemIdAndNamesAsString(item.formProperty.formValue) }}</td>
+                    </template>
+                </ConfigurationTable>
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
@@ -39,17 +40,12 @@ import { getItemIdAndNamesAsString } from '../../../bpmn-workflow-editor/utils/g
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../../eventbus';
 
-import Card from '../../generic/Card.vue';
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
 const model = defineModel();
 const formProperties = ref(null);
 
-const cardProps = {
-    title: "Form",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Form';
 
 const formPropertiesTableSettings = {
     title: '',
@@ -141,6 +137,5 @@ onUnmounted(() => {
 
 </script>
 
-<style>
-
+<style scoped>
 </style>

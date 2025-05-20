@@ -6,19 +6,19 @@ export function modelerEventsHandler(modeler) {
     });
 
     modeler.on('import.parse.complete', (event) => {
-        console.log('import.parse.complete', event);
+        console.info('import.parse.complete', event);
     });
 
     modeler.on('import.done', (event) => {
-        console.log('import.done', event);
+        console.info('import.done', event);
     });
 
     modeler.on('import.error', (event) => {
-        console.log('import.error', event);
+        console.info('import.error', event);
     });
 
     modeler.on('save.done', (event) => {
-        console.log('save.done', event);
+        console.info('save.done', event);
     });
     
 

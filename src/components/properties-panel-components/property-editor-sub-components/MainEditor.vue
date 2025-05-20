@@ -1,21 +1,22 @@
 <template>
-    <div class="main-editor-container" data-testid="main-editor-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
-                <div v-if="model" class="main-editor-content" data-testid="main-editor-content">                                        
-                    <ScriptTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SCRIPT_TASK" v-model="model" />
-                    <UserTaskPropertiesEditor v-if="model.$type === TASK_TYPES.USER_TASK" v-model="model" />
-                    <InitiatorPropertyEditor v-if="model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
-                    <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
-                    <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
-                    <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
-                    <BoundaryEventPropertiesEditor v-if="model.$type === EVENT_TYPES.BOUNDARY_EVENT" v-model="model" />
-                    <CatchEventPropertiesEditor v-if="model.$type === EVENT_TYPES.INTERMEDIATE_CATCH_EVENT" v-model="model" />
-                    <CallActivityPropertiesEditor v-if="model.$type === ACTIVITY_TYPES.CALL_ACTIVITY" v-model="model" />
-                </div>
-            </template>
-        </Card>
-    </div>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3>            
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div v-if="model" class="main-editor-content" data-testid="main-editor-content">                                        
+                <ScriptTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SCRIPT_TASK" v-model="model" />
+                <UserTaskPropertiesEditor v-if="model.$type === TASK_TYPES.USER_TASK" v-model="model" />
+                <InitiatorPropertyEditor v-if="model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
+                <FormKeyPropertyEditor v-if="model.$type === TASK_TYPES.USER_TASK || model.$type === EVENT_TYPES.START_EVENT" v-model="model" />
+                <ServiceTaskPropertiesEditor v-if="model.$type === TASK_TYPES.SERVICE_TASK" v-model="model" />
+                <SequenceFlowPropertyEditor v-if="model.$type === FLOW_TYPES.SEQUENCE_FLOW" v-model="model" />
+                <BoundaryEventPropertiesEditor v-if="model.$type === EVENT_TYPES.BOUNDARY_EVENT" v-model="model" />
+                <CatchEventPropertiesEditor v-if="model.$type === EVENT_TYPES.INTERMEDIATE_CATCH_EVENT" v-model="model" />
+                <CallActivityPropertiesEditor v-if="model.$type === ACTIVITY_TYPES.CALL_ACTIVITY" v-model="model" />
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
@@ -35,16 +36,10 @@ import BoundaryEventPropertiesEditor from './main-editor-sub-components/Boundary
 import CatchEventPropertiesEditor from './main-editor-sub-components/CatchEventPropertiesEditor.vue';
 import CallActivityPropertiesEditor from './main-editor-sub-components/CallActivityPropertiesEditor.vue';
 
-import Card from '../../generic/Card.vue';
-
 const model = defineModel();
 const mainProperties = ref(null);
 
-const cardProps = {
-    title: "Main",
-    subtitle: "",
-    text: ""
-};
+const panelTitle = 'Main';
 
 watch(
   () => model, 
