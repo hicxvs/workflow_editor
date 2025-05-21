@@ -7,6 +7,7 @@ import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
 import { workflowEditorSelectionEventsHandler } from './eventHandlers/workflowEditorSelectionEventsHandler';
 import { workflowElementEventsHandler } from './eventHandlers/workflowElementEventsHandler';
 import { workflowSubprocessNavigationEventsHandler } from './eventHandlers/workflowSubprocessNavigationEventsHandler';
+import { workflowCanvasEventHandler } from './eventHandlers/workflowCanvasEventsHandler';
 import { ELEMENT_TYPES } from './modelerTypes/elementTypes';
 import { PROCESS_TYPES } from './modelerTypes/processTypes';
 import { EVENT_DEFINITION_TYPES } from './modelerTypes/eventDefinitionTypes';
@@ -30,6 +31,7 @@ export function createWorkflowEditor(container) {
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
     workflowSubprocessNavigationEventsHandler(modeler);
+    workflowCanvasEventHandler(modeler);
 
     async function importDiagram(xmlDiagram) {
         if(!xmlDiagram) {

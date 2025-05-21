@@ -14,7 +14,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import EventBus from '../../eventbus';
+import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
 import Card from "../generic/Card.vue";
 import MessageEditor from './process-messages-sub-components/MessageEditor.vue';
@@ -29,6 +31,22 @@ const cardProps = {
     text: "The Process Messages Editor provides an intuitive interface for managing and configuring BPMN message elements within your diagram. Message elements are standalone components that facilitate communication between events and tasks."
 };
 
+onMounted(() => {
+  EventBus.on(EVENT_TYPE.CANVAS_SELECTED, () => {
+    showEditors.value = true;
+  });
+
+  EventBus.on(EVENT_TYPE.CANVAS_DESELECTED, () => {
+    showEditors.value = false;
+  });
+});
+
+onUnmounted(() => {
+  EventBus.off(EVENT_TYPE.CANVAS_SELECTED);
+  EventBus.off(EVENT_TYPE.CANVAS_DESELECTED);
+});
+
+/*
 watch(
   () => model, 
   () => {
@@ -39,7 +57,7 @@ watch(
     }
   },
   { immediate:true, deep: true }
-);
+); */
 
 </script>
 

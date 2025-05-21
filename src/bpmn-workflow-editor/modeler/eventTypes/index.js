@@ -98,7 +98,9 @@ export const EVENT_TYPE = Object.freeze({
     SHOW_SYSTEM_DRAFT_OPTIONS: 'show-system-draft-options',
     HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options',
     GET_DIAGRAM_DATA: 'get-diagram-data',
-    DIAGRAM_DATA_READY: 'diagram-data-ready'
+    DIAGRAM_DATA_READY: 'diagram-data-ready',
+    CANVAS_SELECTED: 'canvas-selected',
+    CANVAS_DESELECTED: 'canvas-deselected',
 });
 
 
