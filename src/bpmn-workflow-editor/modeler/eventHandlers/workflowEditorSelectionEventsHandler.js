@@ -6,13 +6,15 @@ export function workflowEditorSelectionEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
 
     workflowEventBus.on('selection.changed', (event) => {
-
         const selectedElement = event.newSelection[0];
 
         if(!selectedElement) {
-            EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT, null);
+            EventBus.emit(EVENT_TYPE.ELEMENT_DESELECTED);
+            EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT, null);            
             return;
         }
+
+        EventBus.emit(EVENT_TYPE.ELEMENT_SELECTED);
 
         if(selectedElement.type === TASK_TYPES.SERVICE_TASK) {
             handleServiceTaskSelection(selectedElement);

@@ -45,17 +45,22 @@ const bpmnMenuGroup = {
             handler: () => {
                 EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },
         {
             label: 'Load BPMN From System',
             handler: () => {
-                EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);           
+                EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);           
             }
         },        
         {
             label: 'Deploy BPMN to system',
-            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+            }
         },
         {
             label: 'Load BPMN From Local',
@@ -63,12 +68,14 @@ const bpmnMenuGroup = {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },
         {
             label: 'Download BPMN to Local',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         }        
     ]
@@ -79,7 +86,10 @@ const draftMenuGroup = {
     items: [
         {
             label: 'Save BPMN Draft to system',
-            handler: () => EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT)
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+            }
         },
         {
             label: 'Delete BPMN Draft from system',
@@ -87,6 +97,7 @@ const draftMenuGroup = {
                 EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
                 EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },
     ]

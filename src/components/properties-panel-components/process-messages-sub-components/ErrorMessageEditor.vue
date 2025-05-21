@@ -1,9 +1,12 @@
 <template>
-    <div class="error-message-editor-container" data-testid="error-message-editor-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3> 
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div class="error-messages-editor-content" data-testid="error-messages-editor-content">
                 <ConfigurationTable
-                    :title="errorMessageLabels.title"
+                    :title="''"
                     :headers="errorMessageHeaders"
                     v-model="errorWorkflowMessages"
                     :createNewItemHandler="errorMessageHandlers.create"
@@ -15,32 +18,23 @@
                         <td>{{ item.name }}</td>
                     </template>
                 </ConfigurationTable>
-            </template>
-        </Card>
-    </div>
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { ELEMENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
-import EventBus from '../../eventbus';
-import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { ELEMENT_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
+import EventBus from '../../../eventbus';
+import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 
-import Card from '../generic/Card.vue';
-import ConfigurationTable from '../generic/ConfigurationTable.vue';
+import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
 const model = defineModel();
 const errorWorkflowMessages = ref(null);
 
-const cardProps = {
-    title: "Process Error Messages Editor",
-    subtitle: "",
-    text: "The Process Error Messages Editor provides an intuitive interface for managing and configuring BPMN error message elements within your diagram. Unlike typical process elements, error message elements are standalone components that facilitate communication between events and tasks."
-};
-
-const errorMessageLabels = {
-    title: 'Error Messages'
-};
+const panelTitle = 'Error Messages';
 
 const errorMessageHeaders = [
     'Id',

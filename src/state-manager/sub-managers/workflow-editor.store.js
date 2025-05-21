@@ -36,8 +36,6 @@ export function WorkflowEditorStore() {
     const currentSystemDiagrams = ref(null);
     const currentDiagramMessages = ref(null);
     const currentDiagramErrorMessages = ref(null);
-
-    const isBackgroundSelected = ref(false);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -45,7 +43,6 @@ export function WorkflowEditorStore() {
         }
 
         currentModeler.value = createWorkflowEditor(canvas);
-        await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = (IS_APP_IN_MODE_DEV) ? loadAPIKey() : null;
         getDiagramMessages();
         getDiagramErrorMessages();
@@ -89,8 +86,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);
         EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
         EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
-        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
-        EventBus.on(EVENT_TYPE.BACKGROUNG_SELECTED, handlebackgroundSelection);      
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);     
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -125,7 +121,6 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);
         EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
-        EventBus.off(EVENT_TYPE.BACKGROUNG_SELECTED);
     }
 
     async function createNewDiagram() {
@@ -241,6 +236,7 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
+        EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);
     }
 
     async function getScriptCode(scriptId) {
@@ -428,19 +424,13 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
 
-    function handlebackgroundSelection(isSelected) {
-        isBackgroundSelected.value = isSelected;
-    }
-
     function apiKeyExists() {
         if (!currentApiKey.value) {
             console.error("No API key provided. Please provide an API key to load a diagram from the system.");
             return false;
         }
         return true;    
-    }
-
-    
+    }   
   
     return {
         currentModeler,
@@ -452,7 +442,6 @@ export function WorkflowEditorStore() {
         currentSystemDiagrams,
         currentDiagramMessages,
         currentDiagramErrorMessages,
-        isBackgroundSelected,
         initializeWorkflowEditor,
         destroyWorkflowEditor,
         registerWorkflowEditorEventHandlers,

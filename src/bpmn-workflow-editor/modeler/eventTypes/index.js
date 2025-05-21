@@ -99,7 +99,12 @@ export const EVENT_TYPE = Object.freeze({
     HIDE_SYSTEM_DRAFT_OPTIONS: 'hide-system-draft-options',
     GET_DIAGRAM_DATA: 'get-diagram-data',
     DIAGRAM_DATA_READY: 'diagram-data-ready',
-    BACKGROUNG_SELECTED: 'background-selected'
+    CANVAS_SELECTED: 'canvas-selected',
+    CANVAS_DESELECTED: 'canvas-deselected',
+    SHOW_PROPERTIES_PANEL: 'show-properties-panel',
+    HIDE_PROPERTIES_PANEL: 'hide-properties-panel',
+    ELEMENT_SELECTED: 'element-selected',
+    ELEMENT_DESELECTED: 'element-deselected',
 });
 
 
