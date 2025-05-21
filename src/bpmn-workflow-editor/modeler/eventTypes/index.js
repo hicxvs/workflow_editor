@@ -101,6 +101,8 @@ export const EVENT_TYPE = Object.freeze({
     DIAGRAM_DATA_READY: 'diagram-data-ready',
     CANVAS_SELECTED: 'canvas-selected',
     CANVAS_DESELECTED: 'canvas-deselected',
+    SHOW_PROPERTIES_PANEL: 'show-properties-panel',
+    HIDE_PROPERTIES_PANEL: 'hide-properties-panel'
 });
 
 

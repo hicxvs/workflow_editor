@@ -11,7 +11,7 @@
 
       <div class="resizer" @mousedown="startResizing"></div>
 
-      <div class="section-properties-panel" :style="{ flex: propertiesPanelFlex }">
+      <div v-if="showPropertiesPanel" class="section-properties-panel" :style="{ flex: propertiesPanelFlex }">
         <WorkflowPropertiesPanel />
       </div>
 
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import EventBus from '../eventbus';
 import { EVENT_TYPE } from '../bpmn-workflow-editor/modeler/eventTypes';
 import WorkflowToolbar from '../main-sections/WorkflowToolbar.vue';
@@ -30,6 +30,23 @@ import WorkflowPropertiesPanel from '../main-sections/WorkflowPropertiesPanel.vu
 const workflowEditorFlex = ref(3); // Initial flex ratio for the workflow editor
 const propertiesPanelFlex = ref(2); // Initial flex ratio for the properties panel
 let isUserResizing = false;
+
+const showPropertiesPanel = ref(false);
+
+onMounted(() => {
+  EventBus.on(EVENT_TYPE.SHOW_PROPERTIES_PANEL, () => {
+    showPropertiesPanel.value = true;
+  });
+
+  EventBus.on(EVENT_TYPE.HIDE_PROPERTIES_PANEL, () => {
+    showPropertiesPanel.value = false;
+  });
+});
+
+onUnmounted(() => {
+  EventBus.off(EVENT_TYPE.SHOW_PROPERTIES_PANEL);
+  EventBus.off(EVENT_TYPE.HIDE_PROPERTIES_PANEL);
+});
 
 function startResizing(event) {
   isUserResizing = true;

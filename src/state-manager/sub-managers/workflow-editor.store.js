@@ -43,7 +43,6 @@ export function WorkflowEditorStore() {
         }
 
         currentModeler.value = createWorkflowEditor(canvas);
-        await importAndProcessDiagram(defaultDiagram);
         currentApiKey.value = (IS_APP_IN_MODE_DEV) ? loadAPIKey() : null;
         getDiagramMessages();
         getDiagramErrorMessages();
@@ -237,6 +236,7 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
+        EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);
     }
 
     async function getScriptCode(scriptId) {
@@ -430,9 +430,7 @@ export function WorkflowEditorStore() {
             return false;
         }
         return true;    
-    }
-
-    
+    }   
   
     return {
         currentModeler,
