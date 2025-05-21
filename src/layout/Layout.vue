@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-container" @click="handleLayoutClick">
+  <div class="layout-container">
     <div class="section-navbar">
       <WorkflowToolbar />
     </div>
@@ -73,15 +73,6 @@ function startResizing(event) {
   window.addEventListener('mousemove', updatePanelSizes);
   window.addEventListener('mouseup', stopResizing);
 }
-
-function handleLayoutClick(event) {
-  EventBus.emit(EVENT_TYPE.BACKGROUNG_SELECTED, false);
-
-  if(event?.srcElement?.dataset?.elementId) {
-    EventBus.emit(EVENT_TYPE.BACKGROUNG_SELECTED, true);
-  }
-}
-
 </script>
 
 <style scoped>

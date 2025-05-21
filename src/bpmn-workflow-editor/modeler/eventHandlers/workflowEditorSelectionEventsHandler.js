@@ -6,7 +6,6 @@ export function workflowEditorSelectionEventsHandler(modeler) {
     const workflowEventBus = modeler.get('eventBus');
 
     workflowEventBus.on('selection.changed', (event) => {
-
         const selectedElement = event.newSelection[0];
 
         if(!selectedElement) {

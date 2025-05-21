@@ -1,9 +1,12 @@
 <template>
-    <div class="message-editor-container" data-testid="message-editor-container">
-        <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
-            <template #content>
+    <v-expansion-panel>
+        <v-expansion-panel-title>
+            <h3>{{ panelTitle }}</h3> 
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+            <div class="messages-editor-content" data-testid="messages-editor-content">
                 <ConfigurationTable
-                    :title="messageLabels.title"
+                    :title="''"
                     :headers="messageHeaders"
                     v-model="workflowMessages"
                     :createNewItemHandler="messageHandlers.create"
@@ -15,32 +18,23 @@
                         <td>{{ item.name }}</td>
                     </template>
                 </ConfigurationTable>
-            </template>
-        </Card>
-    </div>
+            </div>
+        </v-expansion-panel-text>
+    </v-expansion-panel>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { ELEMENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
-import EventBus from '../../eventbus';
-import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { ELEMENT_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/elementTypes';
+import EventBus from '../../../eventbus';
+import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
 
-import Card from '../generic/Card.vue';
-import ConfigurationTable from '../generic/ConfigurationTable.vue';
+import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 
 const model = defineModel();
 const workflowMessages = ref(null);
 
-const cardProps = {
-    title: "Process Messages Editor",
-    subtitle: "",
-    text: "The Process Messages Editor provides an intuitive interface for managing and configuring BPMN message elements within your diagram. Unlike typical process elements, message elements are standalone components that facilitate communication between events and tasks."
-};
-
-const messageLabels = {
-    title: 'Messages'
-};
+const panelTitle = 'Messages';
 
 const messageHeaders = [
     'Id',

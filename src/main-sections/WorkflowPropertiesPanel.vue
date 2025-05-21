@@ -1,23 +1,28 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
-    <MessageEditor v-if="isBackgroundSelected" v-model="currentDiagramMessages" class="mb-6" />
-    <ErrorMessageEditor v-if="isBackgroundSelected" v-model="currentDiagramErrorMessages" class="mb-6" />
+    <ProcessMessagesEditor v-model="processMessages" class="mb-6" />
     <PropertyEditor v-model="currentWorkingElementProperties" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import StateManager from "../state-manager";
 import { storeToRefs } from "pinia";
 
 import ProcessDefinition from "../components/properties-panel-components/ProcessDefinition.vue";
-import MessageEditor from "../components/properties-panel-components/MessageEditor.vue";
-import ErrorMessageEditor from "../components/properties-panel-components/ErrorMessageEditor.vue";
+import ProcessMessagesEditor from "../components/properties-panel-components/ProcessMessagesEditor.vue";
 import PropertyEditor from "../components/properties-panel-components/PropertyEditor.vue";
 
 const workflowEditorStore = StateManager.useWorkflowEditorStore();
-const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages, currentDiagramErrorMessages, isBackgroundSelected } = storeToRefs(workflowEditorStore);
+const { currentProcessDefinition, currentWorkingElementProperties, currentDiagramMessages, currentDiagramErrorMessages} = storeToRefs(workflowEditorStore);
+
+const processMessages = ref({
+  diagramMessages: currentDiagramMessages,
+  diagramErrorMessages: currentDiagramErrorMessages
+});
+
 </script>
 
 <style scoped>
