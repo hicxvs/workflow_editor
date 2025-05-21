@@ -102,7 +102,9 @@ export const EVENT_TYPE = Object.freeze({
     CANVAS_SELECTED: 'canvas-selected',
     CANVAS_DESELECTED: 'canvas-deselected',
     SHOW_PROPERTIES_PANEL: 'show-properties-panel',
-    HIDE_PROPERTIES_PANEL: 'hide-properties-panel'
+    HIDE_PROPERTIES_PANEL: 'hide-properties-panel',
+    ELEMENT_SELECTED: 'element-selected',
+    ELEMENT_DESELECTED: 'element-deselected',
 });
 
 

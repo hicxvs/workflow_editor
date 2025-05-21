@@ -3,7 +3,7 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
         <template #content>
           <div class="property-editor-content" data-testid="property-editor-content">
-            <v-expansion-panels v-if="showEditors">
+            <v-expansion-panels>
               <GeneralEditor v-model="model"/>
               <MainEditor v-model="model" />
               <DocumentationEditor v-model="model" />
@@ -19,7 +19,6 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
 import Card from "../generic/Card.vue";
 import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
 import MainEditor from "./property-editor-sub-components/MainEditor.vue";
@@ -30,25 +29,12 @@ import MultiInstanceEditor from "./property-editor-sub-components/MultiInstanceE
 import OutputPanel from "./property-editor-sub-components/OutputPanel.vue";
 
 const model = defineModel();
-const showEditors = ref(false);
 
 const cardProps = {
     title: "Property Editor",
     subtitle: "",
     text: "The Properties Panel provides detailed configuration options for BPMN elements. The panel updates automatically when you select an element in the diagram."
 };
-
-watch(
-  () => model, 
-  () => {
-    showEditors.value = false;
-    if(model.value) {
-      showEditors.value = true;
-      return;
-    }
-  },
-  { immediate:true, deep: true }
-);
 </script>
 
 <style scoped>

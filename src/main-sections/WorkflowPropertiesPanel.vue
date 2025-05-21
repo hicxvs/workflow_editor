@@ -1,13 +1,15 @@
 <template>
   <div class="properties-panel" data-testid="properties-panel">
     <ProcessDefinition v-model="currentProcessDefinition" class="mb-6" />
-    <ProcessMessagesEditor v-model="processMessages" class="mb-6" />
-    <PropertyEditor v-model="currentWorkingElementProperties" />
+    <ProcessMessagesEditor v-if="showProcessMessagesEditor" v-model="processMessages" class="mb-6" />
+    <PropertyEditor v-if="showPropertyEditor" v-model="currentWorkingElementProperties" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import EventBus from '../eventbus';
+import { EVENT_TYPE } from '../bpmn-workflow-editor/modeler/eventTypes';
 import StateManager from "../state-manager";
 import { storeToRefs } from "pinia";
 
@@ -21,6 +23,34 @@ const { currentProcessDefinition, currentWorkingElementProperties, currentDiagra
 const processMessages = ref({
   diagramMessages: currentDiagramMessages,
   diagramErrorMessages: currentDiagramErrorMessages
+});
+
+const showProcessMessagesEditor = ref(false);
+const showPropertyEditor = ref(false);
+
+onMounted(() => {
+  EventBus.on(EVENT_TYPE.CANVAS_SELECTED, () => {
+    showProcessMessagesEditor.value = true;
+  });
+
+  EventBus.on(EVENT_TYPE.CANVAS_DESELECTED, () => {
+    showProcessMessagesEditor.value = false;
+  });
+
+  EventBus.on(EVENT_TYPE.ELEMENT_SELECTED, () => {
+    showPropertyEditor.value = true;
+  });
+
+  EventBus.on(EVENT_TYPE.ELEMENT_DESELECTED, () => {
+    showPropertyEditor.value = false;
+  });
+});
+
+onUnmounted(() => {
+  EventBus.off(EVENT_TYPE.CANVAS_SELECTED);
+  EventBus.off(EVENT_TYPE.CANVAS_DESELECTED);
+  EventBus.off(EVENT_TYPE.ELEMENT_SELECTED);
+  EventBus.off(EVENT_TYPE.ELEMENT_DESELECTED);
 });
 
 </script>
