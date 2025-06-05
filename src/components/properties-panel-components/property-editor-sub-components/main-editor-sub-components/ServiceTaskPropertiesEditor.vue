@@ -163,7 +163,7 @@ function filterJavaClasses() {
     const searchedClass = serviceTaskClass.value;
     filteredClasses.value = classFilterer.value?.fitlerClasses(searchedClass);
 
-    if(!filteredClasses.value.length) {
+    if(!filteredClasses.value?.length) {
         showFilterClassSelect.value = false;
         return;
     }
@@ -215,16 +215,6 @@ function retrieveScript(scriptId) {
 onMounted(() => {
     EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
 
-    EventBus.on(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY, (classes) => {
-        if(!classes || !Array.isArray(classes)) {
-            return;
-        }
-
-        selectedClass.value = null;
-        classFilterer.value = null;
-        classFilterer.value = ClassFilterer(classes);
-    });
-
     EventBus.on(EVENT_TYPE.ADD_CREATED_SERVICE_TASK_FIELD, (newFieldItem) => {
         if(!newFieldItem) {
             return;
@@ -259,6 +249,16 @@ watch(
     serviceTaskDelegateExpression.value = model.value?.delegateExpression || '';
     originalServiceTaskExtentionElements.value = model.value?.extensionElements || generateNewExtentionElements();
     serviceTaskExtentionElementsCopy.value = createDeepCopy(originalServiceTaskExtentionElements.value);
+
+    EventBus.on(EVENT_TYPE.WORKFLOW_JAVA_CLASSES_READY, (classes) => {
+        if(!classes || !Array.isArray(classes)) {
+            return;
+        }
+
+        selectedClass.value = null;
+        classFilterer.value = null;
+        classFilterer.value = ClassFilterer(classes);
+    });
   },
   { immediate: true, deep: true }
 );

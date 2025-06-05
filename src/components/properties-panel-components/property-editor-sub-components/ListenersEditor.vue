@@ -128,7 +128,7 @@ watch(
     taskListeners.value = getListeners(TaskListenerType);
     executionListeners.value = getListeners(ExecutionListenerType);
   },
-  { deep: true }
+  { immediate: true, deep: true }
 );
 
 onMounted(() => {
