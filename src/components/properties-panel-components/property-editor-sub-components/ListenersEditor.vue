@@ -5,7 +5,7 @@
         </v-expansion-panel-title>
         <v-expansion-panel-text>
             <ConfigurationTable
-                v-if="model"
+                v-if="showTaskListeners"
                 :title="taskListenersTitle"
                 :headers="listnersHeaders"
                 v-model="taskListeners"
@@ -46,6 +46,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { TaskListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/task-listener';
 import { ExecutionListenerType } from '../../../bpmn-workflow-editor/activiti-model-definitions/activiti-model-types/execution-listener';
 import { EVENT_TYPE } from '../../../bpmn-workflow-editor/modeler/eventTypes';
+import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import EventBus from '../../../eventbus';
 
 import ConfigurationTable from '../../generic/ConfigurationTable.vue';
@@ -53,6 +54,7 @@ import ConfigurationTable from '../../generic/ConfigurationTable.vue';
 const model = defineModel();
 const taskListeners = ref(null);
 const executionListeners = ref(null);
+const showTaskListeners = ref(false);
 
 const panelTitle = 'Listeners';
 
@@ -125,8 +127,14 @@ function getListeners(listenerType) {
 watch(
   () => model, 
   () => {
+    showTaskListeners.value = false;
+
     taskListeners.value = getListeners(TaskListenerType);
     executionListeners.value = getListeners(ExecutionListenerType);
+
+    if(model.value?.$type === TASK_TYPES.USER_TASK) {
+        showTaskListeners.value = true;
+    }
   },
   { immediate: true, deep: true }
 );
