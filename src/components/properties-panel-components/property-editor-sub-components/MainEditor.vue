@@ -39,7 +39,7 @@ import CallActivityPropertiesEditor from './main-editor-sub-components/CallActiv
 const model = defineModel();
 const mainProperties = ref(null);
 
-const panelTitle = 'Main';
+const panelTitle = 'Main Config';
 
 watch(
   () => model, 
