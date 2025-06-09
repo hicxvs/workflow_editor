@@ -57,6 +57,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_NAVIGATION_PATH, updateNavigationPath);
         EventBus.on(EVENT_TYPE.LOAD_FILE_SUCCESS, loadDiagramFromLocalFileSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM, saveDiagramToSystem);
+        EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM, removeDiagramFromSystem);
         EventBus.on(EVENT_TYPE.SAVE_DIAGRAM_DRAFT, saveDiagramToDraft);
         EventBus.on(EVENT_TYPE.DELETE_DIAGRAM_DRAFT, deleteDiagramFromDraft);
         EventBus.on(EVENT_TYPE.DOWNLOAD_DIAGRAM, downloadDiagram);
@@ -91,6 +92,7 @@ export function WorkflowEditorStore() {
 
     function unregisterWorkflowEditorEventHandlers() {
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM);
+        EventBus.off(EVENT_TYPE.REMOVE_DIAGRAM);
         EventBus.off(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
         EventBus.off(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
         EventBus.off(EVENT_TYPE.DOWNLOAD_DIAGRAM);
@@ -320,6 +322,15 @@ export function WorkflowEditorStore() {
 
     async function saveDiagramToDraft() {
         await saveDiagram(DraftService.saveDiagramToDraft);
+    }
+
+    async function removeDiagramFromSystem() {
+        if(!currentProcessDefinition.value?.id) {
+            return;
+        }
+
+        await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
+        EventBus.emit(EVENT_TYPE.CLEAR_DIAGRAM);
     }
 
     async function deleteDiagramFromDraft() {

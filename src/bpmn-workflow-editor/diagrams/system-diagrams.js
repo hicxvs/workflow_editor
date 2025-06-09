@@ -58,9 +58,23 @@ export function SystemDiagrams() {
         }
     }
 
+    async function removeDiagramFromSystem(apiKey, id) {
+        try {
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            await apiEngine.delete(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);    
+        } catch (error) {
+            console.error('Error removing diagram from the System', error);
+            throw error;
+        }
+    }
+
     return {
         getAllDiagramsFromSystem,
         getDiagramByIdFromSystem,
-        saveDiagramToSystem
+        saveDiagramToSystem,
+        removeDiagramFromSystem
     };
 }
