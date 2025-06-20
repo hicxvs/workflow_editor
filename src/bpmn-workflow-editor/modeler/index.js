@@ -151,8 +151,7 @@ export function createWorkflowEditor(container) {
             });
 
             newExtensionElements.$parent = elementProperties;
-            extensionElements = newExtensionElements;
-            return;            
+            extensionElements = newExtensionElements;            
         }
        
         elementProperties.extensionElements = extensionElements;
