@@ -7,7 +7,7 @@
             <div v-if="generalProperties" class="general-editor-content" data-testid="general-editor-content">
                 <h4 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h4>
                 <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
-                <TextInput :label="inputLabel.name" v-model="generalProperties.name" />
+                <TextInput :label="inputLabel.name" v-model="generalProperties.name" @input="updateElementName" />
                 <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
                 <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
                 <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
@@ -50,8 +50,19 @@ const inputLabel = {
 };
 
 const fieldKeys = {
+    name: 'name',
     type: 'type'
 };
+
+function updateElementName() {
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
+        {
+            elementId: model.value?.id,
+            elementProperty: fieldKeys.name,
+            elementPropertyValue: generalProperties.value.name
+        }
+    );
+}
 
 function setSelectedType(modelValue, types, selectedType, typeCheck) {
     if (!modelValue || !modelValue.$type?.toLowerCase()?.includes(typeCheck) || !types.value) {
