@@ -7,7 +7,7 @@
             <div v-if="generalProperties" class="general-editor-content" data-testid="general-editor-content">
                 <h4 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h4>
                 <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
-                <TextInput :label="inputLabel.name" v-model="generalProperties.name" @input="updateElementName" />
+                <TextInput :label="inputLabel.name" v-model="generalProperties.name" @input="updateElementName" :clearHandler="updateElementName"/>
                 <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
                 <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
                 <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
