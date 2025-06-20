@@ -61,14 +61,14 @@ const bpmnMenuGroup = {
                 EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
-        },/*
+        },
         {
             label: 'Delete BPMN From System',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
-        }, */
+        },
         {
             label: 'Load BPMN From Local',
             handler: () => {
