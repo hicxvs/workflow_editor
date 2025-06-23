@@ -306,7 +306,6 @@ export function WorkflowEditorStore() {
         };
 
         EventBus.emit(EVENT_TYPE.DIAGRAM_DATA_READY, diagramData);
-
         return diagramData;
     }
 
@@ -330,7 +329,7 @@ export function WorkflowEditorStore() {
         }
 
         await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
-        EventBus.emit(EVENT_TYPE.CLEAR_DIAGRAM);
+        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
     }
 
     async function deleteDiagramFromDraft() {
