@@ -5,6 +5,7 @@ export const EVENT_TYPE = Object.freeze({
     GENERATED_XML_DIAGRAM_READY: 'generated-xml-diagram-ready',
     CLEAR_GENERATED_XML_DIAGRAM: 'clear-generated-xml-diagram',
     CREATE_NEW_DIAGRAM: 'create-new-diagram',
+    IMPORTED_DIAGRAM_READY: 'imported-diagram-ready',
     CLEAR_DIAGRAM: 'clear-diagram',
     SAVE_DIAGRAM: 'save-diagram',
     REMOVE_DIAGRAM: 'remove-diagram',
