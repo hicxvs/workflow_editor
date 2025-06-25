@@ -6,7 +6,7 @@
             </template>
             <v-list>
                 <v-list-item v-for="item in items" :key="item.label">
-                    <v-btn block flat @click="item.handler" class="left-align">{{ item.label }}</v-btn>
+                    <v-btn block flat @click="item.handler" :disabled="item.disabled" class="left-align">{{ item.label }}</v-btn>
                 </v-list-item>
             </v-list>
         </v-menu>
@@ -26,6 +26,7 @@
             default: () => [
                 {
                     label: 'Default Button Label',
+                    disabled: false,
                     handler: () => {console.log('Default Button Click Handler');}
                 }
             ]

@@ -37,7 +37,7 @@ const apiKeyLabel = "API KEY";
 const showDraftMenuGroup = ref(false);
 const showAnalisisAndLogginMenuGroup = ref(false);
 
-const bpmnMenuGroup = {
+const bpmnMenuGroup = ref({
     label: 'BPMN MANAGEMENT',
     items: [
         {
@@ -54,21 +54,7 @@ const bpmnMenuGroup = {
                 EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);           
             }
-        },        
-        {
-            label: 'Deploy BPMN to system',
-            handler: () => {
-                EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
-            }
-        },/*
-        {
-            label: 'Delete BPMN From System',
-            handler: () => {
-                EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
-            }
-        }, */
+        },
         {
             label: 'Load BPMN From Local',
             handler: () => {
@@ -77,16 +63,33 @@ const bpmnMenuGroup = {
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
+        },        
+        {
+            label: 'Deploy BPMN to system',
+            disabled: true,
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+            }
+        },
+        {
+            label: 'Delete BPMN From System',
+            disabled: true,
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+            }
         },
         {
             label: 'Download BPMN to Local',
+            disabled: true,
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         }        
     ]
-};
+});
 
 const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
@@ -141,18 +144,28 @@ onMounted(() => {
         showDraftMenuGroup.value = false;
     });
 
-    addSaveAsIfSupported(bpmnMenuGroup.items, 'Save BPMN to Local as');
+    addSaveAsIfSupported(bpmnMenuGroup.value.items, 'Save BPMN to Local as');
+
+    EventBus.on(EVENT_TYPE.IMPORTED_DIAGRAM_READY, () => {
+        bpmnMenuGroup.value.items.forEach(bpmnMenuGroupMenuItem => {
+            if(bpmnMenuGroupMenuItem.disabled) {
+                bpmnMenuGroupMenuItem.disabled = false;
+            }
+        });
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     EventBus.off(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+    EventBus.off(EVENT_TYPE.IMPORTED_DIAGRAM_READY);
 });
 
 function addSaveAsIfSupported(itemsCollection, buttonLabel) {
     if ('showOpenFilePicker' in window) {
         itemsCollection.push({
         label: buttonLabel || 'Save as',
+        disabled: true,
         handler: () => {
 
             EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);

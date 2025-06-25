@@ -239,6 +239,7 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);        
+        EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);        
     }
 
     async function getScriptCode(scriptId) {
@@ -306,7 +307,6 @@ export function WorkflowEditorStore() {
         };
 
         EventBus.emit(EVENT_TYPE.DIAGRAM_DATA_READY, diagramData);
-
         return diagramData;
     }
 
@@ -330,7 +330,7 @@ export function WorkflowEditorStore() {
         }
 
         await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
-        EventBus.emit(EVENT_TYPE.CLEAR_DIAGRAM);
+        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
     }
 
     async function deleteDiagramFromDraft() {
