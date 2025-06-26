@@ -13,6 +13,7 @@ import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { IS_APP_IN_MODE_DEV } from '../../config';
+import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -166,7 +167,10 @@ export function WorkflowEditorStore() {
         }
 
         if(!isApiKeyValid(apiKey)) {
-            console.error("Invalid API key provided. Please provide a valid API key to load a diagram from the system.");
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Invalid API key provided. Please provide a valid API key to load Workflows.'
+            });
             clearAPIKey();
             return;
         }
@@ -189,8 +193,15 @@ export function WorkflowEditorStore() {
             return;
         }
 
-        currentSystemDiagrams.value = await SystemService.getAllDiagramsFromSystem(currentApiKey.value);
-        EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
+        try {
+            currentSystemDiagrams.value = await SystemService.getAllDiagramsFromSystem(currentApiKey.value);
+            EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
+        } catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error loading workflows from the system.'
+            });
+        }
     }
 
     async function loadDiagram(diagram, serviceFunction) {
@@ -199,7 +210,10 @@ export function WorkflowEditorStore() {
         }
     
         if (!diagram || !diagram.id) {
-            console.error("No valid diagram. Please provide a valid diagram to be loaded from the system.");
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Invalid workflow. Please provide a valid workflow to be loaded.'
+            });
             return;
         }
     
@@ -210,11 +224,32 @@ export function WorkflowEditorStore() {
     }
 
     async function loadDiagramFromSystem(diagram) {
-        await loadDiagram(diagram, SystemService.getDiagramByIdFromSystem);
+        try {
+            await loadDiagram(diagram, SystemService.getDiagramByIdFromSystem);
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error loading the requested workflow.'
+            });
+        }
     } 
 
     async function loadDiagramDraftFromSystem(diagram) {
-        await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+        try {
+            await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow draft loaded successfully.'
+            });
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error loading the requested workflow draft.'
+            });
+        }
     }
 
     async function importAndProcessDiagram(diagramContent) {
@@ -251,8 +286,16 @@ export function WorkflowEditorStore() {
             return;
         }
 
-        const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
-        EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
+        try {
+            const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
+            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
+        } 
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error loading workflow script.'
+            });
+        }        
     }
     
     function saveListener(listeners) {
@@ -317,11 +360,37 @@ export function WorkflowEditorStore() {
     }
 
     async function saveDiagramToSystem() {         
-        await saveDiagram(SystemService.saveDiagramToSystem);
+        try {
+            await saveDiagram(SystemService.saveDiagramToSystem);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow deployed successfully.'
+            });
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error deploying workflow.'
+            });
+        }  
     }
 
     async function saveDiagramToDraft() {
-        await saveDiagram(DraftService.saveDiagramToDraft);
+        try {
+            await saveDiagram(DraftService.saveDiagramToDraft);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow draft saved successfully.'
+            });
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error saving workflow draft.'
+            });
+        }
     }
 
     async function removeDiagramFromSystem() {
@@ -329,12 +398,38 @@ export function WorkflowEditorStore() {
             return;
         }
 
-        await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
-        EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+        try {
+            await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow deleted from the system successfully.'
+            });
+    
+            EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error deleting workflow from the system.'
+            });
+        }
     }
 
     async function deleteDiagramFromDraft() {
-       await DraftService.deleteDiagramFromDraft( currentApiKey.value, currentProcessDefinition.value.id);
+        try {
+            await DraftService.deleteDiagramFromDraft( currentApiKey.value, currentProcessDefinition.value.id);
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow draft deleted successfully.'
+            });
+        }
+        catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error deleting workflow from draft.'
+            });
+        }
     }
 
     async function downloadDiagram() {
@@ -437,7 +532,10 @@ export function WorkflowEditorStore() {
 
     function apiKeyExists() {
         if (!currentApiKey.value) {
-            console.error("No API key provided. Please provide an API key to load a diagram from the system.");
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'No API key provided. Please provide an API key to load workflows from the system.'
+            });
             return false;
         }
         return true;    

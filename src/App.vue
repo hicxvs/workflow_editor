@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <Notification />
     <CodeEditor />
     <CallActivityParameterConfigurator />
     <ErrorMessageConfigurator />
@@ -17,6 +18,7 @@
 </template>
 
 <script setup>
+import Notification from './components/singleton-components/Notification.vue';
 import CodeEditor from './components/modal-components/CodeEditor.vue';
 import CallActivityParameterConfigurator from './components/modal-components/CallActivityParameterConfigurator.vue';
 import ErrorMessageConfigurator from './components/modal-components/ErrorMessageConfigurator.vue';
@@ -30,9 +32,5 @@ import SystemDiagrams from './components/modal-components/SystemDiagrams.vue';
 import Loader from './components/singleton-components/Loader.vue';
 import FileInput from './components/singleton-components/FileInput.vue';
 import Layout from './layout/Layout.vue';
-
 </script>
 
-<style scoped>
-
-</style>
