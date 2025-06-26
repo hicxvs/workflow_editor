@@ -196,7 +196,7 @@ export function WorkflowEditorStore() {
         try {
             currentSystemDiagrams.value = await SystemService.getAllDiagramsFromSystem(currentApiKey.value);
             EventBus.emit(EVENT_TYPE.SHOW_DIAGRAMS_FROM_SYSTEM, currentSystemDiagrams.value);
-        } catch(error) {
+        } catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error loading workflows from the system.'
@@ -227,7 +227,7 @@ export function WorkflowEditorStore() {
         try {
             await loadDiagram(diagram, SystemService.getDiagramByIdFromSystem);
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error loading the requested workflow.'
@@ -244,7 +244,7 @@ export function WorkflowEditorStore() {
                 text: 'Workflow draft loaded successfully.'
             });
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error loading the requested workflow draft.'
@@ -290,7 +290,7 @@ export function WorkflowEditorStore() {
             const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
             EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
         } 
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error loading workflow script.'
@@ -368,7 +368,7 @@ export function WorkflowEditorStore() {
                 text: 'Workflow deployed successfully.'
             });
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error deploying workflow.'
@@ -385,7 +385,7 @@ export function WorkflowEditorStore() {
                 text: 'Workflow draft saved successfully.'
             });
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error saving workflow draft.'
@@ -408,7 +408,7 @@ export function WorkflowEditorStore() {
     
             EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error deleting workflow from the system.'
@@ -424,7 +424,7 @@ export function WorkflowEditorStore() {
                 text: 'Workflow draft deleted successfully.'
             });
         }
-        catch(error) {
+        catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: 'Error deleting workflow from draft.'

@@ -18,6 +18,7 @@ export function DraftDiagrams() {
             const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
+            console.error('Error get diagram from draft', error);
             throw error;
         }
     }
@@ -31,6 +32,7 @@ export function DraftDiagrams() {
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey, isXMLContent) : getRequestHeaders(null, isXMLContent);
             await apiEngine.post(`${API_RESOURCE_DRAFT_ENDPOINT}`, diagramXMLContent, requestHeaders);
         } catch (error) {
+            console.error('Error save diagram to draft', error);
             throw error;
         }
     }
@@ -43,6 +45,7 @@ export function DraftDiagrams() {
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders();
             await apiEngine.delete(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, requestHeaders);
         } catch (error) {
+            console.error('Error delete diagram to draft', error);
             throw error;
         }
     }

@@ -25,6 +25,7 @@ export function SystemDiagrams() {
             })) || null;
             
         } catch (error) {            
+            console.error('Error loading system diagrams', error);
             throw error;
         }
     }
@@ -38,6 +39,7 @@ export function SystemDiagrams() {
             const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
+            console.error('Error loading system diagram by id', error);
             throw error;
         }
     }
@@ -51,6 +53,7 @@ export function SystemDiagrams() {
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey, isXMLContent) : getRequestHeaders(null, isXMLContent);
             await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, requestHeaders);
         } catch (error) {
+            console.error('Error saving diagram to the System', error);
             throw error;
         }
     }
@@ -63,6 +66,7 @@ export function SystemDiagrams() {
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
             await apiEngine.delete(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);    
         } catch (error) {
+            console.error('Error removing diagram from the System', error);
             throw error;
         }
     }
