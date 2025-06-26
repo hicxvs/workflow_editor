@@ -106,7 +106,6 @@ const draftMenuGroup = {
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
-                EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },

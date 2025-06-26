@@ -106,6 +106,7 @@ export const EVENT_TYPE = Object.freeze({
     HIDE_PROPERTIES_PANEL: 'hide-properties-panel',
     ELEMENT_SELECTED: 'element-selected',
     ELEMENT_DESELECTED: 'element-deselected',
+    SHOW_NOTIFICATION: 'show-notification'
 });
 
 

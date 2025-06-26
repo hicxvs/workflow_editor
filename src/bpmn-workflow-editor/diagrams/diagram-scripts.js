@@ -24,7 +24,6 @@ export function DiagramScripts() {
                 codeScriptId: id
             };
         } catch (error) {
-            console.error('Error loading diagram script by id', error);
             throw error;
         }
     }
