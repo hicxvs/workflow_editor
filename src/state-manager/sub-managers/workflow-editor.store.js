@@ -362,6 +362,7 @@ export function WorkflowEditorStore() {
     async function saveDiagramToSystem() {         
         try {
             await saveDiagram(SystemService.saveDiagramToSystem);
+            EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
