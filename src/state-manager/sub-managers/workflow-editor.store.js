@@ -169,7 +169,7 @@ export function WorkflowEditorStore() {
         if(!isApiKeyValid(apiKey)) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Invalid API key provided. Please provide a valid API key to load BPMN Workflows from the system'
+                text: 'Invalid API key provided. Please provide a valid API key to load Workflows.'
             });
             clearAPIKey();
             return;
@@ -199,7 +199,7 @@ export function WorkflowEditorStore() {
         } catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error loading BPMN Workflows from System'
+                text: 'Error loading workflows from the system.'
             });
         }
     }
@@ -212,7 +212,7 @@ export function WorkflowEditorStore() {
         if (!diagram || !diagram.id) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Invalid BPMN Workflow. Please provide a valid BPMN Workflow to be loaded from the system'
+                text: 'Invalid workflow. Please provide a valid workflow to be loaded.'
             });
             return;
         }
@@ -230,19 +230,24 @@ export function WorkflowEditorStore() {
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error loading Requested BPMN Workflow from System'
+                text: 'Error loading the requested workflow.'
             });
         }
     } 
 
     async function loadDiagramDraftFromSystem(diagram) {
         try {
-             await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+            await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow draft loaded successfully.'
+            });
         }
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error loading Requested BPMN Workflow Draft from System'
+                text: 'Error loading the requested workflow draft.'
             });
         }
     }
@@ -288,7 +293,7 @@ export function WorkflowEditorStore() {
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error loading BPMN Workflow script'
+                text: 'Error loading workflow script.'
             });
         }        
     }
@@ -360,13 +365,13 @@ export function WorkflowEditorStore() {
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
-                text: 'BPMN Workflow deployed with success'
+                text: 'Workflow deployed successfully.'
             });
         }
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error deploying BPMN Workflow'
+                text: 'Error deploying workflow.'
             });
         }  
     }
@@ -377,13 +382,13 @@ export function WorkflowEditorStore() {
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
-                text: 'BPMN Workflow Draft saved with success!'
+                text: 'Workflow draft saved successfully.'
             });
         }
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error saving BPMN Workflow'
+                text: 'Error saving workflow draft.'
             });
         }
     }
@@ -398,7 +403,7 @@ export function WorkflowEditorStore() {
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
-                text: 'BPMN Workflow deleted from the system with success!'
+                text: 'Workflow deleted from the system successfully.'
             });
     
             EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
@@ -406,7 +411,7 @@ export function WorkflowEditorStore() {
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error deleting BPMN Workflow from the System'
+                text: 'Error deleting workflow from the system.'
             });
         }
     }
@@ -416,13 +421,13 @@ export function WorkflowEditorStore() {
             await DraftService.deleteDiagramFromDraft( currentApiKey.value, currentProcessDefinition.value.id);
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
-                text: 'BPMN Workflow draft deleted with success!'
+                text: 'Workflow draft deleted successfully.'
             });
         }
         catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error deleting BPMN Workflow from drafts'
+                text: 'Error deleting workflow from draft.'
             });
         }
     }
@@ -529,7 +534,7 @@ export function WorkflowEditorStore() {
         if (!currentApiKey.value) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'No API key provided. Please provide an API key to load BPMN Workflows from the system'
+                text: 'No API key provided. Please provide an API key to load workflows from the system.'
             });
             return false;
         }

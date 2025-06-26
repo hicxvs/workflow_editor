@@ -38,10 +38,10 @@ const showDraftMenuGroup = ref(false);
 const showAnalisisAndLogginMenuGroup = ref(false);
 
 const bpmnMenuGroup = ref({
-    label: 'BPMN MANAGEMENT',
+    label: 'WORKFLOW MANAGEMENT',
     items: [
         {
-            label: 'Create New BPMN',
+            label: 'Create New',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
@@ -49,14 +49,14 @@ const bpmnMenuGroup = ref({
             }
         },
         {
-            label: 'Load BPMN From System',
+            label: 'Load From System',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.LOAD_DIAGRAMS_FROM_SYSTEM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);           
             }
         },
         {
-            label: 'Load BPMN From Local',
+            label: 'Load From Local',
             handler: () => {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
@@ -65,7 +65,7 @@ const bpmnMenuGroup = ref({
             }
         },        
         {
-            label: 'Deploy BPMN to system',
+            label: 'Deploy to system',
             disabled: true,
             handler: () => {
                 EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
@@ -73,7 +73,7 @@ const bpmnMenuGroup = ref({
             }
         },
         {
-            label: 'Delete BPMN From System',
+            label: 'Delete From System',
             disabled: true,
             handler: () => {
                 EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
@@ -81,7 +81,7 @@ const bpmnMenuGroup = ref({
             }
         },
         {
-            label: 'Download BPMN to Local',
+            label: 'Download to Local',
             disabled: true,
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
@@ -95,14 +95,14 @@ const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
     items: [
         {
-            label: 'Save BPMN Draft to system',
+            label: 'Save Draft to system',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },
         {
-            label: 'Delete BPMN Draft from system',
+            label: 'Delete Draft from system',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
                 EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
@@ -143,7 +143,7 @@ onMounted(() => {
         showDraftMenuGroup.value = false;
     });
 
-    addSaveAsIfSupported(bpmnMenuGroup.value.items, 'Save BPMN to Local as');
+    addSaveAsIfSupported(bpmnMenuGroup.value.items, 'Save to Local as');
 
     EventBus.on(EVENT_TYPE.IMPORTED_DIAGRAM_READY, () => {
         bpmnMenuGroup.value.items.forEach(bpmnMenuGroupMenuItem => {
