@@ -31,6 +31,7 @@ import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import MenuButtonList from '../generic/MenuButtonList.vue';
+import { CONFIRMATION_TYPE } from '../../bpmn-workflow-editor/modeler/confirmationTypes';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
@@ -68,16 +69,30 @@ const bpmnMenuGroup = ref({
             label: 'Deploy to system',
             disabled: true,
             handler: () => {
-                EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                EventBus.emit(EVENT_TYPE.SHOW_ACTION_CONFIRMATION, {
+                    type: CONFIRMATION_TYPE.ADD,
+                    title: 'Confirm Workflow Deployment',
+                    message: 'Are you sure you want to deploy this workflow to the system?',
+                    actionHandler: () => {
+                        EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
             }
         },
         {
             label: 'Delete From System',
             disabled: true,
             handler: () => {
-                EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                EventBus.emit(EVENT_TYPE.SHOW_ACTION_CONFIRMATION, {
+                    type: CONFIRMATION_TYPE.REMOVE,
+                    title: 'Confirm Workflow Deletion',
+                    message: 'Are you sure you want to permanently delete this workflow from the system?',
+                    actionHandler: () => {
+                        EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
             }
         },
         {
@@ -104,9 +119,16 @@ const draftMenuGroup = {
         {
             label: 'Delete Draft from system',
             handler: () => {
-                EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
-                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
-                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                EventBus.emit(EVENT_TYPE.SHOW_ACTION_CONFIRMATION, {
+                    type: CONFIRMATION_TYPE.REMOVE,
+                    title: 'Confirm Draft Deletion',
+                    message: 'Are you sure you want to delete this workflow draft from the system?',
+                    actionHandler: () => {
+                        EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
+                        EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
             }
         },
     ]
