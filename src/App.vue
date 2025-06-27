@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <Notification />
+    <ActionConfirmation />
     <CodeEditor />
     <CallActivityParameterConfigurator />
     <ErrorMessageConfigurator />
@@ -19,6 +20,7 @@
 
 <script setup>
 import Notification from './components/singleton-components/Notification.vue';
+import ActionConfirmation from './components/modal-components/ActionConfirmation.vue';
 import CodeEditor from './components/modal-components/CodeEditor.vue';
 import CallActivityParameterConfigurator from './components/modal-components/CallActivityParameterConfigurator.vue';
 import ErrorMessageConfigurator from './components/modal-components/ErrorMessageConfigurator.vue';
