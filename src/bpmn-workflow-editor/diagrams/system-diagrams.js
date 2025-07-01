@@ -21,6 +21,7 @@ export function SystemDiagrams() {
 
             return response?.data?.result.map(diagram => ({
                 id: diagram?.fileName,
+                version: diagram?.version,
                 hasDraft: diagram?.draft
             })) || null;
             
