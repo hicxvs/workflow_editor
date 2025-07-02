@@ -18,6 +18,8 @@
                     <template #head-content>
                         <tr>
                             <th class="text-left">{{ tableHeader.processName }}</th>                            
+                            <th class="text-left">{{ tableHeader.processVersion }}</th>
+                            <th class="text-left">{{ tableHeader.processSelectVersion }}</th>
                             <th class="text-left">{{ tableHeader.processAction }}</th>
                             <th class="text-left">{{ tableHeader.processDraft }}</th>
                         </tr>
@@ -28,6 +30,14 @@
                             :key="diagram.id"
                         >
                             <td>{{ diagram.id }}</td>
+                            <td>{{ diagram.version }}</td>
+                            <td>
+                                <NumberInput
+                                    v-model="diagram.versionToLoad"
+                                    :max="diagram.version" 
+                                    :min="1" 
+                                />
+                            </td>
                             <td class="text-right">
                                 <Button 
                                     :buttonColor="buttons.loadDiagram.color"
@@ -66,6 +76,7 @@ import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import Modal from '../generic/Modal.vue';
 import Table from '../generic/Table.vue';
 import TextInput from '../generic/TextInput.vue';
+import NumberInput from '../generic/NumberInput.vue';
 import Button from '../generic/Button.vue';
 
 const systemDiagrams = ref(null);
@@ -77,6 +88,8 @@ const modalTitle = "Workflow Search";
 const inputLabel = "Search process id";
 const tableHeader = {
     processName: 'Process Id',
+    processVersion: 'Process Version',
+    processSelectVersion: 'Select Version to Load',
     processAction: '',
     processDraft: ''
 };

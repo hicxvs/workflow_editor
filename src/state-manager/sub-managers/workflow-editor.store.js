@@ -217,7 +217,10 @@ export function WorkflowEditorStore() {
             return;
         }
     
-        const loadedDiagramContent = await serviceFunction(currentApiKey.value, diagram.id);
+        const loadedDiagramContent = (serviceFunction.name === SystemService.getDiagramByIdFromSystem.name) 
+            ? await serviceFunction(currentApiKey.value, diagram.id, diagram.versionToLoad)
+            : await serviceFunction(currentApiKey.value, diagram.id);
+
         await importAndProcessDiagram(loadedDiagramContent);
         EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
         EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
