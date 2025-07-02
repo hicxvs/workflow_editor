@@ -1,95 +1,70 @@
 <template>
     <div class="number-input-container" data-testid="number-input-container">
-        <input type="number" v-model="currentValue" @input="handleInput" />
+        <v-text-field
+            type="number"
+            :variant="variant"
+            :density="density"
+            :hide-details="hideDetails"
+            clearable
+            flat
+            :max="max"
+            :min="min"
+            v-model="model"
+        ></v-text-field>
     </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 const model = defineModel();
-const currentValue = ref('');
 
 const props = defineProps({
-    label: {
-        type: String,
-        required: false,
-        default: ""
-    },
-    variant: {
-        type: String,
-        required: false,
-        default: "plain"
-    },
     max: {
         type: [String, Number],
         required: false,
-        default: "1",
-        validator: value => {
-            if (typeof value === 'number') return true;
-            if (typeof value === 'string' && value.trim() !== '' && !isNaN(Number(value))) return true;
-            return false;
-        }
+        default: 1
     },
     min: {
         type: [String, Number],
         required: false,
-        default: "1",
-        validator: value => {
-            if (typeof value === 'number') return true;
-            if (typeof value === 'string' && value.trim() !== '' && !isNaN(Number(value))) return true;
-            return false;
-        }
+        default: 1
+    },
+    hideDetails: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
+    variant: {
+        type: String,
+        required: false,
+        default: 'outlined'
     },
     density: {
         type: String,
         required: false,
-        default: "compact"
+        default: 'compact'
     }
 });
 
-function handleInput() {
-   if(currentValue.value > props.max){
-        currentValue.value = props.max;
-        return;
-   }
-
-   if(currentValue.value < props.min){
-        currentValue.value = props.min;
-        return;
-   }
-}
-
 watch(
-  () => model, 
-  () => {
-    if(!model.value) {
-        currentValue.value = '0';
-        return;
-    }
+    () => model.value,
+    () => {
+        if(!model.value) {
+            model.value = props.max;
+            return;
+        }
+        
+        if(model.value > props.max) {
+            model.value = props.max;
+            return;
+        }
 
-    currentValue.value = model.value;
-  },
-  { immediate: true ,deep: true }
+        if(model.value < props.min) {
+            model.value = props.min;
+            return;
+        }
+    }
 );
 
 </script>
-
-<style scoped>
-.number-input-container {
-    background-color: rgb(230, 230, 230);
-    padding: .6em;
-    border: 1px solid lightgrey;
-    border-radius: 4px;
-
-    input[type="number"] {
-        width: 100%;
-        border: none; 
-        outline: none; 
-        box-shadow: none; 
-        -webkit-appearance: none; 
-        -moz-appearance: none;    
-        appearance: none;        
-    }
-}
-</style>

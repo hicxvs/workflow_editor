@@ -32,12 +32,10 @@
                             <td>{{ diagram.id }}</td>
                             <td>{{ diagram.version }}</td>
                             <td>
-                                <NumberInput 
-                                    v-model="diagram.version" 
+                                <NumberInput
+                                    v-model="diagram.versionToLoad"
                                     :max="diagram.version" 
                                     :min="1" 
-                                    :variant="'outlined'" 
-                                    :density="'compact'"
                                 />
                             </td>
                             <td class="text-right">

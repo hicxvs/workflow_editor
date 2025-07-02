@@ -22,7 +22,8 @@ export function SystemDiagrams() {
             return response?.data?.result.map(diagram => ({
                 id: diagram?.fileName,
                 version: diagram?.version,
-                hasDraft: diagram?.draft
+                hasDraft: diagram?.draft,
+                versionToLoad: diagram?.version
             })) || null;
             
         } catch (error) {            
@@ -31,13 +32,13 @@ export function SystemDiagrams() {
         }
     }
 
-    async function getDiagramByIdFromSystem(apiKey, id) {
+    async function getDiagramByIdFromSystem(apiKey, id, version) {
         try {            
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
-            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);
+            const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}/${version}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
             console.error('Error loading system diagram by id', error);
