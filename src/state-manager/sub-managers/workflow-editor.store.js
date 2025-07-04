@@ -130,7 +130,7 @@ export function WorkflowEditorStore() {
     async function createNewDiagram() {
         clearWorkflowEditor();
         await importAndProcessDiagram(defaultDiagram);
-        ManagerService.saveDiagram(currentProcessDefinition.value.id, defaultDiagram);
+        ManagerService.registerDiagram(currentProcessDefinition.value.id, defaultDiagram);
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
@@ -191,7 +191,7 @@ export function WorkflowEditorStore() {
         }
 
         await importAndProcessDiagram(fileData.content);
-        ManagerService.saveDiagram(currentProcessDefinition.value.id, fileData.content);
+        ManagerService.registerDiagram(currentProcessDefinition.value.id, fileData.content);
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
@@ -230,7 +230,7 @@ export function WorkflowEditorStore() {
             : await serviceFunction(currentApiKey.value, diagram.id);
 
         await importAndProcessDiagram(loadedDiagramContent);
-        ManagerService.saveDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
+        ManagerService.registerDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
         EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
         EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
@@ -321,6 +321,7 @@ export function WorkflowEditorStore() {
         }
 
         await importAndProcessDiagram(selectedDiagram.xmlContent);
+        ManagerService.activateItem(selectedDiagram.managerId);
     }
 
     async function removeDiagramFromManagerDiagrams(selectedDiagram) {

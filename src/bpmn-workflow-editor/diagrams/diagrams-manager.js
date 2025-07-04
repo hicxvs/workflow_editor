@@ -8,17 +8,14 @@ export function DiagramManager() {
     }
 
     const collectionKey = 'local_session_diagrams';
-    initDiagramManager();
-    
-    function initDiagramManager() {
+        
+    function getAllDiagrams() {
         const items = JSON.parse(sessionStorage.getItem(collectionKey));
 
         if(!items || !Array.isArray(items)) {
-            sessionStorage.setItem(collectionKey, JSON.stringify([]));
+            updateManagerCollection([]);
         }
-    }
-    
-    function getAllDiagrams() {
+
         return JSON.parse(sessionStorage.getItem(collectionKey));
     }
 
@@ -26,36 +23,35 @@ export function DiagramManager() {
         console.log('getDiagramById: soon');
     }
 
-    function saveDiagram(diagramId, diagramContent) {
+    function registerDiagram(diagramId, diagramContent) {
         if(!diagramId || !diagramContent) {
             return;
         }
 
         const items = getAllDiagrams();
+        const newManagerId = generateUUID();
 
         items.push({
-            managerId: generateUUID(),
+            managerId: newManagerId,
             id: diagramId,
-            xmlContent: diagramContent 
+            xmlContent: diagramContent,
+            active: false
         });
 
-        sessionStorage.setItem(collectionKey, JSON.stringify(items));
+        updateManagerCollection(items);
+        activateItem(newManagerId);
     }
 
     function removeDiagramByManagerId(managerId) {
-        try {      
-            const items = getAllDiagrams();
+        const items = getAllDiagrams();
 
-            if (!Array.isArray(items)) {
-                console.warn('Expected getAllDiagrams() to return an array, got:', items);
-                return;
-            }
-        
-            const updatedItems = items.filter(item => item.managerId !== managerId);      
-            sessionStorage.setItem(collectionKey, JSON.stringify(updatedItems));
-        } catch (error) {
-            console.error('Error removing diagram by managerId:', error);
+        if(!items.length) {
+            updateManagerCollection([]);
+            return;
         }
+
+        const updatedItems = items.filter(item => item.managerId !== managerId);
+        updateManagerCollection(updatedItems);
     }
 
     function generateUUID() {
@@ -65,11 +61,35 @@ export function DiagramManager() {
             return v.toString(16);
         });
     }
+
+    function activateItem(managerId) {
+        const items = getAllDiagrams();
+
+        if(!items.length) {
+            return;
+        }
+
+        items.forEach(item => {
+            item.active = false;
+
+            if(item.managerId === managerId) {
+                item.active = true;
+            }
+        });
+
+        updateManagerCollection(items);        
+    }
+
+    function updateManagerCollection(items) {
+        sessionStorage.removeItem(collectionKey);
+        sessionStorage.setItem(collectionKey, JSON.stringify(items));
+    }
     
     return {
         getAllDiagrams,
         getDiagramByManagerId,
-        saveDiagram,
-        removeDiagramByManagerId
+        registerDiagram,
+        removeDiagramByManagerId,
+        activateItem
     };
 }
