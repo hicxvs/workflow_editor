@@ -39,6 +39,7 @@ export function WorkflowEditorStore() {
     const currentSystemDiagrams = ref(null);
     const currentDiagramMessages = ref(null);
     const currentDiagramErrorMessages = ref(null);
+    const currentWorkingDiagramManagerId = ref(null);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -87,7 +88,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
         EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
-        EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, getDiagramFromManagerDiagrams);     
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);     
     }
 
@@ -287,7 +288,7 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);        
-        EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);          
+        EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);         
     }
 
     async function getScriptCode(scriptId) {
@@ -311,39 +312,43 @@ export function WorkflowEditorStore() {
         }        
     }
 
-    async function getDiagramFromManagerDiagrams(selectedDiagram) {
-        if(!selectedDiagram || !selectedDiagram.managerId) {
+    async function loadSelectedManagerDiagrams(selectedDiagramManagerId) {
+        if(!selectedDiagramManagerId) {
             return;
         }
 
-        if(!selectedDiagram.xmlContent) {
+        const diagram = ManagerService.getSelectedDiagram(selectedDiagramManagerId);
+
+        if(!diagram || !diagram.xmlContent || !diagram.managerId) {           
             return;
         }
 
-        await importAndProcessDiagram(selectedDiagram.xmlContent);
-        ManagerService.activateItem(selectedDiagram.managerId);
+        clearWorkflowEditor();
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
+        EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+
+        await importAndProcessDiagram(diagram.xmlContent);
+        currentWorkingDiagramManagerId.value = selectedDiagramManagerId;
     }
 
-    async function removeDiagramFromManagerDiagrams(selectedDiagram) {
-        if(!selectedDiagram || !selectedDiagram.managerId) {
+    async function removeDiagramFromManagerDiagrams(selectedDiagramManagerId) {
+        if(!selectedDiagramManagerId) {
             return;
         }
 
-        ManagerService.removeDiagramByManagerId(selectedDiagram.managerId);        
+        ManagerService.removeDiagramByManagerId(selectedDiagramManagerId);
         const allManagerDiagrams = ManagerService.getAllDiagrams();
 
-        if(!allManagerDiagrams || !allManagerDiagrams.length) {
+        if(!allManagerDiagrams.length) {
             clearWorkflowEditor();
-            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, allManagerDiagrams);
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
             EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
             return;
         }
 
-        const lastManagerDiagram = allManagerDiagrams[allManagerDiagrams.length -1];
-        await getDiagramFromManagerDiagrams(lastManagerDiagram);
-        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, allManagerDiagrams);
+        await loadSelectedManagerDiagrams(allManagerDiagrams[allManagerDiagrams.length -1].managerId);
     }
-    
+
     function saveListener(listeners) {
         currentModeler.value.saveListener(currentWorkingElementProperties.value, listeners);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
@@ -380,10 +385,15 @@ export function WorkflowEditorStore() {
         currentNavigationPath.value = null;
     }
 
+    function clearCurrentWorkingDiagramManagerId() {
+        currentWorkingDiagramManagerId.value = null;
+    }
+
     function clearWorkflowEditor() {
         clearDiagram();
         clearCurrentWorkingElement();
         clearNavigationPath();
+        clearCurrentWorkingDiagramManagerId();
     }
 
     async function generateDiagram() {
@@ -493,6 +503,8 @@ export function WorkflowEditorStore() {
         const {xmlContent} = await getDiagramData();
         const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
+        ManagerService.updateDiagramContent(currentWorkingDiagramManagerId.value, xml);
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
     }
 
     function updateElementType(typeToUpdate) {

@@ -1,7 +1,6 @@
 <template>
     <div class="tab-panels-container" data-testid="tab-panels-container">
         <v-tabs 
-            v-if="items" 
             center-active
             show-arrows
             color="green"
@@ -13,7 +12,7 @@
                 :value="item.managerId"
                 @click="(event) => {
                     event.stopPropagation();
-                    EventBus.emit(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, item);
+                    EventBus.emit(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, item.managerId);
                 }"
                 >
                 {{ item.id }}
@@ -26,7 +25,7 @@
                     flat
                     @click="(event) => {
                         event.stopPropagation();
-                        EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, item);                                                
+                        EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, item.managerId);                                                
                     }"
                 >
                 </v-btn>

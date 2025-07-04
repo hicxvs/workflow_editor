@@ -8,19 +8,18 @@ export function DiagramManager() {
     }
 
     const collectionKey = 'local_session_diagrams';
+    initializeDiagramManager();
+
+    function initializeDiagramManager() {
+        const items = JSON.parse(sessionStorage.getItem(collectionKey));
+        
+        if(!items || !items.length) {
+            updateManagerCollection([]);
+        }       
+    }
         
     function getAllDiagrams() {
-        const items = JSON.parse(sessionStorage.getItem(collectionKey));
-
-        if(!items || !Array.isArray(items)) {
-            updateManagerCollection([]);
-        }
-
         return JSON.parse(sessionStorage.getItem(collectionKey));
-    }
-
-    function getDiagramByManagerId() {
-        console.log('getDiagramById: soon');
     }
 
     function registerDiagram(diagramId, diagramContent) {
@@ -28,7 +27,7 @@ export function DiagramManager() {
             return;
         }
 
-        const items = getAllDiagrams();
+        const items = getAllDiagrams() || [];
         const newManagerId = generateUUID();
 
         items.push({
@@ -42,7 +41,7 @@ export function DiagramManager() {
         activateItem(newManagerId);
     }
 
-    function removeDiagramByManagerId(managerId) {
+    function getSelectedDiagram(managerId) {
         const items = getAllDiagrams();
 
         if(!items.length) {
@@ -50,8 +49,43 @@ export function DiagramManager() {
             return;
         }
 
+        const seletedItem = items.find(item => item.managerId === managerId) || null;
+
+        if(!seletedItem) {
+            return;
+        }
+
+        activateItem(seletedItem.managerId);
+        return seletedItem;
+    }
+
+    function removeDiagramByManagerId(managerId) {
+        const items = getAllDiagrams();
+
+        if(!items?.length) {
+            updateManagerCollection([]);
+            return;
+        }
+
         const updatedItems = items.filter(item => item.managerId !== managerId);
         updateManagerCollection(updatedItems);
+    }
+
+    function updateDiagramContent(managerId, diagramContent) {
+        const items = getAllDiagrams();
+
+        if(!items.length) {
+            return;
+        }
+
+        const itemToUpdate = items.find(item => item.managerId === managerId);
+
+        if(!itemToUpdate) {
+            return;
+        }
+
+        itemToUpdate.xmlContent = diagramContent;
+        updateManagerCollection(items);
     }
 
     function generateUUID() {
@@ -77,7 +111,7 @@ export function DiagramManager() {
             }
         });
 
-        updateManagerCollection(items);        
+        updateManagerCollection(items);    
     }
 
     function updateManagerCollection(items) {
@@ -86,10 +120,11 @@ export function DiagramManager() {
     }
     
     return {
+        initializeDiagramManager,
         getAllDiagrams,
-        getDiagramByManagerId,
+        getSelectedDiagram,
         registerDiagram,
         removeDiagramByManagerId,
-        activateItem
+        updateDiagramContent
     };
 }
