@@ -18,27 +18,69 @@ export function DiagramManager() {
         }       
     }
         
-    function getAllDiagrams() {
-        return JSON.parse(sessionStorage.getItem(collectionKey));
-    }
-
     function registerDiagram(diagramId, diagramContent) {
         if(!diagramId || !diagramContent) {
             return;
         }
 
         const items = getAllDiagrams() || [];
-        const newManagerId = generateUUID();
 
-        items.push({
-            managerId: newManagerId,
+        const item = {
+            managerId: generateUUID(),
             id: diagramId,
             xmlContent: diagramContent,
-            active: false
+            active: false,
+            showSystemDraftOperations: false
+        };
+
+        items.push(item);
+        updateManagerCollection(items);
+        activateItem(item.managerId);
+        return item.managerId;
+    }
+
+    function activateItem(managerId) {
+        updateItemProperties(managerId, (item, id) => {
+            item.active = item.managerId === id;
+        });
+    }
+
+    function enableDraftOperations(managerId) {
+        updateItemProperties(managerId, (item, id) => {
+            if (item.managerId === id) {
+                item.showSystemDraftOperations = true;
+            }     
+        });
+    }
+
+    function updateDiagramContent(managerId, diagramContent) {
+        updateItemProperties(managerId, (item, id) => {
+            if (item.managerId === id) {
+                item.xmlContent = diagramContent;
+            }
+        });
+    }
+    
+    function updateItemProperties(managerId, updateFunction) {
+        if(!managerId || !updateFunction) {
+            return;
+        }
+
+        const items = getAllDiagrams();
+
+        if (!items.length) {
+            return;
+        }
+
+        items.forEach(item => {
+            updateFunction(item, managerId);
         });
 
         updateManagerCollection(items);
-        activateItem(newManagerId);
+    }
+
+    function getAllDiagrams() {
+        return JSON.parse(sessionStorage.getItem(collectionKey));
     }
 
     function getSelectedDiagram(managerId) {
@@ -71,47 +113,14 @@ export function DiagramManager() {
         updateManagerCollection(updatedItems);
     }
 
-    function updateDiagramContent(managerId, diagramContent) {
-        const items = getAllDiagrams();
-
-        if(!items.length) {
-            return;
-        }
-
-        const itemToUpdate = items.find(item => item.managerId === managerId);
-
-        if(!itemToUpdate) {
-            return;
-        }
-
-        itemToUpdate.xmlContent = diagramContent;
-        updateManagerCollection(items);
-    }
-
     function generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+            const randomValue = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
+            const replacementValue = character === 'x'
+                ? randomValue
+                : (randomValue & 0x3) | 0x8;
+            return replacementValue.toString(16);
         });
-    }
-
-    function activateItem(managerId) {
-        const items = getAllDiagrams();
-
-        if(!items.length) {
-            return;
-        }
-
-        items.forEach(item => {
-            item.active = false;
-
-            if(item.managerId === managerId) {
-                item.active = true;
-            }
-        });
-
-        updateManagerCollection(items);    
     }
 
     function updateManagerCollection(items) {
@@ -121,10 +130,11 @@ export function DiagramManager() {
     
     return {
         initializeDiagramManager,
+        registerDiagram,
         getAllDiagrams,
         getSelectedDiagram,
-        registerDiagram,
-        removeDiagramByManagerId,
+        removeDiagramByManagerId,        
+        enableDraftOperations,
         updateDiagramContent
     };
 }

@@ -131,7 +131,8 @@ export function WorkflowEditorStore() {
     async function createNewDiagram() {
         clearWorkflowEditor();
         await importAndProcessDiagram(defaultDiagram);
-        ManagerService.registerDiagram(currentProcessDefinition.value.id, defaultDiagram);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, defaultDiagram);
+        currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
@@ -192,7 +193,8 @@ export function WorkflowEditorStore() {
         }
 
         await importAndProcessDiagram(fileData.content);
-        ManagerService.registerDiagram(currentProcessDefinition.value.id, fileData.content);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, fileData.content);
+        currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
@@ -231,10 +233,11 @@ export function WorkflowEditorStore() {
             : await serviceFunction(currentApiKey.value, diagram.id);
 
         await importAndProcessDiagram(loadedDiagramContent);
-        ManagerService.registerDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
+        ManagerService.enableDraftOperations(managerId);
+        currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
         EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
-        EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     }
 
     async function loadDiagramFromSystem(diagram) {
@@ -318,15 +321,16 @@ export function WorkflowEditorStore() {
         }
 
         const diagram = ManagerService.getSelectedDiagram(selectedDiagramManagerId);
-
-        if(!diagram || !diagram.xmlContent || !diagram.managerId) {           
+        
+        if(!diagram || !diagram.xmlContent || !diagram.managerId) {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error workflow diagram not registered.'
+            });           
             return;
         }
 
         clearWorkflowEditor();
-        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
-        EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
-
         await importAndProcessDiagram(diagram.xmlContent);
         currentWorkingDiagramManagerId.value = selectedDiagramManagerId;
     }
@@ -337,16 +341,13 @@ export function WorkflowEditorStore() {
         }
 
         ManagerService.removeDiagramByManagerId(selectedDiagramManagerId);
-        const allManagerDiagrams = ManagerService.getAllDiagrams();
+        const diagrams = ManagerService.getAllDiagrams();
 
-        if(!allManagerDiagrams.length) {
+        if(!diagrams || !diagrams.length) {
             clearWorkflowEditor();
-            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
-            EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
-            return;
         }
 
-        await loadSelectedManagerDiagrams(allManagerDiagrams[allManagerDiagrams.length -1].managerId);
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);        
     }
 
     function saveListener(listeners) {
@@ -423,7 +424,11 @@ export function WorkflowEditorStore() {
     async function saveDiagramToSystem() {         
         try {
             await saveDiagram(SystemService.saveDiagramToSystem);
-            EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+            ManagerService.enableDraftOperations(currentWorkingDiagramManagerId.value);
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
+            //EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+
+            //TODO: TEST THIS
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
@@ -504,7 +509,6 @@ export function WorkflowEditorStore() {
         const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
         ManagerService.updateDiagramContent(currentWorkingDiagramManagerId.value, xml);
-        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
     }
 
     function updateElementType(typeToUpdate) {

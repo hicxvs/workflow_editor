@@ -12,7 +12,7 @@
                 :value="item.managerId"
                 @click="(event) => {
                     event.stopPropagation();
-                    EventBus.emit(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, item.managerId);
+                    handleItemSelection(item);
                 }"
                 >
                 {{ item.id }}
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 
@@ -49,15 +49,7 @@ onMounted(() => {
             return;
         }
 
-        items.value = localSessionDiagrams;
-        const currentlyActiveItem = items.value.find(item => item.active === true);
-
-        if(!currentlyActiveItem) {
-            activeTab.value = items.value[0].managerId;
-            return;
-        }
-
-        activeTab.value = currentlyActiveItem.managerId;
+        items.value = localSessionDiagrams;        
     });
 });
 
@@ -69,4 +61,33 @@ function clear() {
     items.value = null;
     activeTab.value = null;
 }
+
+function handleItemSelection(selectedItem) {   
+    if(!selectedItem) {
+        activeTab.value = items.value[items.value?.length - 1].managerId;
+        return;
+    }
+
+    activeTab.value = selectedItem.managerId;
+    EventBus.emit(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, selectedItem.managerId);
+    EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+
+    if(selectedItem?.showSystemDraftOperations) {
+        EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+    }
+}
+
+watch(
+    () => items,
+    () => {
+        if(!items.value) {
+            clear();
+            return;
+        }
+
+        const currentlyActiveItem = items.value.find(item => item.active === true);
+        handleItemSelection(currentlyActiveItem);
+    },
+    { immediate:true, deep:true }
+);
 </script>
