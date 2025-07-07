@@ -341,13 +341,14 @@ export function WorkflowEditorStore() {
         }
 
         ManagerService.removeDiagramByManagerId(selectedDiagramManagerId);
+
         const diagrams = ManagerService.getAllDiagrams();
 
-        if(!diagrams || !diagrams.length) {
+        if(!diagrams?.length) {
             clearWorkflowEditor();
         }
-
-        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);        
+        
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());        
     }
 
     function saveListener(listeners) {

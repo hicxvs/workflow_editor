@@ -64,7 +64,7 @@ function clear() {
 
 function handleItemSelection(selectedItem) {   
     if(!selectedItem) {
-        activeTab.value = items.value[items.value?.length - 1].managerId;
+        activeTab.value = null;
         return;
     }
 
@@ -80,13 +80,14 @@ function handleItemSelection(selectedItem) {
 watch(
     () => items,
     () => {
+
         if(!items.value) {
             clear();
             return;
         }
 
-        const currentlyActiveItem = items.value.find(item => item.active === true);
-        handleItemSelection(currentlyActiveItem);
+        const selectedItem = items.value.find(item => item.active === true) || items.value[items.value?.length - 1];
+        handleItemSelection(selectedItem);
     },
     { immediate:true, deep:true }
 );
