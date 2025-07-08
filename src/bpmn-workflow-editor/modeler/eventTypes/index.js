@@ -107,7 +107,10 @@ export const EVENT_TYPE = Object.freeze({
     ELEMENT_SELECTED: 'element-selected',
     ELEMENT_DESELECTED: 'element-deselected',
     SHOW_NOTIFICATION: 'show-notification',
-    SHOW_ACTION_CONFIRMATION: 'show-action-confirmation'
+    SHOW_ACTION_CONFIRMATION: 'show-action-confirmation',
+    GET_ALL_MANAGER_DIAGRAMS: 'get-all-manager-diagrams',
+    GET_DIAGRAM_FROM_MANAGER_DIAGRAMS: 'get-diagram-from-manager-diagrams',
+    REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS: 'remove-diagram-from-manager-diagrams',
 });
 
 

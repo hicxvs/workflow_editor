@@ -9,6 +9,7 @@ import { DiagramsApiUtils } from '../../bpmn-workflow-editor/diagrams/diagrams-a
 import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagrams';
 import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
 import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scripts';
+import { DiagramManager } from '../../bpmn-workflow-editor/diagrams/diagrams-manager';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
@@ -23,6 +24,7 @@ const { getAllInMemoryJavaClasses } = ClassListing();
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
 const ScriptService = DiagramScripts();
+const ManagerService = DiagramManager();
 
 export function WorkflowEditorStore() {
 
@@ -37,6 +39,7 @@ export function WorkflowEditorStore() {
     const currentSystemDiagrams = ref(null);
     const currentDiagramMessages = ref(null);
     const currentDiagramErrorMessages = ref(null);
+    const currentWorkingDiagramManagerId = ref(null);
     
     async function initializeWorkflowEditor(canvas) {
         if(!canvas) {
@@ -45,8 +48,7 @@ export function WorkflowEditorStore() {
 
         currentModeler.value = createWorkflowEditor(canvas);
         currentApiKey.value = (IS_APP_IN_MODE_DEV) ? loadAPIKey() : null;
-        getDiagramMessages();
-        getDiagramErrorMessages();       
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());      
     }
 
     function registerWorkflowEditorEventHandlers() {
@@ -85,7 +87,9 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.SAVE_CALL_ACTIVITY_OUTPUT_PARAMETER, saveCallActivityOutputParameter);
         EventBus.on(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY, updateMultiInstanceElementProperty);
         EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
-        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);     
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
+        EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
+        EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);     
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -121,11 +125,15 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_MULTI_INSTANCE_ELEMENT_PROPERTY);
         EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
+        EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS); 
     }
 
     async function createNewDiagram() {
         clearWorkflowEditor();
         await importAndProcessDiagram(defaultDiagram);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, defaultDiagram);
+        currentWorkingDiagramManagerId.value = managerId;
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
     function getWorkflowJavaClasses() {
@@ -185,6 +193,9 @@ export function WorkflowEditorStore() {
         }
 
         await importAndProcessDiagram(fileData.content);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, fileData.content);
+        currentWorkingDiagramManagerId.value = managerId;
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
 
 
@@ -222,8 +233,11 @@ export function WorkflowEditorStore() {
             : await serviceFunction(currentApiKey.value, diagram.id);
 
         await importAndProcessDiagram(loadedDiagramContent);
+        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
+        ManagerService.enableDraftOperations(managerId);
+        currentWorkingDiagramManagerId.value = managerId;
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
         EventBus.emit(EVENT_TYPE.CLOSE_MODAL);
-        EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     }
 
     async function loadDiagramFromSystem(diagram) {
@@ -269,7 +283,7 @@ export function WorkflowEditorStore() {
         }
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
-        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();       
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
@@ -277,7 +291,7 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);        
-        EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);        
+        EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);         
     }
 
     async function getScriptCode(scriptId) {
@@ -300,7 +314,43 @@ export function WorkflowEditorStore() {
             });
         }        
     }
-    
+
+    async function loadSelectedManagerDiagrams(selectedDiagramManagerId) {
+        if(!selectedDiagramManagerId) {
+            return;
+        }
+
+        const diagram = ManagerService.getSelectedDiagram(selectedDiagramManagerId);
+        
+        if(!diagram || !diagram.xmlContent || !diagram.managerId) {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error workflow diagram not registered.'
+            });           
+            return;
+        }
+
+        clearWorkflowEditor();
+        await importAndProcessDiagram(diagram.xmlContent);
+        currentWorkingDiagramManagerId.value = selectedDiagramManagerId;
+    }
+
+    async function removeDiagramFromManagerDiagrams(selectedDiagramManagerId) {
+        if(!selectedDiagramManagerId) {
+            return;
+        }
+
+        ManagerService.removeDiagramByManagerId(selectedDiagramManagerId);
+
+        const diagrams = ManagerService.getAllDiagrams();
+
+        if(!diagrams?.length) {
+            clearWorkflowEditor();
+        }
+        
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);        
+    }
+
     function saveListener(listeners) {
         currentModeler.value.saveListener(currentWorkingElementProperties.value, listeners);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
@@ -321,6 +371,11 @@ export function WorkflowEditorStore() {
     function clearDiagram() {        
         currentModeler.value.clearDiagram();
         currentDiagram.value = null;
+        currentProcessDefinition.value = {
+            id: '',
+            name: '',
+            isExecutable: false
+        };
     }
 
     function clearCurrentWorkingElement() {
@@ -332,10 +387,15 @@ export function WorkflowEditorStore() {
         currentNavigationPath.value = null;
     }
 
+    function clearCurrentWorkingDiagramManagerId() {
+        currentWorkingDiagramManagerId.value = null;
+    }
+
     function clearWorkflowEditor() {
         clearDiagram();
         clearCurrentWorkingElement();
         clearNavigationPath();
+        clearCurrentWorkingDiagramManagerId();
     }
 
     async function generateDiagram() {
@@ -365,17 +425,20 @@ export function WorkflowEditorStore() {
     async function saveDiagramToSystem() {         
         try {
             await saveDiagram(SystemService.saveDiagramToSystem);
-            EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
-
+            ManagerService.enableDraftOperations(currentWorkingDiagramManagerId.value);
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
+            
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
                 text: 'Workflow deployed successfully.'
             });
         }
-        catch {
+        catch (error) {
+            const errorMessage = error?.response?.data?.responseMessage || 'Error deploying workflow.';
+
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error deploying workflow.'
+                text: errorMessage
             });
         }  
     }
@@ -404,13 +467,20 @@ export function WorkflowEditorStore() {
 
         try {
             await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
+            ManagerService.removeDiagramByManagerId(currentWorkingDiagramManagerId.value);
+            
+            const diagrams = ManagerService.getAllDiagrams();
+
+            if(!diagrams?.length) {
+                clearWorkflowEditor();
+            }
+            
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
                 text: 'Workflow deleted from the system successfully.'
             });
-    
-            EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         }
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
@@ -445,6 +515,7 @@ export function WorkflowEditorStore() {
         const {xmlContent} = await getDiagramData();
         const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
+        ManagerService.updateDiagramContent(currentWorkingDiagramManagerId.value, xml);
     }
 
     function updateElementType(typeToUpdate) {
