@@ -348,7 +348,7 @@ export function WorkflowEditorStore() {
             clearWorkflowEditor();
         }
         
-        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());        
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);        
     }
 
     function saveListener(listeners) {
@@ -427,19 +427,18 @@ export function WorkflowEditorStore() {
             await saveDiagram(SystemService.saveDiagramToSystem);
             ManagerService.enableDraftOperations(currentWorkingDiagramManagerId.value);
             EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
-            //EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
-
-            //TODO: TEST THIS
-
+            
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
                 text: 'Workflow deployed successfully.'
             });
         }
-        catch {
+        catch (error) {
+            const errorMessage = error?.response?.data?.responseMessage || 'Error deploying workflow.';
+
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
-                text: 'Error deploying workflow.'
+                text: errorMessage
             });
         }  
     }
@@ -468,13 +467,20 @@ export function WorkflowEditorStore() {
 
         try {
             await SystemService.removeDiagramFromSystem(currentApiKey.value, currentProcessDefinition.value.id);
+            ManagerService.removeDiagramByManagerId(currentWorkingDiagramManagerId.value);
+            
+            const diagrams = ManagerService.getAllDiagrams();
+
+            if(!diagrams?.length) {
+                clearWorkflowEditor();
+            }
+            
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
                 text: 'Workflow deleted from the system successfully.'
             });
-    
-            EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
         }
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {

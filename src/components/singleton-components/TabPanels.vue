@@ -45,7 +45,8 @@ const activeTab = ref(null);
 onMounted(() => {
     EventBus.on(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, (localSessionDiagrams) => {
         if(!localSessionDiagrams || !localSessionDiagrams.length) {
-            clear();            
+            clear();
+            EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);            
             return;
         }
 
