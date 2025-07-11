@@ -52,7 +52,6 @@ onUnmounted(() => {
   EventBus.off(EVENT_TYPE.ELEMENT_SELECTED);
   EventBus.off(EVENT_TYPE.ELEMENT_DESELECTED);
 });
-
 </script>
 
 <style scoped>

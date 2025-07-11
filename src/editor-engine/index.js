@@ -3,9 +3,11 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 export function EditorEngine() {
 
-    function createCodeEditor(container, editorLanguage, editorValue) {
+    let engine = null;
+
+    function createCodeEditor(container, editorLanguage, editorValue, editorReadOnly) {
         try {
-            return  monaco.editor.create(container, {
+            engine = monaco.editor.create(container, {
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
                 fontSize: 18,
@@ -20,17 +22,27 @@ export function EditorEngine() {
                 wordWrap: 'on',
                 language: editorLanguage || 'java',
                 value: editorValue || '',
-                readOnly: true,
+                readOnly: (editorReadOnly === false) ? false : true,
                 theme: 'vs-dark'
             });
+
+            return engine;
         } catch (error) {
             console.error("Error during code editor initialization:", error);
         }
     }
 
+    function getValue() {
+        if(!engine) {
+            return;
+        }
+
+        return engine.getValue();
+    }
 
     return {
         createCodeEditor,
+        getValue
     };
 
 }

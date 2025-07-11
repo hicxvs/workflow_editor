@@ -329,7 +329,7 @@ export function createWorkflowEditor(container) {
     }
 
     function updateElementProperty(selectedProperty) {
-        try  {    
+        try  {   
             const {element, businessObject} = getElementAndBusinessObject(selectedProperty);
             businessObject[selectedProperty.elementProperty] = selectedProperty.elementPropertyValue;
             modeling.updateProperties(element, {});

@@ -3,12 +3,12 @@
         <Select v-model="scriptTaskFormat" :label="scriptTaskPropertiesLabels.scriptFormat" :selectOptionItems="scriptFormatSelectOptions" :selectItemClickHandler="updatesScriptFormat"/>
         <Checkbox v-model="scriptTaskAutoStoreVariables" :label="scriptTaskPropertiesLabels.autoStoreVariables" @update:modelValue="updateAutoStoreVariables"/>
         <TextInput :label="scriptTaskPropertiesLabels.script" v-model="scriptTaskScript" @input="updateScript" :clearHandler="updateScript"/>
-        <Button :label="scriptTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.grey" @click="retrieveScript" class="retrive-script-button"/>
+        <Button :label="scriptTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.green" @click="retrieveScript" class="retrive-script-button"/>
     </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 
 import EventBus from '../../../../eventbus';
 import { EVENT_TYPE } from '../../../../bpmn-workflow-editor/modeler/eventTypes';
@@ -34,7 +34,8 @@ const scriptTaskPropertiesLabels = {
 };
 
 const buttonColors = {
-    grey: 'grey'
+    grey: 'grey',
+    green: 'green'
 };
 
 const scriptFormatSelectOptions = ref([
@@ -53,6 +54,56 @@ const fieldKeys = {
     scriptTaskAutoStoreVariables: 'autoStoreVariables',
     script: 'script',
 };
+
+const scriptHandler = {
+    groovy: {
+        handler: () => {
+            const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.script).ns.localName;
+
+            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+                codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value,
+                codeScript: scriptTaskScript.value,
+                codeScriptId: extractScriptId(scriptTaskScript.value),
+                readOnly: false,
+                elementId: model.value?.id,
+                elementProperty: targetProperty 
+            });            
+        }
+    },
+    java: {
+        handler: () => {
+            const targetStartString = 'scripts.execute';
+            const scriptId = extractScriptId(scriptTaskScript.value);
+
+            if(!isValidScriptId(scriptId)) {
+                return;
+            }
+
+            if(!scriptTaskScript.value.startsWith(targetStartString)) {
+                EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+                    codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value,
+                    codeScript: scriptTaskScript.value,
+                    codeScriptId: scriptId,
+                    readOnly: true
+                });
+
+                return;
+            }
+
+            EventBus.emit(EVENT_TYPE.GET_SCRIPT_CODE, scriptId);
+        }
+    }
+};
+
+onMounted(() => {
+    EventBus.on(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorScriptValue => {
+        scriptTaskScript.value = editorScriptValue || '';
+    });
+}); 
+
+onUnmounted(() => {
+    EventBus.off(EVENT_TYPE.UPDATE_SCRIPT_VALUE);
+});
 
 watch(
   () => model, 
@@ -97,7 +148,7 @@ function updateAutoStoreVariables() {
 
 function updateScript() {
 
-    const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.script).name;
+    const targetProperty = ScriptTask.properties.find(property => property.ns.localName === fieldKeys.script).ns.localName;
 
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
@@ -109,25 +160,8 @@ function updateScript() {
 }
 
 function retrieveScript() {
-
-    const targetStartString = 'scripts.execute';
-    const scriptId = extractScriptId(scriptTaskScript.value);
-
-    if(!isValidScriptId(scriptId)) {
-        return;
-    }
-
-    if(!scriptTaskScript.value.startsWith(targetStartString)) {
-        EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
-            codeLanguage: scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value,
-            codeScript: scriptTaskScript.value,
-            codeScriptId: scriptId 
-        });
-
-        return;
-    }
-
-    EventBus.emit(EVENT_TYPE.GET_SCRIPT_CODE, scriptId);
+    const codeLanguage = scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value;
+    scriptHandler[codeLanguage]?.handler();
 }
 
 </script>
