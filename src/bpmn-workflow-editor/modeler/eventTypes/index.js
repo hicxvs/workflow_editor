@@ -111,6 +111,7 @@ export const EVENT_TYPE = Object.freeze({
     GET_ALL_MANAGER_DIAGRAMS: 'get-all-manager-diagrams',
     GET_DIAGRAM_FROM_MANAGER_DIAGRAMS: 'get-diagram-from-manager-diagrams',
     REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS: 'remove-diagram-from-manager-diagrams',
+    UPDATE_SCRIPT_VALUE: 'update-script-value'
 });
 
 
