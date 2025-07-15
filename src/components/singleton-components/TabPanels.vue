@@ -15,7 +15,7 @@
                     handleItemSelection(item);
                 }"
                 >
-                {{ item.id }}
+                {{ item.id }}<span v-if="item.loadedVersion">&nbsp;- V{{ item.loadedVersion }}</span>
                 <v-btn 
                     class="ml-2"
                     icon="mdi-close"
@@ -38,6 +38,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 
 const items = ref(null);
 const activeTab = ref(null);
@@ -72,6 +73,15 @@ function handleItemSelection(selectedItem) {
     activeTab.value = selectedItem.managerId;
     EventBus.emit(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, selectedItem.managerId);
     EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+    EventBus.emit(EVENT_TYPE.HIDE_ALERT_NOTIFICATION);
+
+    if(!selectedItem?.isLatestVersion) {
+        EventBus.emit(EVENT_TYPE.SHOW_ALERT_NOTIFICATION, {
+            title: 'Outdated Workflow Version',
+            text: `You're currently working on an older version of the workflow. Consider switching to the latest version for up-to-date changes.`,
+            type: NOTIFICATION_TYPE.WARNING
+        });
+    }
 
     if(selectedItem?.showSystemDraftOperations) {
         EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);

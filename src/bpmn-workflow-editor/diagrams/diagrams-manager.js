@@ -18,8 +18,8 @@ export function DiagramManager() {
         }       
     }
         
-    function registerDiagram(diagramId, diagramContent) {
-        if(!diagramId || !diagramContent) {
+    function registerDiagram(diagramToRegister) {
+        if(!diagramToRegister && !diagramToRegister.diagramId && !diagramToRegister.diagramContent) {
             return;
         }
 
@@ -27,8 +27,11 @@ export function DiagramManager() {
 
         const item = {
             managerId: generateUUID(),
-            id: diagramId,
-            xmlContent: diagramContent,
+            id: diagramToRegister?.diagramId,
+            xmlContent: diagramToRegister?.diagramContent,
+            version: diagramToRegister?.diagramVersion,
+            loadedVersion: diagramToRegister?.diagramLoadedVersion,
+            isLatestVersion: diagramToRegister?.isDiagramLastestVersion,
             active: false,
             showSystemDraftOperations: false
         };

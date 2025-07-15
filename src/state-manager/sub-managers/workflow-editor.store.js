@@ -131,7 +131,14 @@ export function WorkflowEditorStore() {
     async function createNewDiagram() {
         clearWorkflowEditor();
         await importAndProcessDiagram(defaultDiagram);
-        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, defaultDiagram);
+        const managerId = ManagerService.registerDiagram({
+                diagramId: currentProcessDefinition.value.id,
+                diagramContent: defaultDiagram,
+                diagramVersion: null,
+                diagramLoadedVersion: null,
+                isDiagramLastestVersion: true          
+            }
+        );
         currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
@@ -193,7 +200,14 @@ export function WorkflowEditorStore() {
         }
 
         await importAndProcessDiagram(fileData.content);
-        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, fileData.content);
+        const managerId = ManagerService.registerDiagram({
+                diagramId: currentProcessDefinition.value.id,
+                diagramContent: fileData.content,
+                diagramVersion: null,
+                diagramLoadedVersion: null,
+                isDiagramLastestVersion: true          
+            }
+        );
         currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
@@ -233,7 +247,13 @@ export function WorkflowEditorStore() {
             : await serviceFunction(currentApiKey.value, diagram.id);
 
         await importAndProcessDiagram(loadedDiagramContent);
-        const managerId = ManagerService.registerDiagram(currentProcessDefinition.value.id, loadedDiagramContent);
+        const managerId = ManagerService.registerDiagram({
+            diagramId: currentProcessDefinition.value.id,
+            diagramContent: loadedDiagramContent,
+            diagramVersion: diagram.version,
+            diagramLoadedVersion: diagram.versionToLoad,
+            isDiagramLastestVersion: ( diagram.version === diagram.versionToLoad )          
+        });
         ManagerService.enableDraftOperations(managerId);
         currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 

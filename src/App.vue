@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <AlertNotification />
     <Notification />
     <ActionConfirmation />
     <CodeEditor />
@@ -19,6 +20,7 @@
 </template>
 
 <script setup>
+import AlertNotification from './components/singleton-components/AlertNotification.vue';
 import Notification from './components/singleton-components/Notification.vue';
 import ActionConfirmation from './components/modal-components/ActionConfirmation.vue';
 import CodeEditor from './components/modal-components/CodeEditor.vue';
