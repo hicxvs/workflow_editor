@@ -45,7 +45,6 @@ const bpmnMenuGroup = ref({
             label: 'Create New',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.CREATE_NEW_DIAGRAM);
-                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },
@@ -61,7 +60,6 @@ const bpmnMenuGroup = ref({
             handler: () => {
                 const fileTypes = ".bpmn,.xml";
                 EventBus.emit(EVENT_TYPE.LOAD_FILE, fileTypes);
-                EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
         },        
@@ -125,7 +123,6 @@ const draftMenuGroup = {
                     message: 'Are you sure you want to delete this workflow draft from the system?',
                     actionHandler: () => {
                         EventBus.emit(EVENT_TYPE.DELETE_DIAGRAM_DRAFT);
-                        EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
                     }
                 });

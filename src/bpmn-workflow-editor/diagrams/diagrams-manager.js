@@ -63,6 +63,14 @@ export function DiagramManager() {
             }
         });
     }
+
+    function updateDiagramId(managerId, diagramId) {
+        updateItemProperties(managerId, (item, id) => {
+            if (item.managerId === id) {
+                item.id = diagramId;
+            }
+        });
+    }
     
     function updateItemProperties(managerId, updateFunction) {
         if(!managerId || !updateFunction) {
@@ -138,6 +146,7 @@ export function DiagramManager() {
         getSelectedDiagram,
         removeDiagramByManagerId,        
         enableDraftOperations,
-        updateDiagramContent
+        updateDiagramContent,
+        updateDiagramId
     };
 }

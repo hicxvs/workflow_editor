@@ -113,7 +113,8 @@ export const EVENT_TYPE = Object.freeze({
     REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS: 'remove-diagram-from-manager-diagrams',
     UPDATE_SCRIPT_VALUE: 'update-script-value',
     SHOW_ALERT_NOTIFICATION: 'show-alert-notification',
-    HIDE_ALERT_NOTIFICATION: 'hide-alert-notification'
+    HIDE_ALERT_NOTIFICATION: 'hide-alert-notification',
+    UPDATE_TAB_DIAGRAM_PROCESS_ID: 'update-tab-diagram-process-id'
 });
 
 
