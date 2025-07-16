@@ -9,11 +9,14 @@
         </div>
       </template>
     </Card>
-
   </div>
 </template>
 
 <script setup>
+import { watch } from "vue";
+import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import EventBus from '../../eventbus';
+
 import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
 import Checkbox from "../generic/Checkbox.vue";
@@ -31,6 +34,14 @@ const inputLabel = {
   name: "Process Name",
   isExecutable: "Is Executable"
 };
+
+watch(
+  () => model.value.id,
+  () => {
+    EventBus.emit(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID, model.value.id);
+  },
+  { immediate:true, deep:true }
+);
 
 </script>
 
