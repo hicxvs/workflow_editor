@@ -36,12 +36,14 @@
                                     v-model="diagram.versionToLoad"
                                     :max="diagram.version" 
                                     :min="1" 
+                                    :disabled="(diagram.version === -1)"
                                 />
                             </td>
                             <td class="text-right">
                                 <Button 
-                                    :buttonColor="buttons.loadDiagram.color"
+                                    :buttonColor="(diagram.version !== -1) ? buttons.loadDiagramDraft.activeColor : buttons.loadDiagramDraft.inactiveColor"                                
                                     :label="buttons.loadDiagram.label"
+                                    :disabled="(diagram.version === -1)"
                                     @click="() => { EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram); }"
                                 />
                             </td>
