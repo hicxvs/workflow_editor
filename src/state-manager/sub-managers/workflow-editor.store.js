@@ -90,7 +90,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
-        EventBus.on(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID, updateTabDiagramProcessId);   
+        EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -127,7 +127,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
-        EventBus.off(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID); 
+        EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
     }
 
     async function createNewDiagram() {
@@ -420,10 +420,6 @@ export function WorkflowEditorStore() {
         clearCurrentWorkingDiagramManagerId();
     }
 
-    function updateTabDiagramProcessId(updatedProcessDefinitionId) {
-        ManagerService.updateDiagramId(currentWorkingDiagramManagerId.value, updatedProcessDefinitionId);
-    }
-
     async function generateDiagram() {
         if(currentDiagram.value) {
             clearDiagram();
@@ -542,6 +538,12 @@ export function WorkflowEditorStore() {
         const {xml} = xmlContent;
         EventBus.emit(EVENT_TYPE.GENERATED_XML_DIAGRAM_READY, xml);
         ManagerService.updateDiagramContent(currentWorkingDiagramManagerId.value, xml);
+        ManagerService.updateDiagramId(currentWorkingDiagramManagerId.value, currentProcessDefinition.value?.id);
+    }
+
+    async function handleProcessDefinitionChange() {
+        await generateXMLDiagram();
+        EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
     }
 
     function updateElementType(typeToUpdate) {

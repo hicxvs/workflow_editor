@@ -3,7 +3,7 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
       <template #content>
         <div class="input-group">
-          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
+          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" @input="() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)"/>
           <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
           <Checkbox v-if="model" :label="inputLabel.isExecutable" v-model="model.isExecutable" />
         </div>
@@ -13,10 +13,8 @@
 </template>
 
 <script setup>
-import { watch } from "vue";
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../eventbus';
-
 import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
 import Checkbox from "../generic/Checkbox.vue";
@@ -34,14 +32,6 @@ const inputLabel = {
   name: "Process Name",
   isExecutable: "Is Executable"
 };
-
-watch(
-  () => model.value.id,
-  () => {
-    EventBus.emit(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID, model.value.id);
-  },
-  { immediate:true, deep:true }
-);
 
 </script>
 
