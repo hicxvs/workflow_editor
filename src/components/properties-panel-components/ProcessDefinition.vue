@@ -3,7 +3,7 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
       <template #content>
         <div class="input-group">
-          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" />
+          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" @input="() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)"/>
           <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
           <Checkbox v-if="model" :label="inputLabel.isExecutable" v-model="model.isExecutable" />
         </div>
@@ -13,6 +13,8 @@
 </template>
 
 <script setup>
+import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import EventBus from '../../eventbus';
 import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
 import Checkbox from "../generic/Checkbox.vue";
