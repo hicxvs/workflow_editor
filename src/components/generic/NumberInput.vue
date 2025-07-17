@@ -9,6 +9,7 @@
             flat
             :max="max"
             :min="min"
+            :disabled="disabled"
             v-model="model"
         ></v-text-field>
     </div>
@@ -44,6 +45,11 @@ const props = defineProps({
         type: String,
         required: false,
         default: 'compact'
+    },
+    disabled: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 });
 
