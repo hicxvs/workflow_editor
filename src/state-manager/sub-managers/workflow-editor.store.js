@@ -89,8 +89,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GET_SCRIPT_CODE, getScriptCode);   
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
-        EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
-        EventBus.on(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID, updateTabDiagramProcessId);   
+        EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -127,7 +126,6 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
-        EventBus.off(EVENT_TYPE.UPDATE_TAB_DIAGRAM_PROCESS_ID); 
     }
 
     async function createNewDiagram() {
