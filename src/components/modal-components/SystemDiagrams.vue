@@ -44,7 +44,12 @@
                                     :buttonColor="(diagram.version !== -1) ? buttons.loadDiagramDraft.activeColor : buttons.loadDiagramDraft.inactiveColor"                                
                                     :label="buttons.loadDiagram.label"
                                     :disabled="(diagram.version === -1)"
-                                    @click="() => { EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram); }"
+                                    @click="() => {
+                                        if((diagram.version === -1)) {
+                                            return;
+                                        } 
+                                        EventBus.emit(EVENT_TYPE.LOAD_DIAGRAM_FROM_SYSTEM, diagram);
+                                    }"
                                 />
                             </td>
                             <td class="text-right">
