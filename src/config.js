@@ -1,6 +1,6 @@
 export const IS_APP_IN_MODE_DEV = import.meta.env.MODE === 'development';
 
-export const API_BASE_URL = (IS_APP_IN_MODE_DEV) ? import.meta.env.VITE_API_BASE_URL : `${window.location.origin}${Hicx.app.path}`;
+export const API_BASE_URL = (IS_APP_IN_MODE_DEV) ? import.meta.env.VITE_API_BASE_URL : `${window.location.origin}${Hicx?.app?.path}`;
 
 export const API_RESOURCE_DEFINITION_ENDPOINT = import.meta.env.VITE_API_RESOURCE_DEFINITION_ENDPOINT || 'rest/api/v2/workflow/definition';
 export const API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT = import.meta.env.VITE_API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT || `${API_RESOURCE_DEFINITION_ENDPOINT}/publish`;
