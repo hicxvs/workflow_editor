@@ -1,6 +1,6 @@
 export const IS_APP_IN_MODE_DEV = import.meta.env.MODE === 'development';
 
-export const API_BASE_URL = (IS_APP_IN_MODE_DEV) ? import.meta.env.VITE_API_BASE_URL : `${window.location.origin}${Hicx?.app?.path}`;
+export const API_BASE_URL = (IS_APP_IN_MODE_DEV) ? import.meta.env.VITE_API_BASE_URL : getBasePath(window.location.href);
 
 export const API_RESOURCE_DEFINITION_ENDPOINT = import.meta.env.VITE_API_RESOURCE_DEFINITION_ENDPOINT || 'rest/api/v2/workflow/definition';
 export const API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT = import.meta.env.VITE_API_RESOURCE_DEFINITION_PUBLISH_ENDPOINT || `${API_RESOURCE_DEFINITION_ENDPOINT}/publish`;
@@ -13,3 +13,12 @@ export const API_RESOURCE_SCRIPT_ENDPOINT = import.meta.env.VITE_API_RESOURCE_SC
 export const API_LOCAL_BASE_URL = import.meta.env.VITE_API_LOCAL_BASE_URL || '/workflow-editor';
 export const API_RESOURCE_CLASS_LISTING_URL = import.meta.env.VITE_API_CLASS_LISTING || '/fw-class-listing.json';
 
+function getBasePath(url) {
+    const lastSlashIndex = url.lastIndexOf('/');
+
+    if (lastSlashIndex !== -1) {
+      return url.substring(0, lastSlashIndex + 1);
+    }
+    
+    return url;
+}
