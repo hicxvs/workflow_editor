@@ -6,7 +6,7 @@ import pluginVue from "eslint-plugin-vue";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {files: ["**/*.{js,mjs,cjs,vue}"]},
-  {languageOptions: { globals: globals.browser }},
+  { languageOptions: { globals: { ...globals.browser, Hicx: "readonly" } } },
   pluginJs.configs.recommended,
   ...pluginVue.configs["flat/essential"],
   {
