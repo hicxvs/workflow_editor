@@ -18,6 +18,7 @@
                     <Button v-if="showSaveButton" :label="buttonLabels.save" :buttonColor="buttonColors.save" @click="save"></Button>                    
                     <Button v-if="showDeployButton" :label="buttonLabels.deploy" :buttonColor="buttonColors.deploy" @click="deploy"></Button>                    
                     <Button v-if="showGenerateButton" :label="buttonLabels.generate" :buttonColor="buttonColors.generate" @click="generate"></Button>                    
+                    <Button v-if="showAnalyzeButton" :label="buttonLabels.analyze" :buttonColor="buttonColors.analyze" @click="analyze"></Button>                    
                     <Button v-if="showDeleteButton" :label="buttonLabels.delete" :buttonColor="buttonColors.delete" @click="remove"></Button>
                     <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelModal"></Button>                    
                     <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" @click="closeModal"></Button>
@@ -71,6 +72,11 @@ const props = defineProps({
         required: false,
         default: false
     },
+    showAnalyzeButton: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     saveButtonClickHandler: {
         type: Function,
         required: false,
@@ -90,6 +96,11 @@ const props = defineProps({
         type: Function,
         required: false,
         default: () => { console.warn('generateButtonClickHandler is not defined'); }
+    },
+    analyzeButtonClickHandler: {
+        type: Function,
+        required: false,
+        default: () => { console.warn('analyzeButtonClickHandler is not defined'); }
     }, 
     cancelButtonClickHandler: {
         type: Function,
@@ -105,7 +116,8 @@ const buttonLabels = {
     cancel: 'Cancel',
     delete: 'Confirm Delete',
     deploy: 'Confirm Deployment',
-    generate: 'Generate'
+    generate: 'Generate',
+    analyze: 'Analyse'
 };
 
 const buttonColors = {
@@ -114,7 +126,8 @@ const buttonColors = {
     cancel: 'grey',
     delete: 'red',
     deploy: 'green',
-    generate: 'blue'
+    generate: 'blue',
+    analyze: 'blue'
 };
 
 function closeModal() {
@@ -137,6 +150,9 @@ function generate() {
     props.generateButtonClickHandler();
 }
 
+function analyze() {
+    props.analyzeButtonClickHandler();
+}
 
 function cancelModal() {
     props.cancelButtonClickHandler();
