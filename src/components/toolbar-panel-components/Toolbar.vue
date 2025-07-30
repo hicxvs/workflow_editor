@@ -117,7 +117,6 @@ const aiMenuGroup = {
                     title: 'Generate Process with AI',
                     message: 'Enter your requirements prompt',
                     actionHandler: (promptRequest) => {
-                        console.log(promptRequest);
                         EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, promptRequest);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
                     }
@@ -132,7 +131,6 @@ const aiMenuGroup = {
                     title: 'Analyse Process with AI',
                     message: 'Enter your analysis prompt',
                     actionHandler: (promptRequest) => {
-                        console.log(promptRequest);
                         EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, promptRequest);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
                     }
@@ -219,42 +217,42 @@ onUnmounted(() => {
 
 function addSaveAsIfSupported(itemsCollection, buttonLabel) {
     if ('showOpenFilePicker' in window) {
-        itemsCollection.push({
-        label: buttonLabel || 'Save as',
-        disabled: true,
-        handler: () => {
+            itemsCollection.push({
+            label: buttonLabel || 'Save as',
+            disabled: true,
+            handler: () => {
 
-            EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
-            EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
+                EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
+                EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
 
-                const fileName = diagramData?.id || 'workflow_bpmn';
-                const {xml} = diagramData?.xmlContent || '<xml></xml>';
+                    const fileName = diagramData?.id || 'workflow_bpmn';
+                    const {xml} = diagramData?.xmlContent || '<xml></xml>';
 
-                try {
-                const options = {
-                    suggestedName: `${fileName}.bpmn`,
-                    types: [{
-                        description: "XML Files",
-                        accept: { "text/xml": [".xml", ".bpmn"] }
-                    }]
-                };
+                    try {
+                    const options = {
+                        suggestedName: `${fileName}.bpmn`,
+                        types: [{
+                            description: "XML Files",
+                            accept: { "text/xml": [".xml", ".bpmn"] }
+                        }]
+                    };
 
-                const fileHandle = await window.showSaveFilePicker(options);
-                const writable = await fileHandle.createWritable();
+                    const fileHandle = await window.showSaveFilePicker(options);
+                    const writable = await fileHandle.createWritable();
 
-                await writable.write(xml);
-                await writable.close();
-                EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
-
-                } catch (error) {
+                    await writable.write(xml);
+                    await writable.close();
                     EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
-                    throw error;
-                }
 
-            });
-        }
-    });
-}
+                    } catch (error) {
+                        EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
+                        throw error;
+                    }
+
+                });
+            }
+        });
+    }
 }
 
 </script>

@@ -117,7 +117,7 @@ const buttonLabels = {
     delete: 'Confirm Delete',
     deploy: 'Confirm Deployment',
     generate: 'Generate',
-    analyze: 'Analyse'
+    analyze: 'Analyze'
 };
 
 const buttonColors = {
