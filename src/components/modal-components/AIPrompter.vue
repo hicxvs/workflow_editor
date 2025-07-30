@@ -15,7 +15,7 @@
             </template>
 
             <template #content>
-                {{ modalMessage }}                             
+                <TextArea :label="modalMessage" v-model="promptText" />
             </template>
         </Modal>
     </div>
@@ -28,6 +28,7 @@ import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes'
 import {ref, onMounted, onUnmounted} from 'vue';
 
 import Modal from '../generic/Modal.vue';
+import TextArea from '../generic/TextArea.vue';
 
 const showButton = ref(true);
 const showModal = ref(false);
@@ -37,6 +38,7 @@ const modalPrompterType = ref(null);
 const modalActionHandler = ref(null);
 const showGenerateButton = ref(false);
 const showAnalyzeButton = ref(false);
+const promptText = ref(null); 
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.SHOW_AI_PROMPTER, (requestedAction) => {
