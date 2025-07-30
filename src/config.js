@@ -20,6 +20,7 @@ const CONFIG = {
     API_RESOURCE_DRAFT_ENDPOINT: import.meta.env.VITE_API_RESOURCE_DRAFT_ENDPOINT || 'rest/api/v2/workflow/definition/draft',
     API_RESOURCE_DRAFT_PUBLISH_ENDPOINT: import.meta.env.VITE_API_RESOURCE_DRAFT_PUBLISH_ENDPOINT || 'rest/api/v2/workflow/definition/draft/publish',
     API_RESOURCE_SCRIPT_ENDPOINT: import.meta.env.VITE_API_RESOURCE_SCRIPT_ENDPOINT || 'rest/api/v2/workflow/definition/script',
+    API_RESOURCE_EVENTS_ENDPOINT: import.meta.env.VITE_API_RESOURCE_EVENTS_ENDPOINT || 'rest/api/v2/events/publish',
     API_LOCAL_BASE_URL: import.meta.env.VITE_API_LOCAL_BASE_URL || '/workflow-editor',
     API_RESOURCE_CLASS_LISTING_URL: import.meta.env.VITE_API_CLASS_LISTING || '/fw-class-listing.json'
 };
