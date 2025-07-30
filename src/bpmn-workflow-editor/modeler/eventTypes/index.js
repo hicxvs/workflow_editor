@@ -114,7 +114,12 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SCRIPT_VALUE: 'update-script-value',
     SHOW_ALERT_NOTIFICATION: 'show-alert-notification',
     HIDE_ALERT_NOTIFICATION: 'hide-alert-notification',
-    PROCESS_DEFINITION_CHANGED: 'process-definition-changed'
+    PROCESS_DEFINITION_CHANGED: 'process-definition-changed',
+    SHOW_AI_PROMPTER: 'show-ai-prompter',
+    GENERATE_WORKFLOW_DIAGRAM: 'generate-workflow-diagram',
+    WORKFLOW_DIAGRAM_READY: 'workflow-diagram-ready',
+    GENERATE_WORKFLOW_DIAGRAM_ANALYSES: 'generate-workflow-diagram-analyses',
+    WORKFLOW_DIAGRAM_ANALYSES_READY: 'generate-workflow-diagram-ready',
 });
 
 

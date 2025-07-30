@@ -33,6 +33,7 @@ import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import MenuButtonList from '../generic/MenuButtonList.vue';
 import { CONFIRMATION_TYPE } from '../../bpmn-workflow-editor/modeler/confirmationTypes';
+import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
@@ -109,9 +110,17 @@ const aiMenuGroup = {
     label: 'AI OPERATIONS',
     items: [
         {
-            label: 'Create new',
+            label: 'Generate Process',
             handler: () => {
-                console.log('AI OPERATIONS: Create new -> to be implemented');
+                EventBus.emit(EVENT_TYPE.SHOW_AI_PROMPTER, {
+                    type: PROMPTER_TYPE.GENERATE,
+                    title: 'Generate Process with AI',
+                    message: 'Enter your requirements',
+                    actionHandler: (promptRequest) => {
+                        EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, promptRequest);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
             } 
         },
         {
