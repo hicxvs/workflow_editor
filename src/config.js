@@ -4,14 +4,14 @@ function getBasePath(url) {
 }
 
 function getValidApiURL(baseApiURLString, backupApiURLString) {
-    if (baseApiURLString.startsWith("https://manage")) {
+    if (baseApiURLString.startsWith('https://manage') || baseApiURLString.startsWith('https://hicx-manage')) {
         return baseApiURLString;
     } else {
         return backupApiURLString;
     }
 }
 
-const DEVELOPMENT_API_BASE_URL = import.meta.env.VITE_DEVELOPMENT_API_BASE_URL || 'https://hicx-manage-template-uat5.hicxsolutions.net/template/hicxesm-manager/app/';
+const DEVELOPMENT_API_BASE_URL = import.meta.env.VITE_DEVELOPMENT_API_BASE_URL;
 
 const CONFIG = {
     API_BASE_URL: getValidApiURL(getBasePath(window.location.href), DEVELOPMENT_API_BASE_URL),
