@@ -114,7 +114,9 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SCRIPT_VALUE: 'update-script-value',
     SHOW_ALERT_NOTIFICATION: 'show-alert-notification',
     HIDE_ALERT_NOTIFICATION: 'hide-alert-notification',
-    PROCESS_DEFINITION_CHANGED: 'process-definition-changed'
+    PROCESS_DEFINITION_CHANGED: 'process-definition-changed',
+    SHOW_AI_OPERATION_OPTIONS: 'show-ai-operation-options',
+    HIDE_AI_OPERATION_OPTIONS: 'hide-ai-operation-options'
 });
 
 

@@ -48,6 +48,7 @@ onMounted(() => {
         if(!localSessionDiagrams || !localSessionDiagrams.length) {
             clear();
             EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);            
+            EventBus.emit(EVENT_TYPE.HIDE_AI_OPERATION_OPTIONS);            
             return;
         }
 
@@ -90,12 +91,14 @@ watch(
         if(!items.value) {
             clear();
             EventBus.emit(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
+            EventBus.emit(EVENT_TYPE.HIDE_AI_OPERATION_OPTIONS);
             return;
         }
 
         const selectedItem = items.value.find(item => item.active === true) || items.value[items.value?.length - 1];
         handleItemSelection(selectedItem);
         EventBus.emit(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
+        EventBus.emit(EVENT_TYPE.SHOW_AI_OPERATION_OPTIONS);
     },
     { immediate:true, deep:true }
 );

@@ -10,6 +10,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
 import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scripts';
 import { DiagramManager } from '../../bpmn-workflow-editor/diagrams/diagrams-manager';
+//import { AIDiagrams } from '../../bpmn-workflow-editor/diagrams/ai-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
@@ -24,6 +25,7 @@ const { getAllInMemoryJavaClasses } = ClassListing();
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
 const ScriptService = DiagramScripts();
+//const AIDiagramService = AIDiagrams();
 const ManagerService = DiagramManager();
 
 export function WorkflowEditorStore() {
