@@ -117,6 +117,7 @@ const aiMenuGroup = {
                     title: 'Generate Process with AI',
                     message: 'Enter your requirements prompt',
                     actionHandler: (promptRequest) => {
+                        console.log(promptRequest);
                         EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, promptRequest);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
                     }
@@ -131,6 +132,7 @@ const aiMenuGroup = {
                     title: 'Analyse Process with AI',
                     message: 'Enter your analysis prompt',
                     actionHandler: (promptRequest) => {
+                        console.log(promptRequest);
                         EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, promptRequest);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
                     }

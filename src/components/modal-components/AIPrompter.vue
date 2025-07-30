@@ -24,6 +24,7 @@
 <script setup>
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 import {ref, onMounted, onUnmounted} from 'vue';
 
 import Modal from '../generic/Modal.vue';
@@ -32,7 +33,7 @@ const showButton = ref(true);
 const showModal = ref(false);
 const modalTitle = ref('');
 const modalMessage = ref('');
-const modalContentType = ref(null);
+const modalPrompterType = ref(null);
 const modalActionHandler = ref(null);
 const showGenerateButton = ref(false);
 const showAnalyzeButton = ref(false);
@@ -47,8 +48,10 @@ onMounted(() => {
 
         modalTitle.value = requestedAction.title || '';
         modalMessage.value = requestedAction.message || '';
-        modalContentType.value = requestedAction.type || null;
+        modalPrompterType.value = requestedAction.type || null;
         modalActionHandler.value = requestedAction.actionHandler || null;
+        showGenerateButton.value = (requestedAction.type === PROMPTER_TYPE.GENERATE);
+        showAnalyzeButton.value = (requestedAction.type === PROMPTER_TYPE.ANALYZE);
         showModal.value = true;
     });
 });
@@ -60,7 +63,7 @@ onUnmounted(() => {
 function clearAIPrompter() {
     modalTitle.value = '';
     modalMessage.value = '';
-    modalContentType.value = null;
+    modalPrompterType.value = null;
     modalActionHandler.value = null;
     showGenerateButton.value = false;
     showAnalyzeButton.value = false;
@@ -71,7 +74,12 @@ function handleRequestedOperationAction() {
         showModal.value = false;
         return;
     }
-    console.log('on the right path!');
+
+    modalActionHandler.value('mekei');
+
+    if(modalPrompterType.value !== PROMPTER_TYPE.ANALYZE) {
+        showModal.value = false;
+    }
 }
 
 </script>
