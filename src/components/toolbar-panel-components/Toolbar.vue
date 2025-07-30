@@ -115,7 +115,7 @@ const aiMenuGroup = {
                 EventBus.emit(EVENT_TYPE.SHOW_AI_PROMPTER, {
                     type: PROMPTER_TYPE.GENERATE,
                     title: 'Generate Process with AI',
-                    message: 'Enter your requirements',
+                    message: 'Enter your requirements prompt',
                     actionHandler: (promptRequest) => {
                         EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, promptRequest);
                         EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
@@ -126,7 +126,15 @@ const aiMenuGroup = {
         {
             label: 'Analyze Process',
             handler: () => {
-                console.log('AI OPERATIONS: Analyze Process -> to be implemented');
+                EventBus.emit(EVENT_TYPE.SHOW_AI_PROMPTER, {
+                    type: PROMPTER_TYPE.ANALYZE,
+                    title: 'Analyse Process with AI',
+                    message: 'Enter your analysis prompt',
+                    actionHandler: (promptRequest) => {
+                        EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, promptRequest);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
             }
         }    
     ]
