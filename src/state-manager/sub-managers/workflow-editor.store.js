@@ -10,7 +10,7 @@ import { SystemDiagrams } from '../../bpmn-workflow-editor/diagrams/system-diagr
 import { DraftDiagrams } from '../../bpmn-workflow-editor/diagrams/draft-diagrams';
 import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scripts';
 import { DiagramManager } from '../../bpmn-workflow-editor/diagrams/diagrams-manager';
-//import { AIDiagrams } from '../../bpmn-workflow-editor/diagrams/ai-diagrams';
+import { AIDiagrams } from '../../bpmn-workflow-editor/diagrams/ai-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
@@ -25,7 +25,7 @@ const { getAllInMemoryJavaClasses } = ClassListing();
 const SystemService = SystemDiagrams();
 const DraftService = DraftDiagrams();
 const ScriptService = DiagramScripts();
-//const AIDiagramService = AIDiagrams();
+const AIDiagramService = AIDiagrams();
 const ManagerService = DiagramManager();
 
 export function WorkflowEditorStore() {
@@ -93,6 +93,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
         EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
+        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -130,6 +131,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
         EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
+        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
     }
 
     async function createNewDiagram() {
@@ -373,6 +375,42 @@ export function WorkflowEditorStore() {
         }
         
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, diagrams);        
+    }
+
+    async function generateWorkflowDiagram(requestedPrompt) {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
+            return;
+        }
+
+        try {
+            const diagram = await AIDiagramService.generateDiagram(currentApiKey.value, requestedPrompt);
+
+            if(!diagram) {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                    type: NOTIFICATION_TYPE.ERROR,
+                    text: 'Error generating workflow diagram. Please try again'
+                });
+                return;
+            }
+
+            await importAndProcessDiagram(diagram);
+            const managerId = ManagerService.registerDiagram({
+                diagramId: currentProcessDefinition.value.id,
+                diagramContent: diagram,
+                diagramVersion: null,
+                diagramLoadedVersion: null,
+                isDiagramLastestVersion: true          
+            });
+
+            currentWorkingDiagramManagerId.value = managerId;
+            EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
+
+        } catch(error) {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: error?.message || 'Error generating workflow diagram.'
+            });
+        }
     }
 
     function saveListener(listeners) {

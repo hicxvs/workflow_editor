@@ -69,6 +69,7 @@ function clearAIPrompter() {
     modalActionHandler.value = null;
     showGenerateButton.value = false;
     showAnalyzeButton.value = false;
+    promptText.value = null;
 }
 
 function handleRequestedOperationAction() {
@@ -77,7 +78,11 @@ function handleRequestedOperationAction() {
         return;
     }
 
-    modalActionHandler.value('mekei');
+    if(!promptText.value) {
+        return;
+    }
+    
+    modalActionHandler.value(promptText.value);
 
     if(modalPrompterType.value !== PROMPTER_TYPE.ANALYZE) {
         showModal.value = false;

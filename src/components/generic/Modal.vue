@@ -126,8 +126,8 @@ const buttonColors = {
     cancel: 'grey',
     delete: 'red',
     deploy: 'green',
-    generate: 'blue',
-    analyze: 'blue'
+    generate: 'green',
+    analyze: 'green'
 };
 
 function closeModal() {
