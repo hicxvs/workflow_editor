@@ -38,10 +38,8 @@ export function AIDiagrams() {
 
             const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.GENERATE}${prompt}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
-            //const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
-            //return response?.data?.entity?.data?.answer;
-
-            console.log(requestPrompt);
+            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
+            return response?.data?.entity?.data?.answer;
                       
         } catch (error) {            
             console.error('Error generating diagram', error);
