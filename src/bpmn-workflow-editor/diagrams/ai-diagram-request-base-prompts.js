@@ -12,7 +12,8 @@ export const AI_DIAGRAM_REQUEST_BASE_PROMPTS = Object.freeze({
         - Add appropriate description to the description element of each node
 
         The process is as follows:`,
-    ANALYZE: `Here is the BPMN XML to analyze:`
+    ANALYZE: `\nEnsure the response is in markdown format. \nHere is the BPMN XML to analyze:`,
+    IMAGE: `\nPlease Generate process diagram image.`
   },
   SCRIPTS: {
     ANALYZE: `Please analyze this Groovy script and explain its purpose and function in simple terms that a non-technical person can understand. 
@@ -21,6 +22,5 @@ export const AI_DIAGRAM_REQUEST_BASE_PROMPTS = Object.freeze({
       Ensure the response is in markdown format
       
       Here's the code:` 
-  }
-  
+  }  
 });

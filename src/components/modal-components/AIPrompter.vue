@@ -17,7 +17,11 @@
             <template #content>
                 <Select v-model="selectedPrompt" :label="AIPrompterLabels.promptSelect" :selectOptionItems="AIDiagramPromptsOptions" :selectItemClickHandler="promptSelectItemClickHandler" />
                 <TextArea :label="modalMessage" v-model="promptText" :clearHandler="promptTextClearHandler"/>
-                <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage"  @update:modelValue="promptImageGenerateHandler"/>
+                <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage" />
+                
+                <div v-if="showAIAnalises" class="analises-container">
+                    <div class="analises-content-in-html" v-html="modalAnalisesFormatedToHTML"></div>
+                </div>
             </template>
         </Modal>
     </div>
@@ -28,6 +32,8 @@ import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 import { DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS } from '../../bpmn-workflow-editor/diagrams/default-ai-diagram-example-prompts';
+import { formatMarkdown } from '../../bpmn-workflow-editor/utils/format-markdown';
+import { convertMarkdownToHTML } from '../../bpmn-workflow-editor/utils/conver-markdown-to-html';
 import {ref, onMounted, onUnmounted} from 'vue';
 
 import Modal from '../generic/Modal.vue';
@@ -48,6 +54,9 @@ const selectedPrompt = ref(null);
 const promptText = ref(null);
 const showGenerateImageOption = ref(false);
 const generateDiagramImage = ref(false);
+const showAIAnalises = ref(false);
+const modalAnalises = ref(null);
+const modalAnalisesFormatedToHTML = ref(null);
 
 const AIPrompterLabels = {
     promptSelect: 'Select and try an prompt',
@@ -72,7 +81,20 @@ onMounted(() => {
         AIDiagramPromptsOptions.value = (requestedAction.type === PROMPTER_TYPE.GENERATE) ? transformPromptsForSelect(DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS.generate_examples): transformPromptsForSelect(DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS.analyze_examples);
 
         showModal.value = true;
-    });  
+    });
+    
+    EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, (analises) => {
+        if(!analises) {
+            modalAnalises.value = null;
+            modalAnalisesFormatedToHTML.value = null;
+            showAIAnalises.value = false;
+            return;
+        }
+
+        showAIAnalises.value = true;
+        modalAnalises.value = formatMarkdown(analises);
+        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises);
+    });
 });
 
 onUnmounted(() => {
@@ -90,6 +112,9 @@ function clearAIPrompter() {
     promptText.value = null;
     showGenerateImageOption.value = false;
     selectedPrompt.value = null;
+    modalAnalises.value = null;
+    modalAnalisesFormatedToHTML.value = null;
+    showAIAnalises.value = false;
 }
 
 function handleRequestedOperationAction() {
@@ -101,8 +126,11 @@ function handleRequestedOperationAction() {
     if(!promptText.value) {
         return;
     }
-
-    modalActionHandler.value(promptText.value);
+    
+    modalActionHandler.value({
+        promptText: promptText.value,
+        promptGenerateImage: generateDiagramImage.value
+    });
 
     if(modalPrompterType.value !== PROMPTER_TYPE.ANALYZE) {
         showModal.value = false;
@@ -136,13 +164,27 @@ function promptTextClearHandler() {
     selectedPrompt.value = null;
 }
 
-function promptImageGenerateHandler() {
-    if(!promptText.value) {
-        return;
-    }
-    
-    console.log(generateDiagramImage.value);
-    console.log(promptText.value);
+</script>
+
+<style scoped>
+.analises-container {
+  max-width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #eeeeee;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #333;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow-x: auto;
 }
 
-</script>
+.analises-content-in-html > h2 {
+    margin-top: 1em;
+}
+
+
+</style>

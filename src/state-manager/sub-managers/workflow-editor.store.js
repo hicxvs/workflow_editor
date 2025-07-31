@@ -387,7 +387,7 @@ export function WorkflowEditorStore() {
         }
 
         try {
-            const diagram = await AIDiagramService.generateDiagram(currentApiKey.value, requestedPrompt);
+            const diagram = await AIDiagramService.generateDiagram(currentApiKey.value, requestedPrompt.promptText);
 
             if(!diagram) {
                 EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
@@ -418,6 +418,11 @@ export function WorkflowEditorStore() {
             currentWorkingDiagramManagerId.value = managerId;
             EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
 
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow diagram generated with success.'
+            });
+
         } catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
@@ -440,8 +445,23 @@ export function WorkflowEditorStore() {
                 });
                 return;
             }
-            //const diagram = await AIDiagramService.generateDiagram(currentApiKey.value, requestedPrompt);
-            const analysis = await AIDiagramService.analiseDiagram(currentApiKey.value, requestPrompt, currentDiagram.value);
+            
+            const analysis = await AIDiagramService.analiseDiagram(currentApiKey.value, requestPrompt.promptText, currentDiagram.value, requestPrompt.promptGenerateImage);
+
+            if(!analysis) {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                    type: NOTIFICATION_TYPE.ERROR,
+                    text: 'Error generating workflow diagram analyzes. Please try again.'
+                });
+                return;
+            }
+
+            EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, analysis);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'Workflow diagram analyzes generated with success.'
+            });
 
         } catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
