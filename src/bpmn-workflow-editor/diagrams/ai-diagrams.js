@@ -4,6 +4,7 @@ import { API_BASE_URL,
     } from '../../config';
 import { DiagramsApiUtils } from './diagrams-api-utils';
 import { IS_APP_IN_MODE_DEV } from '../../config';
+import { AI_DIAGRAM_REQUEST_BASE_PROMPTS } from './ai-diagram-request-base-prompts';
 
 export function AIDiagrams() {
 
@@ -16,9 +17,12 @@ export function AIDiagrams() {
                 checkApiKey(apiKey);
             }
 
+            const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.ANALYZE}${prompt}${diagramXMLContent}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
-            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(`${prompt}${diagramXMLContent}`), requestHeaders);
-            return response?.data?.entity?.data?.answer;
+            //const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
+            //return response?.data?.entity?.data?.answer;
+
+            console.log(requestPrompt);
 
         } catch (error) {            
             console.error('Error analysing diagram', error);
@@ -32,23 +36,12 @@ export function AIDiagrams() {
                 checkApiKey(apiKey);
             }
 
-            const generatePrompt = `As an expert in BPMN 2.0 and Activiti 5, build a workflow definition as a BPMN file. 
-            You must include the diagram elements for use within BPMN visualization tools. The XML must include:
-                - All necessary Activiti namespace declarations
-                - All Connection elements
-                - Complete process definitions with IDs, names, and documentation
-                - You MUST include All required diagram interchange (BPMNDiagram, BPMNPlane, BPMNShape, BPMNEdge) elements
-                - Proper x,y coordinates for all shapes and waypoints for connections
-                - No comments or explanations outside the XML structure.
-                - Include suggested form fields to be collected on each user task
-                - Add appropriate description to the description element of each node
-
-                The process is as follows:${prompt}
-            `;
-
+            const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.GENERATE}${prompt}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
-            const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(generatePrompt), requestHeaders);
-            return response?.data?.entity?.data?.answer;
+            //const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
+            //return response?.data?.entity?.data?.answer;
+
+            console.log(requestPrompt);
                       
         } catch (error) {            
             console.error('Error generating diagram', error);

@@ -16,6 +16,7 @@ import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/task
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
+import { isValidDiagramWorkflow } from '../../bpmn-workflow-editor/utils/is-valid-diagram-workflow';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -388,12 +389,21 @@ export function WorkflowEditorStore() {
             if(!diagram) {
                 EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                     type: NOTIFICATION_TYPE.ERROR,
-                    text: 'Error generating workflow diagram. Please try again'
+                    text: 'Error generating workflow diagram. Please try again.'
+                });
+                return;
+            }
+
+            if(!isValidDiagramWorkflow(diagram)) {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                    type: NOTIFICATION_TYPE.ERROR,
+                    text: 'The generated workflow diagram is invalid. Please try again.'
                 });
                 return;
             }
 
             await importAndProcessDiagram(diagram);
+
             const managerId = ManagerService.registerDiagram({
                 diagramId: currentProcessDefinition.value.id,
                 diagramContent: diagram,
