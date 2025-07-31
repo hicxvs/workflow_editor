@@ -94,7 +94,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
         EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
-        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);  
+        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);
+        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -133,6 +134,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
         EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
+        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);  
     }
 
     async function createNewDiagram() {
@@ -310,7 +312,8 @@ export function WorkflowEditorStore() {
         }
 
         currentImportDiagramResults.value = await currentModeler.value.importDiagram(diagramContent);
-        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();       
+        currentProcessDefinition.value = currentModeler.value.getProcessDefinition();
+        currentDiagram.value = diagramContent;     
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
@@ -419,6 +422,31 @@ export function WorkflowEditorStore() {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: error?.message || 'Error generating workflow diagram.'
+            });
+        }
+    }
+
+    async function generateWorkflowDiagramAnalyses(requestPrompt) {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
+            return;
+        }
+
+        try {
+
+            if(!currentDiagram.value) {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                    type: NOTIFICATION_TYPE.ERROR,
+                    text: 'No workflow diagram selected to be analyzed.'
+                });
+                return;
+            }
+            //const diagram = await AIDiagramService.generateDiagram(currentApiKey.value, requestedPrompt);
+            const analysis = await AIDiagramService.analiseDiagram(currentApiKey.value, requestPrompt, currentDiagram.value);
+
+        } catch(error) {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: error?.message || 'Error generating workflow diagram analysis.'
             });
         }
     }

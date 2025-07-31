@@ -17,7 +17,7 @@ export function AIDiagrams() {
                 checkApiKey(apiKey);
             }
 
-            const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.ANALYZE}${prompt}${diagramXMLContent}`;
+            const requestPrompt = `${prompt}${AI_DIAGRAM_REQUEST_BASE_PROMPTS.DIAGRAM_WORKFLOW.ANALYZE}${diagramXMLContent}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
             //const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
             //return response?.data?.entity?.data?.answer;
@@ -36,7 +36,7 @@ export function AIDiagrams() {
                 checkApiKey(apiKey);
             }
 
-            const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.GENERATE}${prompt}`;
+            const requestPrompt = `${AI_DIAGRAM_REQUEST_BASE_PROMPTS.DIAGRAM_WORKFLOW.GENERATE}${prompt}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
             const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
             return response?.data?.entity?.data?.answer;

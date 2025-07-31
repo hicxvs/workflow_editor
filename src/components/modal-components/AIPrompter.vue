@@ -17,7 +17,7 @@
             <template #content>
                 <Select v-model="selectedPrompt" :label="AIPrompterLabels.promptSelect" :selectOptionItems="AIDiagramPromptsOptions" :selectItemClickHandler="promptSelectItemClickHandler" />
                 <TextArea :label="modalMessage" v-model="promptText" :clearHandler="promptTextClearHandler"/>
-                <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage" />
+                <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage"  @update:modelValue="promptImageGenerateHandler"/>
             </template>
         </Modal>
     </div>
@@ -134,6 +134,15 @@ function promptTextClearHandler() {
         return;
     }
     selectedPrompt.value = null;
+}
+
+function promptImageGenerateHandler() {
+    if(!promptText.value) {
+        return;
+    }
+    
+    console.log(generateDiagramImage.value);
+    console.log(promptText.value);
 }
 
 </script>
