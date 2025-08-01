@@ -24,7 +24,7 @@
 
                 <Select v-model="selectedPrompt" :label="AIPrompterLabels.promptSelect" :selectOptionItems="AIDiagramPromptsOptions" :selectItemClickHandler="promptSelectItemClickHandler" />
 
-                <TextArea :label="modalMessage" v-model="promptText" @input="handleTextAreaInput" :clearHandler="handleTextAreaClear"/>
+                <TextArea :label="modalMessage" v-model="promptText" :clearHandler="handleTextAreaClear"/>
 
                 <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage" />
                 
