@@ -1,32 +1,30 @@
-export function convertMarkdownToHTML(markdown) {
-    return markdown
-      // Convert headers
-      .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
-      .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
-      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+export function convertMarkdownToHTML(markdown, styles = {}) {
+    const styleTag = (tag) => {
+      const styleObj = styles[tag];
+      if (!styleObj) return '';
+      const styleString = Object.entries(styleObj)
+        .map(([key, value]) => `${key}: ${value};`)
+        .join(' ');
+      return ` style="${styleString}"`;
+    };
   
-      // Convert bold and italic
+    return markdown
+      .replace(/^###### (.*$)/gim, (_, text) => `<h6${styleTag('h6')}>${text}</h6>`)
+      .replace(/^##### (.*$)/gim, (_, text) => `<h5${styleTag('h5')}>${text}</h5>`)
+      .replace(/^#### (.*$)/gim, (_, text) => `<h4${styleTag('h4')}>${text}</h4>`)
+      .replace(/^### (.*$)/gim, (_, text) => `<h3${styleTag('h3')}>${text}</h3>`)
+      .replace(/^## (.*$)/gim, (_, text) => `<h2${styleTag('h2')}>${text}</h2>`)
+      .replace(/^# (.*$)/gim, (_, text) => `<h1${styleTag('h1')}>${text}</h1>`)
+  
       .replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>')
       .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/gim, '<em>$1</em>')
   
-      // Convert inline code
       .replace(/`([^`\n]+)`/gim, '<code>$1</code>')
-  
-      // Convert code blocks
       .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-  
-      // Convert blockquotes
       .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-  
-      // Convert line breaks
       .replace(/\n{2,}/g, '</p><p>')
       .replace(/\n/g, '<br />')
-  
-      // Wrap the whole thing in a paragraph for structure
       .replace(/^/, '<p>')
       .concat('</p>');
 }

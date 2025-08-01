@@ -418,6 +418,8 @@ export function WorkflowEditorStore() {
             currentWorkingDiagramManagerId.value = managerId;
             EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
 
+            EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_READY);
+
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
                 text: 'Workflow diagram generated with success.'

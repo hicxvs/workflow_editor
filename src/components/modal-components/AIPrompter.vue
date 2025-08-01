@@ -15,13 +15,27 @@
             </template>
 
             <template #content>
+                <div class="mb-4 d-flex align-center">
+                    <v-icon icon="mdi-robot" color="blue" size="x-large" class="mr-3"/>
+                    <p class="font-weight-medium">{{ AIPrompterMessages.welcome }}</p>
+                </div>
+
                 <Select v-model="selectedPrompt" :label="AIPrompterLabels.promptSelect" :selectOptionItems="AIDiagramPromptsOptions" :selectItemClickHandler="promptSelectItemClickHandler" />
+
                 <TextArea :label="modalMessage" v-model="promptText" :clearHandler="promptTextClearHandler"/>
+
                 <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage" />
                 
-                <div v-if="showAIAnalises" class="analises-container">
-                    <div class="analises-content-in-html" v-html="modalAnalisesFormatedToHTML"></div>
+                <div v-if="showAIAnalises">
+                    <div class="mb-4 d-flex align-center">
+                        <v-icon icon="mdi-robot-happy" color="blue" size="x-large" class="mr-3"/>
+                        <p class="font-weight-medium">{{ AIPrompterMessages.analisesResult }}</p>
+                    </div>
+                    <div  class="analises-container">                        
+                        <div class="analises-content-in-html" v-html="modalAnalisesFormatedToHTML"></div>
+                    </div>
                 </div>
+                
             </template>
         </Modal>
     </div>
@@ -63,6 +77,11 @@ const AIPrompterLabels = {
     imageOption: 'Generate process diagram image'
 };
 
+const AIPrompterMessages = {
+    welcome: 'Welcome! Try a example prompt or create your own.',
+    analisesResult: `Here is your analysis result.`
+};
+
 onMounted(() => {
     EventBus.on(EVENT_TYPE.SHOW_AI_PROMPTER, (requestedAction) => {
         clearAIPrompter();
@@ -93,12 +112,23 @@ onMounted(() => {
 
         showAIAnalises.value = true;
         modalAnalises.value = formatMarkdown(analises);
-        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises);
+
+        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises, {
+            h2: {
+                'margin-top': '1em'
+            }
+        });
+    });
+
+    EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_READY, () => {
+        showModal.value = false;
     });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.SHOW_AI_PROMPTER);
+    EventBus.off(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY);
+    EventBus.off(EVENT_TYPE.WORKFLOW_DIAGRAM_READY);
 });
 
 function clearAIPrompter() {
@@ -131,10 +161,6 @@ function handleRequestedOperationAction() {
         promptText: promptText.value,
         promptGenerateImage: generateDiagramImage.value
     });
-
-    if(modalPrompterType.value !== PROMPTER_TYPE.ANALYZE) {
-        showModal.value = false;
-    }
 }
 
 function transformPromptsForSelect(collectionToTransform) {
@@ -181,10 +207,4 @@ function promptTextClearHandler() {
   white-space: normal;
   overflow-x: auto;
 }
-
-.analises-content-in-html > h2 {
-    margin-top: 1em;
-}
-
-
 </style>
