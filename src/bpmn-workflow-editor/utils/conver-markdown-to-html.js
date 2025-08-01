@@ -22,7 +22,7 @@ export function convertMarkdownToHTML(markdown, styles = {}) {
   
       .replace(/`([^`\n]+)`/gim, '<code>$1</code>')
       .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-      .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+      .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
       .replace(/\n{2,}/g, '</p><p>')
       .replace(/\n/g, '<br />')
       .replace(/^/, '<p>')
