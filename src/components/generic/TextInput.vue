@@ -9,6 +9,8 @@
             :type="type"
             v-model="model"
             @click:clear="clearHandler"
+            density="compact"
+            variant="outlined"
         />
     </div>
 </template>

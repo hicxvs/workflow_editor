@@ -11,6 +11,8 @@
             @update:modelValue="handleSelectItemClick"
             @update:menu="handleMenuClick"
             @update:focused="handleMenuFocusChange"
+            density="compact"
+            variant="outlined"
         ></v-select>
     </div>
 </template>

@@ -6,7 +6,7 @@ export default function ApiEngine(baseURL) {
 
     const engine = axios.create({
         baseURL: baseURL,
-        timeout: ( 60 * 1000 ),
+        timeout: ( 120 * 1000 ),
         timeoutErrorMessage: 'Timeout error. Please verify service availability and network connection.',
         headers: {
             'Content-Type': 'application/json',

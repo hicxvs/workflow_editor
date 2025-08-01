@@ -37,10 +37,24 @@ export function DiagramsApiUtils() {
         };
     }
 
+    function generateAIRequestPayload(requestPrompt) {
+        return {
+            "eClass": "/hicxapi/2#//Event",
+            "code": "CallAnthropic.SYNC",
+            "name": "not needed",
+            "sourceSystem": "UI",
+            "_resolveDataItemsCodes": true,
+            "data": {
+                prompt: requestPrompt || ''
+            }
+        };
+    }
+
     return {
         isApiKeyValid,
         checkApiKey,
         getRequestHeaders,
-        generateRequestPayload
+        generateRequestPayload,
+        generateAIRequestPayload
     };
 }

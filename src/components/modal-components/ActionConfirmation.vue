@@ -7,8 +7,7 @@
              :showDeployButton = "showAddConfirmation"             
              :showDeleteButton = "!showAddConfirmation"            
              :deleteButtonClickHandler = "handleRequestedConfirmationAction"
-             :deployButtonClickHandler = "handleRequestedConfirmationAction"
-             
+             :deployButtonClickHandler = "handleRequestedConfirmationAction"             
              v-model="showModal"
         >
             <template #title>

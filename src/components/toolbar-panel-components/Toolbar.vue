@@ -3,6 +3,7 @@
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
                 <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
+                <MenuButtonList :label="aiMenuGroup.label" :items="aiMenuGroup.items"/>
                 <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items"/>
                 <MenuButtonList v-if="showAnalisisAndLogginMenuGroup" :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
                 <div v-if="IS_APP_IN_MODE_DEV" class="api-key-input-container" data-testid="api-key-input-container">
@@ -32,6 +33,7 @@ import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import MenuButtonList from '../generic/MenuButtonList.vue';
 import { CONFIRMATION_TYPE } from '../../bpmn-workflow-editor/modeler/confirmationTypes';
+import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
@@ -103,6 +105,40 @@ const bpmnMenuGroup = ref({
         }        
     ]
 });
+
+const aiMenuGroup = {
+    label: 'AI OPERATIONS',
+    items: [
+        {
+            label: 'Generate Process',
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SHOW_AI_PROMPTER, {
+                    type: PROMPTER_TYPE.GENERATE,
+                    title: 'Generate Process with AI',
+                    message: 'Enter your requirements prompt',
+                    actionHandler: (promptRequest) => {
+                        EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, promptRequest);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
+            } 
+        },
+        {
+            label: 'Analyze Process',
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SHOW_AI_PROMPTER, {
+                    type: PROMPTER_TYPE.ANALYZE,
+                    title: 'Analyse Process with AI',
+                    message: 'Enter your analysis prompt',
+                    actionHandler: (promptRequest) => {
+                        EventBus.emit(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, promptRequest);
+                        EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+                    }
+                });
+            }
+        }    
+    ]
+};
 
 const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
@@ -181,42 +217,42 @@ onUnmounted(() => {
 
 function addSaveAsIfSupported(itemsCollection, buttonLabel) {
     if ('showOpenFilePicker' in window) {
-        itemsCollection.push({
-        label: buttonLabel || 'Save as',
-        disabled: true,
-        handler: () => {
+            itemsCollection.push({
+            label: buttonLabel || 'Save as',
+            disabled: true,
+            handler: () => {
 
-            EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
-            EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
+                EventBus.emit(EVENT_TYPE.GET_DIAGRAM_DATA);
+                EventBus.on(EVENT_TYPE.DIAGRAM_DATA_READY, async (diagramData) => {
 
-                const fileName = diagramData?.id || 'workflow_bpmn';
-                const {xml} = diagramData?.xmlContent || '<xml></xml>';
+                    const fileName = diagramData?.id || 'workflow_bpmn';
+                    const {xml} = diagramData?.xmlContent || '<xml></xml>';
 
-                try {
-                const options = {
-                    suggestedName: `${fileName}.bpmn`,
-                    types: [{
-                        description: "XML Files",
-                        accept: { "text/xml": [".xml", ".bpmn"] }
-                    }]
-                };
+                    try {
+                    const options = {
+                        suggestedName: `${fileName}.bpmn`,
+                        types: [{
+                            description: "XML Files",
+                            accept: { "text/xml": [".xml", ".bpmn"] }
+                        }]
+                    };
 
-                const fileHandle = await window.showSaveFilePicker(options);
-                const writable = await fileHandle.createWritable();
+                    const fileHandle = await window.showSaveFilePicker(options);
+                    const writable = await fileHandle.createWritable();
 
-                await writable.write(xml);
-                await writable.close();
-                EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
-
-                } catch (error) {
+                    await writable.write(xml);
+                    await writable.close();
                     EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
-                    throw error;
-                }
 
-            });
-        }
-    });
-}
+                    } catch (error) {
+                        EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
+                        throw error;
+                    }
+
+                });
+            }
+        });
+    }
 }
 
 </script>

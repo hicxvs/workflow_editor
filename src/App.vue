@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <AIPrompter />
     <AlertNotification />
     <Notification />
     <ActionConfirmation />
@@ -20,6 +21,7 @@
 </template>
 
 <script setup>
+import AIPrompter from './components/modal-components/AIPrompter.vue';
 import AlertNotification from './components/singleton-components/AlertNotification.vue';
 import Notification from './components/singleton-components/Notification.vue';
 import ActionConfirmation from './components/modal-components/ActionConfirmation.vue';
