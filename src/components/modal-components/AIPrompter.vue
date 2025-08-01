@@ -1,13 +1,13 @@
 <template>
     <div class="ai-prompter-container" data-testid="ai-prompter-container">
         <Modal
-            :showSaveButton = "!showButton"
-            :showCancelButton = "!showButton"
-            :showCloseButton = "showButton"
-            :showGenerateButton = "showGenerateButton"
-            :showAnalyzeButton = "showAnalyzeButton"
-            :isGenerateButtonDisabled = "isDisabled"
-            :isAnalyzeButtonDisabled = "isDisabled"
+            :showSaveButton="!showButton"
+            :showCancelButton="!showButton"
+            :showCloseButton="showButton"
+            :showGenerateButton="showGenerateButton"
+            :showAnalyzeButton="showAnalyzeButton"
+            :isGenerateButtonDisabled="isDisabled"
+            :isAnalyzeButtonDisabled="isDisabled"
             :generateButtonClickHandler="handleRequestedOperationAction"
             :analyzeButtonClickHandler="handleRequestedOperationAction"
             v-model="showModal"
