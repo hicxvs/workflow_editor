@@ -50,7 +50,7 @@ import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes'
 import { DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS } from '../../bpmn-workflow-editor/diagrams/default-ai-diagram-example-prompts';
 import { formatMarkdown } from '../../bpmn-workflow-editor/utils/format-markdown';
 import { convertMarkdownToHTML } from '../../bpmn-workflow-editor/utils/conver-markdown-to-html';
-import {ref, onMounted, onUnmounted} from 'vue';
+import {ref, onMounted, onUnmounted, watch} from 'vue';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
@@ -211,7 +211,13 @@ function promptSelectItemClickHandler() {
     promptText.value = AIDiagramPromptsOptions.value.find(item => item.label === selectedPrompt.value)?.value || '';
 }
 
-
+watch(
+    () => promptText.value,
+    () => {
+        handleTextAreaInput();
+    },
+    { immediate: true, deep: true }
+);
 
 
 </script>
