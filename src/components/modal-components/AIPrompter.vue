@@ -6,6 +6,8 @@
             :showCloseButton = "showButton"
             :showGenerateButton = "showGenerateButton"
             :showAnalyzeButton = "showAnalyzeButton"
+            :isGenerateButtonDisabled = "isDisabled"
+            :isAnalyzeButtonDisabled = "isDisabled"
             :generateButtonClickHandler="handleRequestedOperationAction"
             :analyzeButtonClickHandler="handleRequestedOperationAction"
             v-model="showModal"
@@ -22,7 +24,7 @@
 
                 <Select v-model="selectedPrompt" :label="AIPrompterLabels.promptSelect" :selectOptionItems="AIDiagramPromptsOptions" :selectItemClickHandler="promptSelectItemClickHandler" />
 
-                <TextArea :label="modalMessage" v-model="promptText" :clearHandler="promptTextClearHandler"/>
+                <TextArea :label="modalMessage" v-model="promptText" @input="handleTextAreaInput" :clearHandler="handleTextAreaClear"/>
 
                 <Checkbox v-if="showGenerateImageOption" :label="AIPrompterLabels.imageOption" v-model="generateDiagramImage" />
                 
@@ -57,6 +59,7 @@ import Checkbox from "../generic/Checkbox.vue";
 
 const showButton = ref(true);
 const showModal = ref(false);
+const isDisabled = ref(true);
 const modalTitle = ref('');
 const modalMessage = ref('');
 const modalPrompterType = ref(null);
@@ -71,6 +74,7 @@ const generateDiagramImage = ref(false);
 const showAIAnalises = ref(false);
 const modalAnalises = ref(null);
 const modalAnalisesFormatedToHTML = ref(null);
+
 
 const AIPrompterLabels = {
     promptSelect: 'Select and try an prompt',
@@ -145,7 +149,31 @@ function clearAIPrompter() {
     modalAnalises.value = null;
     modalAnalisesFormatedToHTML.value = null;
     showAIAnalises.value = false;
+    isDisabled.value = true;
+    generateDiagramImage.value = false;
 }
+
+function handleTextAreaClear() {
+    handleTextAreaInput();
+    promptTextClearHandler();
+}
+
+function handleTextAreaInput() {
+    if(!promptText.value) {
+        isDisabled.value = true;
+        return;
+    }
+
+    isDisabled.value = false;
+}
+
+function promptTextClearHandler() {
+    if(!selectedPrompt.value) {
+        return;
+    }
+    selectedPrompt.value = null;
+}
+
 
 function handleRequestedOperationAction() {
     if(!modalActionHandler.value) {
@@ -183,12 +211,8 @@ function promptSelectItemClickHandler() {
     promptText.value = AIDiagramPromptsOptions.value.find(item => item.label === selectedPrompt.value)?.value || '';
 }
 
-function promptTextClearHandler() {
-    if(!selectedPrompt.value) {
-        return;
-    }
-    selectedPrompt.value = null;
-}
+
+
 
 </script>
 
