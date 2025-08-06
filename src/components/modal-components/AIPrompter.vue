@@ -33,8 +33,13 @@
                         <v-icon icon="mdi-robot-happy" color="blue" size="x-large" class="mr-3"/>
                         <p class="font-weight-medium">{{ AIPrompterMessages.analisesResult }}</p>
                     </div>
-                    <div  class="analises-container">                        
-                        <div class="analises-content-in-html" v-html="modalAnalisesFormatedToHTML"></div>
+                    <div  class="analises-container">                                                
+                        <div class="analises-content-in-html mb-6" v-html="modalAnalisesFormatedToHTML"></div>
+                        <div v-if="showAnalisesImage">
+                            <h2 class="mb-2">{{ AIPrompterLabels.imageTitle }}</h2>
+                            <div class="analises-svg-container" v-html="modalAnalisesImage"></div>
+                        </div>
+                        
                     </div>
                 </div>
                 
@@ -50,6 +55,7 @@ import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes'
 import { DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS } from '../../bpmn-workflow-editor/diagrams/default-ai-diagram-example-prompts';
 import { formatMarkdown } from '../../bpmn-workflow-editor/utils/format-markdown';
 import { convertMarkdownToHTML } from '../../bpmn-workflow-editor/utils/conver-markdown-to-html';
+import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
 import {ref, onMounted, onUnmounted, watch} from 'vue';
 
 import Modal from '../generic/Modal.vue';
@@ -74,11 +80,15 @@ const generateDiagramImage = ref(false);
 const showAIAnalises = ref(false);
 const modalAnalises = ref(null);
 const modalAnalisesFormatedToHTML = ref(null);
+const modalAnalisesImage = ref(null);
+const showAnalisesImage = ref(false);
 
+const svgUtils = SVGUtils();
 
 const AIPrompterLabels = {
     promptSelect: 'Select and try an prompt',
-    imageOption: 'Generate process diagram image'
+    imageOption: 'Generate process diagram image',
+    imageTitle: 'Diagram image'
 };
 
 const AIPrompterMessages = {
@@ -107,21 +117,30 @@ onMounted(() => {
     });
     
     EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, (analises) => {
-        if(!analises) {
+        if(!analises || !analises.text) {
             modalAnalises.value = null;
             modalAnalisesFormatedToHTML.value = null;
+            modalAnalisesImage.value = null;
             showAIAnalises.value = false;
+            showAnalisesImage.value = false;
             return;
         }
 
         showAIAnalises.value = true;
-        modalAnalises.value = formatMarkdown(analises);
+        modalAnalises.value = formatMarkdown(analises.text);
 
-        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises, {
+        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises.text, {
             h2: {
                 'margin-top': '1em'
             }
         });
+
+        showAIAnalises.value = true;
+
+        if(analises?.svgImage) {
+            modalAnalisesImage.value = svgUtils.cleanSvg(analises.svgImage);
+            showAnalisesImage.value = true;
+        }
     });
 
     EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_READY, () => {
@@ -151,6 +170,8 @@ function clearAIPrompter() {
     showAIAnalises.value = false;
     isDisabled.value = true;
     generateDiagramImage.value = false;
+    modalAnalisesImage.value = null;
+    showAnalisesImage.value = false;
 }
 
 function handleTextAreaClear() {
@@ -237,4 +258,18 @@ watch(
   white-space: normal;
   overflow-x: auto;
 }
+
+.analises-svg-container {
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.analises-svg-container svg {
+  display: inline-block;
+}
+
 </style>
