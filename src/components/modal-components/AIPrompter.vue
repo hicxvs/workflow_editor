@@ -33,14 +33,17 @@
                         <v-icon icon="mdi-robot-happy" color="blue" size="x-large" class="mr-3"/>
                         <p class="font-weight-medium">{{ AIPrompterMessages.analisesResult }}</p>
                     </div>
-                    <div  class="analises-container">                                                
+                    <div class="analises-container">                                                
                         <div class="analises-content-in-html mb-6" v-html="modalAnalisesFormatedToHTML"></div>
                         <div v-if="showAnalisesImage">
                             <h2 class="mb-2">{{ AIPrompterLabels.imageTitle }}</h2>
                             <div class="analises-svg-container" v-html="modalAnalisesImage"></div>
                         </div>
-                        
                     </div>
+                    <div class="analises-buttons-container">
+                        <Button :label="buttonLabels.downloadReport" :buttonColor="buttonColors.blue" @click="buttonClickHandlers.downloadAnalysis" />
+                        <Button :label="buttonLabels.downloadImage" :buttonColor="buttonColors.blue" @click="buttonClickHandlers.downloadImage" />
+                    </div>                    
                 </div>
                 
             </template>
@@ -53,8 +56,7 @@ import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 import { DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS } from '../../bpmn-workflow-editor/diagrams/default-ai-diagram-example-prompts';
-import { formatMarkdown } from '../../bpmn-workflow-editor/utils/format-markdown';
-import { convertMarkdownToHTML } from '../../bpmn-workflow-editor/utils/conver-markdown-to-html';
+import { MarkdownUtils } from '../../bpmn-workflow-editor/utils/markdown-utils';
 import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
 import {ref, onMounted, onUnmounted, watch} from 'vue';
 
@@ -62,6 +64,7 @@ import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
 import TextArea from '../generic/TextArea.vue';
 import Checkbox from "../generic/Checkbox.vue";
+import Button from '../generic/Button.vue';
 
 const showButton = ref(true);
 const showModal = ref(false);
@@ -84,6 +87,7 @@ const modalAnalisesImage = ref(null);
 const showAnalisesImage = ref(false);
 
 const svgUtils = SVGUtils();
+const markdownUtils = MarkdownUtils();
 
 const AIPrompterLabels = {
     promptSelect: 'Select and try an prompt',
@@ -94,6 +98,29 @@ const AIPrompterLabels = {
 const AIPrompterMessages = {
     welcome: 'Welcome! Try a example prompt or create your own.',
     analisesResult: `Here is your analysis result.`
+};
+
+const buttonLabels = {
+    downloadReport: 'Download Analysis',
+    downloadImage: 'Download Image',
+}
+
+const buttonColors = {
+    blue: 'blue',
+    grey: 'grey'
+};
+
+const buttonClickHandlers = {
+    downloadAnalysis: () => {
+        const title = markdownUtils.extracTitle(modalAnalises.value);
+        const filename = (title) ? `diagram_analyses_${title}`: 'diagram_analyses_result';
+        markdownUtils.downloadMarkdown(modalAnalises.value, filename);
+    },
+    downloadImage: async () => {
+        const title = markdownUtils.extracTitle(modalAnalises.value);
+        const filename = (title) ? `diagram_analyses_image_${title}`: 'diagram_analyses_result_image';
+        await svgUtils.downloadDiagramImage(modalAnalisesImage.value, filename, 'jpg');
+    }
 };
 
 onMounted(() => {
@@ -127,9 +154,9 @@ onMounted(() => {
         }
 
         showAIAnalises.value = true;
-        modalAnalises.value = formatMarkdown(analises.text);
+        modalAnalises.value = markdownUtils.formatMarkdown(analises.text);
 
-        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises.text, {
+        modalAnalisesFormatedToHTML.value = markdownUtils.convertMarkdownToHTML(analises.text, {
             h2: {
                 'margin-top': '1em'
             }
@@ -257,6 +284,7 @@ watch(
   overflow-wrap: break-word;
   white-space: normal;
   overflow-x: auto;
+  margin-bottom: 1em;
 }
 
 .analises-svg-container {
@@ -271,5 +299,12 @@ watch(
 .analises-svg-container svg {
   display: inline-block;
 }
+
+.analises-buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; 
+}
+
 
 </style>

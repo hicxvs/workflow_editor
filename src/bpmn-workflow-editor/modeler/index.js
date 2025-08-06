@@ -27,9 +27,7 @@ export function createWorkflowEditor(container) {
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
     const replace = modeler.get('bpmnReplace');
-    const viewer = createWorkflowViewer(container);
-    
-    
+     
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
@@ -725,7 +723,6 @@ export function createWorkflowEditor(container) {
     }
 
     function createWorkflowViewer(container) {
-
         if(!container) {
             console.error("Error: Container is not provided or is undefined.");
             return null;
@@ -743,18 +740,15 @@ export function createWorkflowEditor(container) {
         }
 
         try {
-            clearViewer();
+            const viewer = createWorkflowViewer(container);            
             await viewer.importXML(xmlDiagram);
-            return await viewer.saveSVG({format:true});            
+            const image = await viewer.saveSVG({format:true});
+            viewer.destroy();
+            return image.svg || null;            
         } catch (error) {
             console.error("Error during generating the image:", error);
-            clearViewer();
             throw error;
         }        
-    }
-
-    function clearViewer() {
-        viewer.clear();
     }
 
     return {
@@ -793,7 +787,6 @@ export function createWorkflowEditor(container) {
         saveDiagramErrorMessages,
         saveCallActivityInputParameter,
         saveCallActivityOutputParameter,
-        generateImage,
-        clearViewer
+        generateImage
     };
 }

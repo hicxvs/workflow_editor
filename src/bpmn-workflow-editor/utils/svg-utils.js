@@ -55,7 +55,7 @@ export function SVGUtils() {
         });
     }
       
-    async function convertSvgToImage(svgString, format = 'png') {
+    async function convertSvgToImage(svgString, format) {
         const { width, height } = getSvgDimensions(svgString);
         const { img, url } = await loadImageFromSvg(svgString);
     
@@ -80,14 +80,14 @@ export function SVGUtils() {
         document.body.removeChild(a);
     }
 
-    async function downloadDiagramImage(svgString, imageName) {
+    async function downloadDiagramImage(svgString, imageName, format) {
         if(!svgString) {
             return;
         }
 
         try {
-            const dataUrl = await convertSvgToImage(svgString, 'png');
-            downloadImage(dataUrl, `${imageName}.png`);
+            const dataUrl = await convertSvgToImage(svgString, format);
+            downloadImage(dataUrl, `${imageName}.${format}`);
         } catch(error) {
             console.error("Error during diagram download:", error);
             throw error;            

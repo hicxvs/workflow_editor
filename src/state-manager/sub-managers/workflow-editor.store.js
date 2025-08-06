@@ -461,7 +461,7 @@ export function WorkflowEditorStore() {
 
             EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, {
                 text: analysis,
-                svgImage: image?.svg || null
+                svgImage: image || null
             });
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
