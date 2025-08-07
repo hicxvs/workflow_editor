@@ -452,7 +452,7 @@ export function WorkflowEditorStore() {
             const image = (requestPrompt?.promptGenerateImage) ? await currentModeler.value.generateImage(currentDiagram.value) : null;
 
             if(!analysis) {
-                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {                    
                     type: NOTIFICATION_TYPE.ERROR,
                     text: 'Error generating workflow diagram analyzes. Please try again.'
                 });
@@ -460,6 +460,7 @@ export function WorkflowEditorStore() {
             }
 
             EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, {
+                processId: currentProcessDefinition.value?.id,
                 text: analysis,
                 svgImage: image || null
             });

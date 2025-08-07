@@ -85,6 +85,7 @@ const modalAnalises = ref(null);
 const modalAnalisesFormatedToHTML = ref(null);
 const modalAnalisesImage = ref(null);
 const showAnalisesImage = ref(false);
+const processId = ref(null);
 
 const svgUtils = SVGUtils();
 const markdownUtils = MarkdownUtils();
@@ -103,7 +104,7 @@ const AIPrompterMessages = {
 const buttonLabels = {
     downloadReport: 'Download Analysis',
     downloadImage: 'Download Image',
-}
+};
 
 const buttonColors = {
     blue: 'blue',
@@ -112,13 +113,11 @@ const buttonColors = {
 
 const buttonClickHandlers = {
     downloadAnalysis: () => {
-        const title = markdownUtils.extracTitle(modalAnalises.value);
-        const filename = (title) ? `diagram_analyses_${title}`: 'diagram_analyses_result';
+        const filename = `diagram_analyses_${processId.value}`;
         markdownUtils.downloadMarkdown(modalAnalises.value, filename);
     },
     downloadImage: async () => {
-        const title = markdownUtils.extracTitle(modalAnalises.value);
-        const filename = (title) ? `diagram_analyses_image_${title}`: 'diagram_analyses_result_image';
+        const filename = `diagram_analyses_image_${processId.value}`;
         await svgUtils.downloadDiagramImage(modalAnalisesImage.value, filename, 'jpg');
     }
 };
@@ -144,17 +143,19 @@ onMounted(() => {
     });
     
     EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, (analises) => {
-        if(!analises || !analises.text) {
+        if(!analises || !analises.text || !analises.processId) {
             modalAnalises.value = null;
             modalAnalisesFormatedToHTML.value = null;
             modalAnalisesImage.value = null;
             showAIAnalises.value = false;
             showAnalisesImage.value = false;
+            processId.value = null;
             return;
         }
 
         showAIAnalises.value = true;
         modalAnalises.value = markdownUtils.formatMarkdown(analises.text);
+        processId.value = analises.processId;
 
         modalAnalisesFormatedToHTML.value = markdownUtils.convertMarkdownToHTML(analises.text, {
             h2: {
@@ -199,6 +200,7 @@ function clearAIPrompter() {
     generateDiagramImage.value = false;
     modalAnalisesImage.value = null;
     showAnalisesImage.value = false;
+    processId.value = null;
 }
 
 function handleTextAreaClear() {

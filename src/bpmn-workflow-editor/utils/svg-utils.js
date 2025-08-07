@@ -64,6 +64,12 @@ export function SVGUtils() {
         canvas.height = height;
     
         const ctx = canvas.getContext('2d');
+    
+        if (format === 'jpg') {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, width, height);
+        }
+    
         ctx.drawImage(img, 0, 0, width, height);
         URL.revokeObjectURL(url);
     

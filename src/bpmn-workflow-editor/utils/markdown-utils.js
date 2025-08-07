@@ -20,11 +20,6 @@ export function MarkdownUtils() {
             .replace(/\n{3,}/g, '\n\n');
     }
 
-    function extracTitle(text) {
-        const match = text.match(/^# (.+): (.+)/m);
-        return match ? `${match[2]}` : null;
-    }
-
     function convertMarkdownToHTML(markdown, styles = {}) {
         const styleTag = (tag) => {
           const styleObj = styles[tag];
@@ -74,7 +69,6 @@ export function MarkdownUtils() {
       
     return {
         formatMarkdown,
-        extracTitle,
         convertMarkdownToHTML,
         downloadMarkdown
     };
