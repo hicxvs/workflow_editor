@@ -448,17 +448,22 @@ export function WorkflowEditorStore() {
                 return;
             }
             
-            const analysis = await AIDiagramService.analiseDiagram(currentApiKey.value, requestPrompt.promptText, currentDiagram.value, requestPrompt.promptGenerateImage);
+            const analysis = await AIDiagramService.analiseDiagram(currentApiKey.value, requestPrompt.promptText, currentDiagram.value);
+            const image = (requestPrompt?.promptGenerateImage) ? await currentModeler.value.generateImage(currentDiagram.value) : null;
 
             if(!analysis) {
-                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {                    
                     type: NOTIFICATION_TYPE.ERROR,
                     text: 'Error generating workflow diagram analyzes. Please try again.'
                 });
                 return;
             }
 
-            EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, analysis);
+            EventBus.emit(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, {
+                processId: currentProcessDefinition.value?.id,
+                text: analysis,
+                svgImage: image || null
+            });
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,

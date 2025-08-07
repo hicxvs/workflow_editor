@@ -1,6 +1,7 @@
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import BpmnModeler  from 'bpmn-js/lib/Modeler';
+import BpmnViewer from 'bpmn-js/lib/Viewer';
 import activitiModelDefinitions from '../activiti-model-definitions';
 import WorkflowEditorPaletteProvider from '../workflow-editor-palette-provider';
 import { modelerEventsHandler } from './eventHandlers/modelerEventsHandler';
@@ -26,7 +27,7 @@ export function createWorkflowEditor(container) {
     const modeling = modeler.get('modeling');
     const rules = modeler.get('bpmnRules');
     const replace = modeler.get('bpmnReplace');
- 
+     
     modelerEventsHandler(modeler);
     workflowEditorSelectionEventsHandler(modeler);
     workflowElementEventsHandler(modeler);
@@ -721,6 +722,35 @@ export function createWorkflowEditor(container) {
         return true;
     }
 
+    function createWorkflowViewer(container) {
+        if(!container) {
+            console.error("Error: Container is not provided or is undefined.");
+            return null;
+        }
+
+        return new BpmnViewer({
+            container: container
+        });
+    }
+
+    async function generateImage(xmlDiagram) {
+        if(!xmlDiagram) {
+            console.error("Error: XML diagram is not provided or is undefined.");
+            return false;
+        }
+
+        try {
+            const viewer = createWorkflowViewer(container);            
+            await viewer.importXML(xmlDiagram);
+            const image = await viewer.saveSVG({format:true});
+            viewer.destroy();
+            return image.svg || null;            
+        } catch (error) {
+            console.error("Error during generating the image:", error);
+            throw error;
+        }        
+    }
+
     return {
         modeler,
         elementRegistry,
@@ -756,6 +786,7 @@ export function createWorkflowEditor(container) {
         saveDiagramMessages,
         saveDiagramErrorMessages,
         saveCallActivityInputParameter,
-        saveCallActivityOutputParameter
+        saveCallActivityOutputParameter,
+        generateImage
     };
 }

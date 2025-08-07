@@ -11,14 +11,13 @@ export function AIDiagrams() {
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
     const { checkApiKey, getRequestHeaders, generateAIRequestPayload} = DiagramsApiUtils();
 
-    async function analiseDiagram(apiKey, prompt, diagramXMLContent, generateDiagramImage=false) {
+    async function analiseDiagram(apiKey, prompt, diagramXMLContent) {
         try {            
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
 
-            const requestDiagramImage = (generateDiagramImage) ? AI_DIAGRAM_REQUEST_BASE_PROMPTS.DIAGRAM_WORKFLOW.IMAGE: '';
-            const requestPrompt = `${prompt}${AI_DIAGRAM_REQUEST_BASE_PROMPTS.DIAGRAM_WORKFLOW.ANALYZE}${diagramXMLContent}${requestDiagramImage}`;
+            const requestPrompt = `${prompt}${AI_DIAGRAM_REQUEST_BASE_PROMPTS.DIAGRAM_WORKFLOW.ANALYZE}${diagramXMLContent}`;
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
             const response = await apiEngine.post(`${API_RESOURCE_EVENTS_ENDPOINT}`, generateAIRequestPayload(requestPrompt), requestHeaders);
             return response?.data?.entity?.data?.answer;

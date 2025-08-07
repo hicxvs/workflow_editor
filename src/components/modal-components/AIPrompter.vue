@@ -33,9 +33,17 @@
                         <v-icon icon="mdi-robot-happy" color="blue" size="x-large" class="mr-3"/>
                         <p class="font-weight-medium">{{ AIPrompterMessages.analisesResult }}</p>
                     </div>
-                    <div  class="analises-container">                        
-                        <div class="analises-content-in-html" v-html="modalAnalisesFormatedToHTML"></div>
+                    <div class="analises-container">                                                
+                        <div class="analises-content-in-html mb-6" v-html="modalAnalisesFormatedToHTML"></div>
+                        <div v-if="showAnalisesImage">
+                            <h2 class="mb-2">{{ AIPrompterLabels.imageTitle }}</h2>
+                            <div class="analises-svg-container" v-html="modalAnalisesImage"></div>
+                        </div>
                     </div>
+                    <div class="analises-buttons-container">
+                        <Button :label="buttonLabels.downloadReport" :buttonColor="buttonColors.blue" @click="buttonClickHandlers.downloadAnalysis" />
+                        <Button :label="buttonLabels.downloadImage" :buttonColor="buttonColors.blue" @click="buttonClickHandlers.downloadImage" />
+                    </div>                    
                 </div>
                 
             </template>
@@ -48,14 +56,15 @@ import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 import { DEFAULT_AI_DIAGRAM_EXAMPLE_PROMPTS } from '../../bpmn-workflow-editor/diagrams/default-ai-diagram-example-prompts';
-import { formatMarkdown } from '../../bpmn-workflow-editor/utils/format-markdown';
-import { convertMarkdownToHTML } from '../../bpmn-workflow-editor/utils/conver-markdown-to-html';
+import { MarkdownUtils } from '../../bpmn-workflow-editor/utils/markdown-utils';
+import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
 import {ref, onMounted, onUnmounted, watch} from 'vue';
 
 import Modal from '../generic/Modal.vue';
 import Select from '../generic/Select.vue';
 import TextArea from '../generic/TextArea.vue';
 import Checkbox from "../generic/Checkbox.vue";
+import Button from '../generic/Button.vue';
 
 const showButton = ref(true);
 const showModal = ref(false);
@@ -74,16 +83,43 @@ const generateDiagramImage = ref(false);
 const showAIAnalises = ref(false);
 const modalAnalises = ref(null);
 const modalAnalisesFormatedToHTML = ref(null);
+const modalAnalisesImage = ref(null);
+const showAnalisesImage = ref(false);
+const processId = ref(null);
 
+const svgUtils = SVGUtils();
+const markdownUtils = MarkdownUtils();
 
 const AIPrompterLabels = {
     promptSelect: 'Select and try an prompt',
-    imageOption: 'Generate process diagram image'
+    imageOption: 'Generate process diagram image',
+    imageTitle: 'Diagram image'
 };
 
 const AIPrompterMessages = {
     welcome: 'Welcome! Try a example prompt or create your own.',
     analisesResult: `Here is your analysis result.`
+};
+
+const buttonLabels = {
+    downloadReport: 'Download Analysis',
+    downloadImage: 'Download Image',
+};
+
+const buttonColors = {
+    blue: 'blue',
+    grey: 'grey'
+};
+
+const buttonClickHandlers = {
+    downloadAnalysis: () => {
+        const filename = `diagram_analyses_${processId.value}`;
+        markdownUtils.downloadMarkdown(modalAnalises.value, filename);
+    },
+    downloadImage: async () => {
+        const filename = `diagram_analyses_image_${processId.value}`;
+        await svgUtils.downloadDiagramImage(modalAnalisesImage.value, filename, 'jpg');
+    }
 };
 
 onMounted(() => {
@@ -107,21 +143,32 @@ onMounted(() => {
     });
     
     EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_ANALYSES_READY, (analises) => {
-        if(!analises) {
+        if(!analises || !analises.text || !analises.processId) {
             modalAnalises.value = null;
             modalAnalisesFormatedToHTML.value = null;
+            modalAnalisesImage.value = null;
             showAIAnalises.value = false;
+            showAnalisesImage.value = false;
+            processId.value = null;
             return;
         }
 
         showAIAnalises.value = true;
-        modalAnalises.value = formatMarkdown(analises);
+        modalAnalises.value = markdownUtils.formatMarkdown(analises.text);
+        processId.value = analises.processId;
 
-        modalAnalisesFormatedToHTML.value = convertMarkdownToHTML(analises, {
+        modalAnalisesFormatedToHTML.value = markdownUtils.convertMarkdownToHTML(analises.text, {
             h2: {
                 'margin-top': '1em'
             }
         });
+
+        showAIAnalises.value = true;
+
+        if(analises?.svgImage) {
+            modalAnalisesImage.value = svgUtils.cleanSvg(analises.svgImage);
+            showAnalisesImage.value = true;
+        }
     });
 
     EventBus.on(EVENT_TYPE.WORKFLOW_DIAGRAM_READY, () => {
@@ -151,6 +198,9 @@ function clearAIPrompter() {
     showAIAnalises.value = false;
     isDisabled.value = true;
     generateDiagramImage.value = false;
+    modalAnalisesImage.value = null;
+    showAnalisesImage.value = false;
+    processId.value = null;
 }
 
 function handleTextAreaClear() {
@@ -236,5 +286,27 @@ watch(
   overflow-wrap: break-word;
   white-space: normal;
   overflow-x: auto;
+  margin-bottom: 1em;
 }
+
+.analises-svg-container {
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.analises-svg-container svg {
+  display: inline-block;
+}
+
+.analises-buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; 
+}
+
+
 </style>
