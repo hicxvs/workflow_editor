@@ -88,13 +88,23 @@ function save() {
     const editorValue = editorEngine.getValue();
 
     if(!editorInstanceCode.value?.elementId) {
-        EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, {
-            codeScriptId: editorCodeScriptId.value,
-            codeScriptValue: editorValue
-        });
+        updateServiceTaskScript(editorValue);
         return;
     }
 
+    updateElementProperty(editorValue);
+    updateScriptValue(editorValue);  
+    showModal.value = false;
+}
+
+function updateServiceTaskScript(editorValue) {
+    EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, {
+        codeScriptId: editorCodeScriptId.value,
+        codeScriptValue: editorValue
+    });
+}
+
+function updateElementProperty(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: editorInstanceCode.value.elementId,
@@ -102,9 +112,10 @@ function save() {
             elementPropertyValue: editorValue
         }
     );
+}
 
+function updateScriptValue(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue);
-    showModal.value = false;
 }
 
 </script>
