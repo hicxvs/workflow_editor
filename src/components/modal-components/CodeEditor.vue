@@ -79,8 +79,6 @@ function clear() {
 
 function save() {
     const editorValue = editorEngine.getValue();
-
-
     
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
