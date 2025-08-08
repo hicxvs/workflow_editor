@@ -34,12 +34,12 @@ const editorEngine = EditorEngine();
 const editorCanvas = ref(null);
 const editorInstance = ref(null);
 const editorInstanceCode = ref(null);
+const editorCodeScriptId = ref(null);
 
 const showSaveButton = ref(false);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
-
         editorInstanceCode.value = {
             code: codeSettings.codeScript || '',
             language: codeSettings.codeLanguage || 'java',
@@ -48,6 +48,7 @@ onMounted(() => {
             elementProperty: codeSettings.elementProperty || null            
         };
 
+        editorCodeScriptId.value = codeSettings.codeScriptId;
         modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
         showSaveButton.value = !codeSettings.readOnly;
         showModal.value = true;
@@ -87,7 +88,10 @@ function save() {
     const editorValue = editorEngine.getValue();
 
     if(!editorInstanceCode.value?.elementId) {
-        EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, editorValue);
+        EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, {
+            codeScriptId: editorCodeScriptId.value,
+            codeScriptValue: editorValue
+        });
         return;
     }
 

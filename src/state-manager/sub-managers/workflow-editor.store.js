@@ -352,6 +352,15 @@ export function WorkflowEditorStore() {
 
     async function updateServiceTaskScript(scriptCode) {
         console.log(scriptCode);
+        try {
+            //await ScriptService.saveScript();
+
+        } catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error saving workflow script.'
+            });
+        }
     }
 
     async function loadSelectedManagerDiagrams(selectedDiagramManagerId) {
