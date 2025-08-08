@@ -1,4 +1,4 @@
-import { readonly, ref } from 'vue';
+import { ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
@@ -95,7 +95,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
         EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);
-        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);  
+        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);
+        EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, updateServiceTaskScript);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -134,7 +135,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
         EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
-        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);  
+        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);
+        EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT);  
     }
 
     async function createNewDiagram() {
@@ -335,7 +337,6 @@ export function WorkflowEditorStore() {
 
         try {
             const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
-            console.log('here!');
             EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
                 ...script,
                 readOnly: false
@@ -347,6 +348,10 @@ export function WorkflowEditorStore() {
                 text: 'Error loading workflow script.'
             });
         }        
+    }
+
+    async function updateServiceTaskScript(scriptCode) {
+        console.log(scriptCode);
     }
 
     async function loadSelectedManagerDiagrams(selectedDiagramManagerId) {

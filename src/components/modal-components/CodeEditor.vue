@@ -51,11 +51,16 @@ onMounted(() => {
         modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
         showSaveButton.value = !codeSettings.readOnly;
         showModal.value = true;
-    });    
+    });
+    
+    EventBus.on(EVENT_TYPE.SERVICE_TASK_SCRIPT_UPDATED, () => {
+        showModal.value = false;
+    });
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.LOAD_CODE_SCRIPT);  
+    EventBus.off(EVENT_TYPE.LOAD_CODE_SCRIPT);
+    EventBus.off(EVENT_TYPE.SERVICE_TASK_SCRIPT_UPDATED); 
 }); 
 
 watch(
@@ -81,11 +86,12 @@ function clear() {
 function save() {
     const editorValue = editorEngine.getValue();
 
-    console.log(':::',editorInstanceCode.value?.elementId);
-    console.log(':',editorValue);
-    
-    
-    /*EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
+    if(!editorInstanceCode.value?.elementId) {
+        EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, editorValue);
+        return;
+    }
+
+    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: editorInstanceCode.value.elementId,
             elementProperty: editorInstanceCode.value.elementProperty,
@@ -93,10 +99,9 @@ function save() {
         }
     );
 
-    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue); */
-    //showModal.value = false;
+    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue);
+    showModal.value = false;
 }
-
 
 </script>
 
