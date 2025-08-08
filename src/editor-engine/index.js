@@ -5,7 +5,7 @@ export function EditorEngine() {
 
     let engine = null;
 
-    function createCodeEditor(container, editorLanguage, editorValue, editorReadOnly) {
+    function createCodeEditor(container, editorLanguage, editorValue, editorReadOnly=true) {
         try {
             engine = monaco.editor.create(container, {
                 minimap: { enabled: false },
@@ -22,7 +22,7 @@ export function EditorEngine() {
                 wordWrap: 'on',
                 language: editorLanguage || 'java',
                 value: editorValue || '',
-                readOnly: (editorReadOnly === false) ? false : true,
+                readOnly: editorReadOnly,
                 theme: 'vs-dark'
             });
 

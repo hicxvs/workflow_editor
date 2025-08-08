@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { readonly, ref } from 'vue';
 import { createWorkflowEditor } from '../../bpmn-workflow-editor/modeler';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
@@ -335,7 +335,11 @@ export function WorkflowEditorStore() {
 
         try {
             const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
-            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
+            console.log('here!');
+            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+                ...script,
+                readOnly: false
+            });
         } 
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {

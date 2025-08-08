@@ -2,7 +2,7 @@
     <div class="code-editor-container" data-testid="code-editor-container">
         <Modal
             :showCloseButton = "showButton"
-            :showSaveButton = "canEditScript"
+            :showSaveButton = "showSaveButton"
             :showCancelButton = "!showButton"
             :saveButtonClickHandler = "save"
             v-model="showModal"
@@ -35,20 +35,21 @@ const editorCanvas = ref(null);
 const editorInstance = ref(null);
 const editorInstanceCode = ref(null);
 
-const canEditScript = ref(false);
+const showSaveButton = ref(false);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
+
         editorInstanceCode.value = {
             code: codeSettings.codeScript || '',
             language: codeSettings.codeLanguage || 'java',
-            readOnly: codeSettings.readOnly,
+            readOnly: (codeSettings?.readOnly) ? true : false,
             elementId: codeSettings.elementId || null,
             elementProperty: codeSettings.elementProperty || null            
         };
 
         modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
-        canEditScript.value = !codeSettings.readOnly;
+        showSaveButton.value = !codeSettings.readOnly;
         showModal.value = true;
     });    
 });
@@ -65,7 +66,7 @@ watch(
             return;
         }
 
-        editorInstance.value = editorEngine.createCodeEditor(editorCanvas.value, editorInstanceCode.value.language, editorInstanceCode.value.code, editorInstanceCode.value.readOnly);        
+        editorInstance.value = editorEngine.createCodeEditor(editorCanvas.value, editorInstanceCode.value.language, editorInstanceCode.value.code, editorInstanceCode.value.readOnly);  
     },
     { deep:true }
 );
@@ -73,14 +74,18 @@ watch(
 function clear() {
     editorInstance.value = null;
     editorInstanceCode.value = null;
-    canEditScript.value = false;
+    showSaveButton.value = false;
     modalTitle.value = '';
 }
 
 function save() {
     const editorValue = editorEngine.getValue();
+
+    console.log(':::',editorInstanceCode.value?.elementId);
+    console.log(':',editorValue);
     
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
+    
+    /*EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: editorInstanceCode.value.elementId,
             elementProperty: editorInstanceCode.value.elementProperty,
@@ -88,8 +93,8 @@ function save() {
         }
     );
 
-    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue);
-    showModal.value = false;
+    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue); */
+    //showModal.value = false;
 }
 
 
