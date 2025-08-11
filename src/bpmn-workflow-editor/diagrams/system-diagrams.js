@@ -8,7 +8,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export function SystemDiagrams() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
-    const { checkApiKey, getRequestHeaders} = DiagramsApiUtils();
+    const { checkApiKey, callRequestHeaders} = DiagramsApiUtils();
 
     async function getAllDiagramsFromSystem(apiKey) {
         try {            
@@ -16,7 +16,7 @@ export function SystemDiagrams() {
                 checkApiKey(apiKey);
             }
 
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders(); 
             const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}`, requestHeaders);
 
             return response?.data?.result.map(diagram => ({
@@ -37,7 +37,7 @@ export function SystemDiagrams() {
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders(); 
             const response = await apiEngine.get(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}/${version}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
@@ -52,7 +52,7 @@ export function SystemDiagrams() {
                 checkApiKey(apiKey);
             }
             const isXMLContent = true;
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey, isXMLContent) : getRequestHeaders(null, isXMLContent);
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey, isXMLContent) : callRequestHeaders(null, isXMLContent);
             await apiEngine.post(`${API_RESOURCE_DEFINITION_ENDPOINT}`, diagramXMLContent, requestHeaders);
         } catch (error) {
             console.error('Error saving diagram to the System', error);
@@ -65,7 +65,7 @@ export function SystemDiagrams() {
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders(); 
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders(); 
             await apiEngine.delete(`${API_RESOURCE_DEFINITION_ENDPOINT}/${id}`, requestHeaders);    
         } catch (error) {
             console.error('Error removing diagram from the System', error);

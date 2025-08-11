@@ -7,14 +7,14 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export function DraftDiagrams() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
-    const { checkApiKey, getRequestHeaders } = DiagramsApiUtils();
+    const { checkApiKey, callRequestHeaders } = DiagramsApiUtils();
 
     async function getDiagramByIdFromDraft(apiKey, id) {
         try {            
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders();
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();
             const response = await apiEngine.get(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, requestHeaders);
             return atob(response?.data?.result?.content);
         } catch (error) {
@@ -29,7 +29,7 @@ export function DraftDiagrams() {
                 checkApiKey(apiKey);
             }
             const isXMLContent = true;
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey, isXMLContent) : getRequestHeaders(null, isXMLContent);
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey, isXMLContent) : callRequestHeaders(null, isXMLContent);
             await apiEngine.post(`${API_RESOURCE_DRAFT_ENDPOINT}`, diagramXMLContent, requestHeaders);
         } catch (error) {
             console.error('Error save diagram to draft', error);
@@ -42,7 +42,7 @@ export function DraftDiagrams() {
             if(IS_APP_IN_MODE_DEV) {
                 checkApiKey(apiKey);
             }
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders();
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();
             await apiEngine.delete(`${API_RESOURCE_DRAFT_ENDPOINT}/${id}`, requestHeaders);
         } catch (error) {
             console.error('Error delete diagram to draft', error);

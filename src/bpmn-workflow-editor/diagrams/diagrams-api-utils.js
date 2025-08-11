@@ -17,7 +17,7 @@ export function DiagramsApiUtils() {
         }        
     }
 
-    function getRequestHeaders(apiKey, isXMLContent = false) {
+    function callRequestHeaders(apiKey, isXMLContent = false) {
         return {
             headers: {
                 'HICX-API-KEY': apiKey,
@@ -53,7 +53,7 @@ export function DiagramsApiUtils() {
     return {
         isApiKeyValid,
         checkApiKey,
-        getRequestHeaders,
+        callRequestHeaders,
         generateRequestPayload,
         generateAIRequestPayload
     };
