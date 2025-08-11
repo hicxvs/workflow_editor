@@ -2,7 +2,7 @@
     <div class="code-editor-container" data-testid="code-editor-container">
         <Modal
             :showCloseButton = "showButton"
-            :showSaveButton = "canEditScript"
+            :showSaveButton = "showSaveButton"
             :showCancelButton = "!showButton"
             :saveButtonClickHandler = "save"
             v-model="showModal"
@@ -34,27 +34,34 @@ const editorEngine = EditorEngine();
 const editorCanvas = ref(null);
 const editorInstance = ref(null);
 const editorInstanceCode = ref(null);
+const editorCodeScriptId = ref(null);
 
-const canEditScript = ref(false);
+const showSaveButton = ref(false);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
         editorInstanceCode.value = {
             code: codeSettings.codeScript || '',
             language: codeSettings.codeLanguage || 'java',
-            readOnly: codeSettings.readOnly,
+            readOnly: (codeSettings?.readOnly) ? true : false,
             elementId: codeSettings.elementId || null,
             elementProperty: codeSettings.elementProperty || null            
         };
 
+        editorCodeScriptId.value = codeSettings.codeScriptId;
         modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
-        canEditScript.value = !codeSettings.readOnly;
+        showSaveButton.value = !codeSettings.readOnly;
         showModal.value = true;
-    });    
+    });
+    
+    EventBus.on(EVENT_TYPE.SERVICE_TASK_SCRIPT_UPDATED, () => {
+        showModal.value = false;
+    });
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.LOAD_CODE_SCRIPT);  
+    EventBus.off(EVENT_TYPE.LOAD_CODE_SCRIPT);
+    EventBus.off(EVENT_TYPE.SERVICE_TASK_SCRIPT_UPDATED); 
 }); 
 
 watch(
@@ -65,7 +72,7 @@ watch(
             return;
         }
 
-        editorInstance.value = editorEngine.createCodeEditor(editorCanvas.value, editorInstanceCode.value.language, editorInstanceCode.value.code, editorInstanceCode.value.readOnly);        
+        editorInstance.value = editorEngine.createCodeEditor(editorCanvas.value, editorInstanceCode.value.language, editorInstanceCode.value.code, editorInstanceCode.value.readOnly);  
     },
     { deep:true }
 );
@@ -73,15 +80,31 @@ watch(
 function clear() {
     editorInstance.value = null;
     editorInstanceCode.value = null;
-    canEditScript.value = false;
+    showSaveButton.value = false;
     modalTitle.value = '';
 }
 
 function save() {
     const editorValue = editorEngine.getValue();
 
+    if(!editorInstanceCode.value?.elementId) {
+        updateServiceTaskScript(editorValue);
+        return;
+    }
 
-    
+    updateElementProperty(editorValue);
+    updateScriptValue(editorValue);  
+    showModal.value = false;
+}
+
+function updateServiceTaskScript(editorValue) {
+    EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, {
+        codeScriptId: editorCodeScriptId.value,
+        codeScriptValue: editorValue
+    });
+}
+
+function updateElementProperty(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
         {
             elementId: editorInstanceCode.value.elementId,
@@ -89,11 +112,11 @@ function save() {
             elementPropertyValue: editorValue
         }
     );
-
-    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue);
-    showModal.value = false;
 }
 
+function updateScriptValue(editorValue) {
+    EventBus.emit(EVENT_TYPE.UPDATE_SCRIPT_VALUE, editorValue);
+}
 
 </script>
 

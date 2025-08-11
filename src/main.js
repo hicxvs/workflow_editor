@@ -3,8 +3,6 @@ import { createPinia } from 'pinia';
 
 import './style.css';
 
-import LanguageResources from './language-resources';
-
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/styles';
@@ -21,7 +19,6 @@ const vuetify = createVuetify({
   });
 
 createApp(App)
-.use(LanguageResources)
 .use(createPinia())
 .use(vuetify)
 .mount('#app');

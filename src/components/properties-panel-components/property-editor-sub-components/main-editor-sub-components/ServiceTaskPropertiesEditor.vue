@@ -26,7 +26,7 @@
                 <td>{{ item?.string }}</td>
                 <td>{{ item?.expression }}</td>
                 <td>
-                    <Button v-if="isValidScriptId(item?.string)" :label="serviceTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.grey" @click="() => {retrieveScript(item?.string)}" />
+                    <Button v-if="isValidScriptId(item?.string)" :label="serviceTaskPropertiesLabels.retrieveScript" :buttonColor="buttonColors.green" @click="() => {retrieveScript(item?.string)}" />
                 </td>
             </template>
         </ConfigurationTable>
@@ -83,7 +83,8 @@ const serviceTaskExpressionTypeSelectOptions = ref([
 ]);
 
 const buttonColors = {
-    grey: 'grey'
+    grey: 'grey',
+    green: 'green'
 };
 
 const originalServiceTaskExtentionElements = ref(null);

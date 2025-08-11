@@ -95,7 +95,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
         EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);
-        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);  
+        EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);
+        EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, updateServiceTaskScript);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -134,7 +135,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
         EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
-        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);  
+        EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);
+        EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT);  
     }
 
     async function createNewDiagram() {
@@ -335,7 +337,10 @@ export function WorkflowEditorStore() {
 
         try {
             const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
-            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, script);
+            EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
+                ...script,
+                readOnly: false
+            });
         } 
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
@@ -343,6 +348,17 @@ export function WorkflowEditorStore() {
                 text: 'Error loading workflow script.'
             });
         }        
+    }
+
+    async function updateServiceTaskScript(scriptCode) {
+        try {
+            await ScriptService.saveScript(currentApiKey.value, scriptCode.codeScriptId, scriptCode.codeScriptValue);
+        } catch {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: 'Error saving workflow script.'
+            });
+        }
     }
 
     async function loadSelectedManagerDiagrams(selectedDiagramManagerId) {

@@ -6,7 +6,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 export function DiagramScripts() {
 
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
-    const { checkApiKey, getRequestHeaders } = DiagramsApiUtils();
+    const { checkApiKey, callRequestHeaders } = DiagramsApiUtils();
 
     async function getScriptById(apiKey, id) {
         try {           
@@ -15,7 +15,7 @@ export function DiagramScripts() {
                 checkApiKey(apiKey);
             }
 
-            const requestHeaders = (IS_APP_IN_MODE_DEV) ? getRequestHeaders(apiKey) : getRequestHeaders();           
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();           
             const response = await apiEngine.get(`${API_RESOURCE_SCRIPT_ENDPOINT}/${id}`, requestHeaders);
 
             return {
@@ -29,7 +29,23 @@ export function DiagramScripts() {
         }
     }
 
+    async function saveScript(apiKey, id, script) {
+        try {           
+
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
+
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();           
+            return await apiEngine.post(`${API_RESOURCE_SCRIPT_ENDPOINT}/${id}`,script , requestHeaders);
+        } catch (error) {
+            console.error('Error saving diagram script', error);
+            throw error;
+        }
+    }
+
     return {
-        getScriptById
+        getScriptById,
+        saveScript
     };
 }
