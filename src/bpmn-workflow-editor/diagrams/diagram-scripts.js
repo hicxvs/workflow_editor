@@ -8,7 +8,7 @@ export function DiagramScripts() {
     const apiEngine = new ApiEngine(`${API_BASE_URL}`);
     const { checkApiKey, callRequestHeaders } = DiagramsApiUtils();
 
-    async function getScriptById(apiKey, id) {
+    async function getScriptByScriptCode(apiKey, scriptCode) {
         try {           
 
             if(IS_APP_IN_MODE_DEV) {
@@ -16,15 +16,16 @@ export function DiagramScripts() {
             }
 
             const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();           
-            const response = await apiEngine.get(`${API_RESOURCE_SCRIPT_ENDPOINT}/${id}`, requestHeaders);
+            const response = await apiEngine.get(`${API_RESOURCE_SCRIPT_ENDPOINT}/${scriptCode}`, requestHeaders);
 
             return {
                 codeLanguage: response?.data?.result?.language || 'java',
                 codeScript: atob(response.data.result.body),
-                codeScriptId: id
+                codeScriptId: response?.data?.result?.id || null,
+                codeScriptCode: scriptCode
             };
         } catch (error) {
-            console.error('Error loading diagram script by id', error);
+            console.error('Error loading diagram script by id script code', error);
             throw error;
         }
     }
@@ -45,7 +46,7 @@ export function DiagramScripts() {
     }
 
     return {
-        getScriptById,
+        getScriptByScriptCode,
         saveScript
     };
 }
