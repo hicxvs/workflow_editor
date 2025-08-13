@@ -21,10 +21,33 @@ export function DiagramScripts() {
             return {
                 codeLanguage: response?.data?.result?.language || 'java',
                 codeScript: atob(response.data.result.body),
-                codeScriptId: id
+                codeScriptId: response?.data?.result?.id || null,
+                codeScriptCode: response?.data?.result?.code || null
             };
         } catch (error) {
             console.error('Error loading diagram script by id', error);
+            throw error;
+        }
+    }
+
+    async function getScriptByScriptCode(apiKey, scriptCode) {
+        try {           
+
+            if(IS_APP_IN_MODE_DEV) {
+                checkApiKey(apiKey);
+            }
+
+            const requestHeaders = (IS_APP_IN_MODE_DEV) ? callRequestHeaders(apiKey) : callRequestHeaders();           
+            const response = await apiEngine.get(`${API_RESOURCE_SCRIPT_ENDPOINT}/${scriptCode}`, requestHeaders);
+
+            return {
+                codeLanguage: response?.data?.result?.language || 'java',
+                codeScript: atob(response.data.result.body),
+                codeScriptId: response?.data?.result?.id || null,
+                codeScriptCode: scriptCode
+            };
+        } catch (error) {
+            console.error('Error loading diagram script by id script code', error);
             throw error;
         }
     }
@@ -46,6 +69,7 @@ export function DiagramScripts() {
 
     return {
         getScriptById,
+        getScriptByScriptCode,
         saveScript
     };
 }

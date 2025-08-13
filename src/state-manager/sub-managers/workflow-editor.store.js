@@ -326,20 +326,20 @@ export function WorkflowEditorStore() {
         EventBus.emit(EVENT_TYPE.IMPORTED_DIAGRAM_READY);         
     }
 
-    async function getScriptCode(scriptId) {
+    async function getScriptCode(scriptCode) {
         if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
 
-        if(!scriptId) {
+        if(!scriptCode) {
             return;
         }
 
         try {
-            const script = await ScriptService.getScriptById(currentApiKey.value, scriptId);
+            const script = await ScriptService.getScriptByScriptCode(currentApiKey.value, scriptCode);
             EventBus.emit(EVENT_TYPE.LOAD_CODE_SCRIPT, {
                 ...script,
-                readOnly: false
+                readOnly: true,
             });
         } 
         catch {
