@@ -88,7 +88,14 @@ function save() {
     const editorValue = editorEngine.getValue();
 
     if(!editorInstanceCode.value?.elementId) {
-        updateServiceTaskScript(editorValue);
+        /*
+            STATUS: PAUSED
+            DESCRIPTION: This use case has been asked, by the CTO, to not be handled for now. 
+            The code it's in place. once the functionality as asked to be resumed
+            uncomment the line.
+
+            updateServiceTaskScript(editorValue);
+        */
         return;
     }
 
@@ -97,12 +104,13 @@ function save() {
     showModal.value = false;
 }
 
+/*
 function updateServiceTaskScript(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, {
         codeScriptId: editorCodeScriptId.value,
         codeScriptValue: editorValue
     });
-}
+} */
 
 function updateElementProperty(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 

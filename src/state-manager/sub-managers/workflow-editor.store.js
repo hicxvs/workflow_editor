@@ -353,6 +353,7 @@ export function WorkflowEditorStore() {
     async function updateServiceTaskScript(scriptCode) {
         try {
             await ScriptService.saveScript(currentApiKey.value, scriptCode.codeScriptId, scriptCode.codeScriptValue);
+            EventBus.emit(EVENT_TYPE.SERVICE_TASK_SCRIPT_UPDATED);
         } catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
