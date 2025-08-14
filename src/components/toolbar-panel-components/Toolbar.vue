@@ -2,10 +2,10 @@
     <div class="toolbar-container" data-testid="toolbar-container">
         <v-toolbar :elevation="1">
             <div class="toolbar-content">
-                <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items"/>
-                <MenuButtonList v-if="showAIMenuGroup" :label="aiMenuGroup.label" :items="aiMenuGroup.items"/>
-                <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items"/>
-                <MenuButtonList v-if="showAnalisisAndLogginMenuGroup" :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items"/>
+                <MenuButtonList :label="bpmnMenuGroup.label" :items="bpmnMenuGroup.items" class="mr-2"/>
+                <MenuButtonList v-if="showAIMenuGroup" :label="aiMenuGroup.label" :items="aiMenuGroup.items" class="mr-2"/>
+                <MenuButtonList v-if="showDraftMenuGroup" :label="draftMenuGroup.label" :items="draftMenuGroup.items" class="mr-2"/>
+                <MenuButtonList v-if="showAnalisisAndLogginMenuGroup" :label="analisesAndLoginMenuGroup.label" :items="analisesAndLoginMenuGroup.items" class="mr-2"/>
                 <div v-if="IS_APP_IN_MODE_DEV" class="api-key-input-container" data-testid="api-key-input-container">
                     <v-text-field 
                         :label="apiKeyLabel"
