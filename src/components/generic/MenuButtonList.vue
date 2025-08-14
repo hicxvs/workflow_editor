@@ -41,12 +41,12 @@
 }
 
 .button-bottom-border {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2); /* subtle base line */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2); 
   transition: border-bottom-color 0.2s ease;
 }
 
 .button-bottom-border:hover {
-  border-bottom-color: rgba(0, 0, 0, 0.4); /* darker on hover */
+  border-bottom-color: rgba(0, 0, 0, 0.4);
 }
 
 

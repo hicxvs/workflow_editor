@@ -14,6 +14,7 @@
                     event.stopPropagation();
                     handleItemSelection(item);
                 }"
+                class="tab-border"
                 >
                 {{ item.id }}<span v-if="item.loadedVersion">&nbsp;- V{{ item.loadedVersion }}</span>
                 <v-btn 
@@ -100,3 +101,9 @@ watch(
     { immediate:true, deep:true }
 );
 </script>
+
+<style scoped>
+.tab-border{
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+</style>
