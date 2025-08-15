@@ -114,7 +114,7 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SCRIPT_VALUE: 'update-script-value',
     SHOW_ALERT_NOTIFICATION: 'show-alert-notification',
     HIDE_ALERT_NOTIFICATION: 'hide-alert-notification',
-    PROCESS_DEFINITION_CHANGED: 'process-definition-changed',
+    UPDATE_PROCESS_DEFINITION: 'update-process-definition',
     SHOW_AI_PROMPTER: 'show-ai-prompter',
     GENERATE_WORKFLOW_DIAGRAM: 'generate-workflow-diagram',
     WORKFLOW_DIAGRAM_READY: 'workflow-diagram-ready',
@@ -123,5 +123,3 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SERVICE_TASK_SCRIPT: 'update-service-task-script',
     SERVICE_TASK_SCRIPT_UPDATED: 'service-task-script-updated'
 });
-
-

@@ -93,7 +93,7 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_DATA, getDiagramData);
         EventBus.on(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS, loadSelectedManagerDiagrams);     
         EventBus.on(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, removeDiagramFromManagerDiagrams);
-        EventBus.on(EVENT_TYPE.PROCESS_DEFINITION_CHANGED, handleProcessDefinitionChange);  
+        EventBus.on(EVENT_TYPE.UPDATE_PROCESS_DEFINITION, updateProcessDefinition); 
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);
         EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, updateServiceTaskScript);  
@@ -133,7 +133,7 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.GET_SCRIPT_CODE);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_DATA);
         EventBus.off(EVENT_TYPE.GET_DIAGRAM_FROM_MANAGER_DIAGRAMS);
-        EventBus.off(EVENT_TYPE.PROCESS_DEFINITION_CHANGED);
+        EventBus.off(EVENT_TYPE.UPDATE_PROCESS_DEFINITION);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);
         EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT);  
@@ -663,7 +663,8 @@ export function WorkflowEditorStore() {
         ManagerService.updateDiagramId(currentWorkingDiagramManagerId.value, currentProcessDefinition.value?.id);
     }
 
-    async function handleProcessDefinitionChange() {
+    async function updateProcessDefinition(propertyToUpdate) {
+        await currentModeler.value.updateProcessDefinition(propertyToUpdate);
         await generateXMLDiagram();
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams());
     }
