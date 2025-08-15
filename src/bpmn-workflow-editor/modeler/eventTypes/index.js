@@ -123,5 +123,3 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SERVICE_TASK_SCRIPT: 'update-service-task-script',
     SERVICE_TASK_SCRIPT_UPDATED: 'service-task-script-updated'
 });
-
-
