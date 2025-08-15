@@ -48,8 +48,6 @@ const fieldKeys = {
 
 function updateProcessDefinitionId() {
   updateProcessDefinition(fieldKeys.id, processDefinition.value.id);
-
-  ////() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)
 }
 
 function updateProcessDefinitionName() {

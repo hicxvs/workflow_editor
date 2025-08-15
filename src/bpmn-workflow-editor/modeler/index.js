@@ -307,6 +307,24 @@ export function createWorkflowEditor(container) {
             throw new Error(local,error); 
         }
     }
+
+    async function updateProcessDefinition(selectedDefinition) {
+        console.log(selectedDefinition);
+
+        if(!validatePropertyObject(selectedDefinition)) {
+            return;
+        }
+
+        try {
+            const processDefinitionElement = modeler.getDefinitions().rootElements.find(el => el.$type === 'bpmn:Process');
+            processDefinitionElement[selectedDefinition.elementProperty] = selectedDefinition.elementPropertyValue;
+            await saveDiagram();
+        } catch(error) {
+            const local = 'updateProcessDefinition';
+            console.error(local,error);
+            throw new Error(local,error);
+        }        
+    }
        
     function updateElementAttribute(selectedAttribute) {
         if(!validatePropertyObject(selectedAttribute)) {
@@ -772,6 +790,7 @@ export function createWorkflowEditor(container) {
         updateElementType,
         updateElementAttribute,
         updateElementProperty,
+        updateProcessDefinition,
         updateElementConditionExpression,
         updateElementDocumentation,
         saveElementField,
