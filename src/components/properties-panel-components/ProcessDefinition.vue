@@ -22,8 +22,6 @@ import Checkbox from "../generic/Checkbox.vue";
 
 const model = defineModel();
 
-//() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)
-
 const processDefinition = ref({
   id: '',
   name: '',
@@ -42,16 +40,32 @@ const inputLabel = {
   isExecutable: "Is Executable"
 };
 
+const fieldKeys = {
+    id: 'id',
+    name: 'name',
+    isExecutable: 'isExecutable'
+};
+
 function updateProcessDefinitionId() {
-  console.log(processDefinition.value.id);
+  updateProcessDefinition(fieldKeys.id, processDefinition.value.id);
+
+  ////() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)
 }
 
 function updateProcessDefinitionName() {
-  console.log(processDefinition.value.name);
+  updateProcessDefinition(fieldKeys.name, processDefinition.value.name);
 }
 
 function updateProcessDefinitionIsExecutable() {
-  console.log(processDefinition.value.isExecutable);
+  updateProcessDefinition(fieldKeys.isExecutable, processDefinition.value.isExecutable);
+}
+
+function updateProcessDefinition(perpertyKey, propertyValue) {
+  EventBus.emit(EVENT_TYPE.UPDATE_PROCESS_DEFINITION, {
+      elementId: model.value?.id,
+      elementProperty: perpertyKey,
+      elementPropertyValue: propertyValue
+  });
 }
 
 watch(

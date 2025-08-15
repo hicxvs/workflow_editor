@@ -114,6 +114,7 @@ export const EVENT_TYPE = Object.freeze({
     UPDATE_SCRIPT_VALUE: 'update-script-value',
     SHOW_ALERT_NOTIFICATION: 'show-alert-notification',
     HIDE_ALERT_NOTIFICATION: 'hide-alert-notification',
+    UPDATE_PROCESS_DEFINITION: 'update-process-definition',
     PROCESS_DEFINITION_CHANGED: 'process-definition-changed',
     SHOW_AI_PROMPTER: 'show-ai-prompter',
     GENERATE_WORKFLOW_DIAGRAM: 'generate-workflow-diagram',
