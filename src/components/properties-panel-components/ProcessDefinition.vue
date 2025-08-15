@@ -3,9 +3,9 @@
     <Card :title="cardProps.title" :subtitle="cardProps.subtitle" :text="cardProps.text">
       <template #content>
         <div class="input-group">
-          <TextInput v-if="model" :label="inputLabel.id" v-model="model.id" @input="() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)"/>
-          <TextInput v-if="model" :label="inputLabel.name" v-model="model.name" />
-          <Checkbox v-if="model" :label="inputLabel.isExecutable" v-model="model.isExecutable" />
+          <TextInput v-if="model" :label="inputLabel.id" v-model="processDefinition.id" @input="updateProcessDefinitionId" />
+          <TextInput v-if="model" :label="inputLabel.name" v-model="processDefinition.name" @input="updateProcessDefinitionName" />
+          <Checkbox v-if="model" :label="inputLabel.isExecutable" v-model="processDefinition.isExecutable" @update:modelValue="updateProcessDefinitionIsExecutable"/>
         </div>
       </template>
     </Card>
@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
 import EventBus from '../../eventbus';
 import Card from "../generic/Card.vue";
@@ -20,6 +21,14 @@ import TextInput from "../generic/TextInput.vue";
 import Checkbox from "../generic/Checkbox.vue";
 
 const model = defineModel();
+
+//() => EventBus.emit(EVENT_TYPE.PROCESS_DEFINITION_CHANGED)
+
+const processDefinition = ref({
+  id: '',
+  name: '',
+  isExecutable: false
+});
 
 const cardProps = {
   title: "Process Definition",
@@ -32,6 +41,28 @@ const inputLabel = {
   name: "Process Name",
   isExecutable: "Is Executable"
 };
+
+function updateProcessDefinitionId() {
+  console.log(processDefinition.value.id);
+}
+
+function updateProcessDefinitionName() {
+  console.log(processDefinition.value.name);
+}
+
+function updateProcessDefinitionIsExecutable() {
+  console.log(processDefinition.value.isExecutable);
+}
+
+watch(
+  () => model.value,
+  () => {
+    processDefinition.value.id = model.value?.id || '';
+    processDefinition.value.name = model.value?.name || '';
+    processDefinition.value.isExecutable = model.value?.isExecutable || false; 
+  },
+  { immediate: true, deep: true}
+);
 
 </script>
 
