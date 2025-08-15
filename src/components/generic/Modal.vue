@@ -3,7 +3,10 @@
         <v-dialog v-model="model" min-width="20%" :width="width" max-width="80%">
             <v-card>
                 <v-card-title>
-                    <slot name="title">This is modal's default title</slot>                    
+                    <slot name="title">This is modal's default title</slot> 
+                    <v-btn icon variant="text" size="small" class="close-btn" @click="closeModal">
+                        <v-icon class="white-icon">mdi-close</v-icon>
+                    </v-btn>                   
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -180,6 +183,27 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.dialog-card {
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #f44336;
+  border-radius: 50%;
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.white-icon {
+  color: #ffffff;
+  font-size: 14px;
+}
 
 </style>
+
 
