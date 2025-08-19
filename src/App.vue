@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" data-testid="app-container">
     <AIPrompter />
     <AlertNotification />
     <Notification />
@@ -40,3 +40,8 @@ import FileInput from './components/singleton-components/FileInput.vue';
 import Layout from './layout/Layout.vue';
 </script>
 
+<style scoped>
+.app-container {
+  height: 100vh;
+}
+</style>

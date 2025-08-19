@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="workflow-editor-container">
+  <div class="workflow-editor-container" data-testid="workflow-editor-container">
     <TabPanels />
     <div ref="workflowEditorCanvasRef" data-testid="workflow-editor-canvas" class="workflow-editor-canvas"></div>
   </div>
@@ -32,8 +32,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.workflow-editor-container {
+  height: 100%;
+}
+
 .workflow-editor-canvas {
-  height: 89vh;
+  height: 95%;
   border:1 px solid #e0e0e0;
 }
 
