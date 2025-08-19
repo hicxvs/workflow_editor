@@ -57,8 +57,6 @@ onUnmounted(() => {
 <style scoped>
 .properties-panel {
   padding: 16px;
-  width: 98%;
-  height: 96vh;
 }
 
 
