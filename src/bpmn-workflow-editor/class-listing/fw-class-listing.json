@@ -1,6 +1,10 @@
 {
     "files": [
       {
+        "source": "com.hicx.bpf.task.TaskScriptCentralDelegate.wf",
+        "file": "TaskScriptCentralDelegate.java"
+      },
+      {
         "source": "com.hicx.esm.cmd.delegates.wf",
         "file": "ApprovalCmdActDelegate.java"
       },
