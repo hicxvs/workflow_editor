@@ -1,6 +1,6 @@
 <template>
     <div class="modal-container" data-testid="modal-container">
-        <v-dialog v-model="model" min-width="20%" :width="width" max-width="80%">
+        <v-dialog v-model="model" min-width="20%" :width="width" max-width="80%" :attach="OVERLAY_CONTAINER_ID">
             <v-card>
                 <v-card-title>
                     <slot name="title">This is modal's default title</slot> 
@@ -36,6 +36,7 @@ import { onMounted, onUnmounted } from 'vue';
 import Button from '../generic/Button.vue';
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { OVERLAY_CONTAINER_ID } from '../../config';
 
 const model = defineModel();
 

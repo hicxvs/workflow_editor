@@ -17,6 +17,8 @@
     <Loader />
     <FileInput />
     <Layout />
+
+    <div id="app-overlay-container"></div>
   </div>
 </template>
 
