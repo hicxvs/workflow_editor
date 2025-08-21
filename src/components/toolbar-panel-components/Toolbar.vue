@@ -103,6 +103,14 @@ const bpmnMenuGroup = ref({
                 EventBus.emit(EVENT_TYPE.DOWNLOAD_DIAGRAM);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
             }
+        },
+        {
+            label: 'Save as image',
+            disabled: true,
+            handler: () => {
+                EventBus.emit(EVENT_TYPE.SAVE_WORKFLOW_AS_IMAGE);
+                EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
+            }
         }        
     ]
 });

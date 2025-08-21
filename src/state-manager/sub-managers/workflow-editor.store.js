@@ -18,6 +18,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 import { isValidDiagramWorkflow } from '../../bpmn-workflow-editor/utils/is-valid-diagram-workflow';
 import { formatErrorDetails } from '../../bpmn-workflow-editor/utils/format-error-details';
+import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -29,6 +30,7 @@ const DraftService = DraftDiagrams();
 const ScriptService = DiagramScripts();
 const AIDiagramService = AIDiagrams();
 const ManagerService = DiagramManager();
+const svgUtils = SVGUtils();
 
 export function WorkflowEditorStore() {
 
@@ -97,7 +99,8 @@ export function WorkflowEditorStore() {
         EventBus.on(EVENT_TYPE.UPDATE_PROCESS_DEFINITION, updateProcessDefinition); 
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM, generateWorkflowDiagram);
         EventBus.on(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES, generateWorkflowDiagramAnalyses);
-        EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, updateServiceTaskScript);  
+        EventBus.on(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT, updateServiceTaskScript);
+        EventBus.on(EVENT_TYPE.SAVE_WORKFLOW_AS_IMAGE, saveWorkflowAsImage);  
     }
 
     function unregisterWorkflowEditorEventHandlers() {
@@ -137,7 +140,8 @@ export function WorkflowEditorStore() {
         EventBus.off(EVENT_TYPE.UPDATE_PROCESS_DEFINITION);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM);
         EventBus.off(EVENT_TYPE.GENERATE_WORKFLOW_DIAGRAM_ANALYSES);
-        EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT);  
+        EventBus.off(EVENT_TYPE.UPDATE_SERVICE_TASK_SCRIPT);
+        EventBus.off(EVENT_TYPE.SAVE_WORKFLOW_AS_IMAGE);  
     }
 
     async function createNewDiagram() {
@@ -223,7 +227,6 @@ export function WorkflowEditorStore() {
         currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
     }
-
 
     async function loadAllDiagramsFromSystem() {
         if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
@@ -447,6 +450,25 @@ export function WorkflowEditorStore() {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
                 text: error?.message || 'Error generating workflow diagram.'
+            });
+        }
+    }
+
+    async function saveWorkflowAsImage() {
+        if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
+            return;
+        }
+
+        try {   
+
+            const image = await currentModeler.value.generateImage(currentDiagram.value);
+            const filename = `diagram_image_${currentProcessDefinition.value.id}`;
+            await svgUtils.downloadDiagramImage(image, filename, 'jpg');
+            
+        } catch(error) {
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.ERROR,
+                text: error?.message || 'Error generating workflow image.'
             });
         }
     }

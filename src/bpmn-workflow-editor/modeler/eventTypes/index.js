@@ -121,5 +121,6 @@ export const EVENT_TYPE = Object.freeze({
     GENERATE_WORKFLOW_DIAGRAM_ANALYSES: 'generate-workflow-diagram-analyses',
     WORKFLOW_DIAGRAM_ANALYSES_READY: 'generate-workflow-diagram-ready',
     UPDATE_SERVICE_TASK_SCRIPT: 'update-service-task-script',
-    SERVICE_TASK_SCRIPT_UPDATED: 'service-task-script-updated'
+    SERVICE_TASK_SCRIPT_UPDATED: 'service-task-script-updated',
+    SAVE_WORKFLOW_AS_IMAGE: 'save-workflow-as-image'
 });
