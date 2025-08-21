@@ -17,6 +17,7 @@ import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/g
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 import { isValidDiagramWorkflow } from '../../bpmn-workflow-editor/utils/is-valid-diagram-workflow';
+import { formatErrorDetails } from '../../bpmn-workflow-editor/utils/format-error-details';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -577,8 +578,8 @@ export function WorkflowEditorStore() {
                 text: 'Workflow deployed successfully.'
             });
         }
-        catch (error) {
-            const errorMessage = error?.response?.data?.responseMessage || 'Error deploying workflow.';
+        catch (error) {            
+            const errorMessage = formatErrorDetails(error?.response?.data?.errors) || 'Error deploying workflow.';
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.ERROR,
