@@ -1,6 +1,6 @@
 <template>
     <div class="menu-button-list-container" data-testid="menu-button-list-container">
-        <v-menu offset-y>
+        <v-menu offset-y :attach="OVERLAY_CONTAINER_ID">
             <template v-slot:activator="{ props }">
                 <v-btn v-bind="props" variant="tonal" class="button-bottom-border">{{ label }}</v-btn>
             </template>
@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+    import { OVERLAY_CONTAINER_ID } from '../../config';
     defineProps({
         label: {
             type: String,

@@ -1,6 +1,11 @@
 <template>
     <div class="notification-container" data-testid="notification-container">
-        <v-snackbar v-model="canShowNotification" :timeout="notificationTimeOut" :timer="true" :color="notificationTypeColor[notificationType].color">
+        <v-snackbar v-model="canShowNotification" 
+        :timeout="notificationTimeOut" 
+        :timer="true" 
+        :color="notificationTypeColor[notificationType].color"
+        :attach="OVERLAY_CONTAINER_ID"
+        >
             {{ notificationText }}
             <template v-slot:actions>
                 <v-btn 
@@ -17,6 +22,7 @@
     import EventBus from '../../eventbus';
     import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
     import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
+    import { OVERLAY_CONTAINER_ID } from '../../config';
 
     const defaultTimeOut = '4000';
     const canShowNotification = ref(false);
