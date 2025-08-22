@@ -31,9 +31,13 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import EventBus from "../../eventbus";
 import { EVENT_TYPE } from "../../bpmn-workflow-editor/modeler/eventTypes";
 import { IS_APP_IN_MODE_DEV } from '../../config';
-import MenuButtonList from '../generic/MenuButtonList.vue';
 import { CONFIRMATION_TYPE } from '../../bpmn-workflow-editor/modeler/confirmationTypes';
 import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
+import { KeyboardShortCuts } from '../../bpmn-workflow-editor/keyboard/keyboard-shortcuts';
+import { KEYBOARD_SHORTCUT_TYPE } from '../../bpmn-workflow-editor/keyboard/keyboard-shortcut-types';
+
+import MenuButtonList from '../generic/MenuButtonList.vue';
+
 
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
@@ -153,7 +157,7 @@ const draftMenuGroup = {
     label: 'DRAFT OPERATIONS',
     items: [
         {
-            label: 'Save Draft to system',
+            label: 'Save Draft to system ( CTRL+SHIFT+S )',
             handler: () => {
                 EventBus.emit(EVENT_TYPE.SAVE_DIAGRAM_DRAFT);
                 EventBus.emit(EVENT_TYPE.CANVAS_DESELECTED);
@@ -190,6 +194,8 @@ const analisesAndLoginMenuGroup = {
     ]
 };
 
+let keyboardShortCutManager;
+
 function update() {    
     EventBus.emit(EVENT_TYPE.SET_API_KEY, apiKey.value);
 }
@@ -216,12 +222,20 @@ onMounted(() => {
             }
         });
     });
+
+    keyboardShortCutManager = KeyboardShortCuts({
+        [KEYBOARD_SHORTCUT_TYPE.SAVE_DRAFT_TO_SYSTEM]: draftMenuGroup.items[0].handler,
+    });
 });
 
 onUnmounted(() => {
     EventBus.off(EVENT_TYPE.SHOW_SYSTEM_DRAFT_OPTIONS);
     EventBus.off(EVENT_TYPE.HIDE_SYSTEM_DRAFT_OPTIONS);
     EventBus.off(EVENT_TYPE.IMPORTED_DIAGRAM_READY);
+
+    if(keyboardShortCutManager && keyboardShortCutManager?.destroy) {
+        keyboardShortCutManager.destroy();
+    }
 });
 
 function addSaveAsIfSupported(itemsCollection, buttonLabel) {
