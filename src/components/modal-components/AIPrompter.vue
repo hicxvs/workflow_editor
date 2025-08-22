@@ -65,6 +65,7 @@ import Select from '../generic/Select.vue';
 import TextArea from '../generic/TextArea.vue';
 import Checkbox from "../generic/Checkbox.vue";
 import Button from '../generic/Button.vue';
+import { IMAGE_TYPE } from '../../bpmn-workflow-editor/modeler/imageTypes';
 
 const showButton = ref(true);
 const showModal = ref(false);
@@ -118,7 +119,7 @@ const buttonClickHandlers = {
     },
     downloadImage: async () => {
         const filename = `diagram_analyses_image_${processId.value}`;
-        await svgUtils.downloadDiagramImage(modalAnalisesImage.value, filename, 'jpg');
+        await svgUtils.downloadDiagramImage(modalAnalisesImage.value, filename, IMAGE_TYPE.JPG);
     }
 };
 

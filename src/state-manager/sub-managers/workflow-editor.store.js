@@ -19,6 +19,7 @@ import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificati
 import { isValidDiagramWorkflow } from '../../bpmn-workflow-editor/utils/is-valid-diagram-workflow';
 import { formatErrorDetails } from '../../bpmn-workflow-editor/utils/format-error-details';
 import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
+import { IMAGE_TYPE } from '../../bpmn-workflow-editor/modeler/imageTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
 const { saveAPIKey, loadAPIKey, clearAPIKey } = Storage();
@@ -463,7 +464,7 @@ export function WorkflowEditorStore() {
 
             const image = await currentModeler.value.generateImage(currentDiagram.value);
             const filename = `diagram_image_${currentProcessDefinition.value.id}`;
-            await svgUtils.downloadDiagramImage(image, filename, 'jpg');
+            await svgUtils.downloadDiagramImage(image, filename, IMAGE_TYPE.JPG);
             
         } catch(error) {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
