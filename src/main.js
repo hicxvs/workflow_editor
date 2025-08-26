@@ -15,9 +15,11 @@ import { aliases, fa } from 'vuetify/iconsets/fa-svg';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
 
 // Add the imported icons to the Font Awesome library
 library.add(fas);
+library.add(far);
 
 import App from './App.vue';
 
