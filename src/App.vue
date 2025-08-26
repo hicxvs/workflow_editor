@@ -17,13 +17,11 @@
     <Loader />
     <FileInput />
     <Layout />
-
-    <div :id="OVERLAY_CONTAINER_ID"></div>
+    <div id="app-overlay-container"></div>
   </div>
 </template>
 
 <script setup>
-import { OVERLAY_CONTAINER_ID } from './config';
 import AIPrompter from './components/modal-components/AIPrompter.vue';
 import AlertNotification from './components/singleton-components/AlertNotification.vue';
 import Notification from './components/singleton-components/Notification.vue';
