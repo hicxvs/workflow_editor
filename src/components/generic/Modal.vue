@@ -4,9 +4,9 @@
             <v-card>
                 <v-card-title>
                     <slot name="title">This is modal's default title</slot> 
-                    <v-btn icon variant="text" size="small" class="close-btn" @click="closeModal">
-                        <v-icon class="white-icon">mdi-close</v-icon>
-                    </v-btn>                   
+                    <v-btn icon="fa-solid fa-circle-xmark" variant="text" color="red" class="close-btn" @click="closeModal">
+                        <v-icon/>
+                    </v-btn>  
                 </v-card-title>
 
                 <v-divider></v-divider>
@@ -192,7 +192,7 @@ onUnmounted(() => {
   position: absolute;
   top: 8px;
   right: 8px;
-  background-color: #f44336;
+
   border-radius: 50%;
   min-width: 30px;
   width: 30px;

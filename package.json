@@ -14,6 +14,9 @@
     "lint:fix": "eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/vue-fontawesome": "^3.1.1",
     "@monaco-editor/loader": "^1.5.0",
     "axios": "^1.8.2",
     "bpmn-js": "^18.3.1",

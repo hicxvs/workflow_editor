@@ -19,16 +19,17 @@
                 {{ item.id }}<span v-if="item.loadedVersion">&nbsp;- V{{ item.loadedVersion }}</span>
                 <v-btn 
                     class="ml-2"
-                    icon="mdi-close"
-                    size="x-small"
+                    variant="text"
+                    icon="fa-solid fa-circle-xmark"
                     density="comfortable"
-                    color="orange-darken-4"
+                    color="red"
                     flat
                     @click="(event) => {
                         event.stopPropagation();
                         EventBus.emit(EVENT_TYPE.REMOVE_DIAGRAM_FROM_MANAGER_DIAGRAMS, item.managerId);                                                
                     }"
                 >
+                    <v-icon/>
                 </v-btn>
             </v-tab>
         </v-tabs>

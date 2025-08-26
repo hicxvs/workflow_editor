@@ -18,7 +18,7 @@
 
             <template #content>
                 <div class="mb-4 d-flex align-center">
-                    <v-icon icon="mdi-robot" color="blue" size="x-large" class="mr-3"/>
+                    <v-icon icon="fa-solid fa-robot" color="blue" size="x-large" class="mr-3"/>
                     <p class="font-weight-medium">{{ AIPrompterMessages.welcome }}</p>
                 </div>
 
@@ -30,7 +30,7 @@
                 
                 <div v-if="showAIAnalises">
                     <div class="mb-4 d-flex align-center">
-                        <v-icon icon="mdi-robot-happy" color="blue" size="x-large" class="mr-3"/>
+                        <v-icon icon="fa-solid fa-robot" color="blue" size="x-large" class="mr-3"/>
                         <p class="font-weight-medium">{{ AIPrompterMessages.analisesResult }}</p>
                     </div>
                     <div class="analises-container">                                                
