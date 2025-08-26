@@ -16,7 +16,7 @@
             <v-icon
                 v-if="showAlertIcon"
                 color="warning" 
-                icon="mdi-alert" 
+                icon="fa-solid fa-triangle-exclamation" 
                 size="x-large"
                 class="draggable-alert draggable-icon"
                 title="Double-click to view alert"
