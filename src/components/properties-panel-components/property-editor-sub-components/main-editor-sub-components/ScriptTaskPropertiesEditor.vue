@@ -163,12 +163,10 @@ function retrieveScript() {
     const codeLanguage = scriptTaskFormat.value || scriptFormatSelectOptions.value[0].value;
     scriptHandler[codeLanguage]?.handler();
 }
-
 </script>
 
 <style scoped>
 .retrive-script-button {
     margin-bottom: 16px;
 }
-
 </style>

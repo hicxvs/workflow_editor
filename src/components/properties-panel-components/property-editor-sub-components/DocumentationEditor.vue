@@ -45,7 +45,6 @@ watch(
   { immediate: true, deep: true }
 );
 
-
 function updateDocumentation() { 
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_DOCUMENTATION, 
         {

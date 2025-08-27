@@ -62,4 +62,3 @@ const buttonClickHandlers = {
   }
 }
 </style>
-

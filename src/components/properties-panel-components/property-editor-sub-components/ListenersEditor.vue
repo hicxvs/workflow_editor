@@ -173,9 +173,7 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.ADD_CREATED_LISTENER);
     EventBus.off(EVENT_TYPE.UPDATE_EDITED_LISTENER);
 });
-
 </script>
 
 <style scoped>
-
 </style>

@@ -134,7 +134,6 @@ function startResizing(event) {
 .main-content.resizing {
   user-select: none;
 }
-
 </style>
 
 

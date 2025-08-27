@@ -197,7 +197,6 @@ function save(collectionTypeToSave) {
         elementPropertyValue: copyOutputParamenters.value
     });
 }
-
 </script>
 
 <style scoped>

@@ -6,7 +6,6 @@
 
 <script setup>
 import Toolbar from "../components/toolbar-panel-components/Toolbar.vue";
-
 </script>
 
 <style scoped>
