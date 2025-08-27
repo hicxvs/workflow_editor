@@ -134,7 +134,6 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.ADD_CREATED_FORM_PROPERTY);
     EventBus.off(EVENT_TYPE.UPDATE_EDITED_FORM_PROPERTY);
 });
-
 </script>
 
 <style scoped>

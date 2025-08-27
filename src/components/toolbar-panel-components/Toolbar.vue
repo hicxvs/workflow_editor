@@ -38,7 +38,6 @@ import { KEYBOARD_SHORTCUT_TYPE } from '../../bpmn-workflow-editor/keyboard/keyb
 
 import MenuButtonList from '../generic/MenuButtonList.vue';
 
-
 const apiKey = ref('');
 const apiKeyLabel = "API KEY";
 const showDraftMenuGroup = ref(false);
@@ -293,7 +292,3 @@ function addSaveAsIfSupported(itemsCollection, buttonLabel) {
     width: 20%;
 }
 </style>
-
-
-
-

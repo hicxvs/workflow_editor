@@ -37,7 +37,6 @@ const selectedTaskType = ref(null);
 const selectedGatewayType = ref(null);
 
 const panelTitle = 'General';
-
 const propertiesLabel = 'Properties: ';
 
 const inputLabel = {

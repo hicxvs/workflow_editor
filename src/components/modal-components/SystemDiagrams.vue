@@ -147,5 +147,4 @@ function filterDiagrams(event) {
 </script>
 
 <style scoped>
-
 </style>

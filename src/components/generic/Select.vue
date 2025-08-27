@@ -102,9 +102,7 @@ function handleMenuClick() {
 function handleMenuFocusChange() {
     props.selectMenuFocusChangeHandler();
 }
-
 </script>
 
 <style scoped>
-
 </style>

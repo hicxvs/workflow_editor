@@ -1,6 +1,5 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-
 export function EditorEngine() {
 
     let engine = null;
@@ -44,5 +43,4 @@ export function EditorEngine() {
         createCodeEditor,
         getValue
     };
-
 }

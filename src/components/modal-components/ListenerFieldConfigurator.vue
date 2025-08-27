@@ -116,9 +116,7 @@ function save() {
 function cancel() {
     requestedOperation.value = null;
 }
-
 </script>
 
 <style scoped>
-
 </style>

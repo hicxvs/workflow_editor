@@ -23,8 +23,7 @@
                 @dblclick="alertToggleHandler"
                 >
             </v-icon>
-        </div>
-        
+        </div>        
     </div>
 </template>
 
@@ -117,7 +116,6 @@ function alertToggleHandler() {
   showAlert.value = !showAlert.value;
   showAlertIcon.value = !showAlertIcon.value;
 }
-
 </script>
 
 <style scoped>

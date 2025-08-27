@@ -25,7 +25,6 @@ onUnmounted(() => {
     EventBus.off(EVENT_TYPE.LOAD_FILE);
 });
 
-
 async function loadFile(event) {
     try {
         const file = event.target.files[0];
@@ -54,7 +53,6 @@ function clearFile() {
     fileInput.value.value = null;
     fileInput.value.accept = '';
 }
-
 </script>
 
 <style scoped>

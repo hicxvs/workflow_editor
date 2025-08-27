@@ -49,6 +49,4 @@
 .button-bottom-border:hover {
   border-bottom-color: rgba(0, 0, 0, 0.4);
 }
-
-
 </style>

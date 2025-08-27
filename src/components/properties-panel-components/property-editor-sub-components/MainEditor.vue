@@ -48,7 +48,6 @@ watch(
   },
   { immediate: true, deep: true }
 );
-
 </script>
 
 <style scoped>

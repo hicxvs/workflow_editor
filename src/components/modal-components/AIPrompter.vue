@@ -269,8 +269,6 @@ watch(
     },
     { immediate: true, deep: true }
 );
-
-
 </script>
 
 <style scoped>
@@ -308,6 +306,4 @@ watch(
   justify-content: flex-end;
   gap: 10px; 
 }
-
-
 </style>

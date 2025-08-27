@@ -130,9 +130,7 @@ function updateReference(reference, options, fieldKey) {
         elementPropertyValue: workflowPropertyValue
     });
 }
-
 </script>
 
 <style scoped>
-
 </style>

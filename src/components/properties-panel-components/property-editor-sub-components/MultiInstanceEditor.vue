@@ -83,5 +83,4 @@ watch(
 .main-instance-content {
     padding: 0 16px;
 }
-
 </style>
