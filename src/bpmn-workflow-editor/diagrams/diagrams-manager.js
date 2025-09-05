@@ -32,8 +32,9 @@ export function DiagramManager() {
             version: diagramToRegister?.diagramVersion,
             loadedVersion: diagramToRegister?.diagramLoadedVersion,
             isLatestVersion: diagramToRegister?.isDiagramLastestVersion,
+            isDraft: diagramToRegister?.isDraft || false,
             active: false,
-            showSystemDraftOperations: false
+            showSystemDraftOperations: false            
         };
 
         items.push(item);
