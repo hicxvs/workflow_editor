@@ -16,7 +16,7 @@
                 }"
                 class="tab-border"
                 >
-                {{ item.id }}<span v-if="item.loadedVersion">&nbsp;- V{{ item.loadedVersion }}</span>
+                {{ item.id }}<span v-if="item.loadedVersion">&nbsp;- V{{ item.loadedVersion }}</span><span v-if="item.isDraft">&nbsp;{{ draftLabel }}</span>
                 <v-btn 
                     class="ml-2"
                     variant="text"
@@ -44,6 +44,7 @@ import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificati
 
 const items = ref(null);
 const activeTab = ref(null);
+const draftLabel = '(DRAFT VERSION)';
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, (localSessionDiagrams) => {

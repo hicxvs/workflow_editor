@@ -59,23 +59,25 @@ export function SVGUtils() {
         const { width, height } = getSvgDimensions(svgString);
         const { img, url } = await loadImageFromSvg(svgString);
     
+        const padding = 60;
         const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = width + padding * 2;
+        canvas.height = height + padding * 2;
     
         const ctx = canvas.getContext('2d');
     
         if (format === 'jpg') {
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, width, height);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     
-        ctx.drawImage(img, 0, 0, width, height);
+        ctx.drawImage(img, padding, padding, width, height);
         URL.revokeObjectURL(url);
     
         const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
         return canvas.toDataURL(mimeType);
     }
+    
 
     function downloadImage(dataUrl, filename = 'image.png') {
         const a = document.createElement('a');

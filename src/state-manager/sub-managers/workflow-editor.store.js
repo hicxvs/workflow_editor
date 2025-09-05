@@ -245,7 +245,7 @@ export function WorkflowEditorStore() {
         }
     }
 
-    async function loadDiagram(diagram, serviceFunction) {
+    async function loadDiagram(diagram, isDraftDiagram, serviceFunction) {
         if (IS_APP_IN_MODE_DEV && !apiKeyExists()) {
             return;
         }
@@ -268,7 +268,8 @@ export function WorkflowEditorStore() {
             diagramContent: loadedDiagramContent,
             diagramVersion: diagram.version,
             diagramLoadedVersion: diagram.versionToLoad,
-            isDiagramLastestVersion: ( diagram.version === diagram.versionToLoad )          
+            isDiagramLastestVersion: ( diagram.version === diagram.versionToLoad ),
+            isDraft: isDraftDiagram        
         });
         ManagerService.enableDraftOperations(managerId);
         currentWorkingDiagramManagerId.value = managerId;
@@ -278,7 +279,8 @@ export function WorkflowEditorStore() {
 
     async function loadDiagramFromSystem(diagram) {
         try {
-            await loadDiagram(diagram, SystemService.getDiagramByIdFromSystem);
+            const isDraftDiagram = false;
+            await loadDiagram(diagram, isDraftDiagram, SystemService.getDiagramByIdFromSystem);
         }
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
@@ -290,7 +292,8 @@ export function WorkflowEditorStore() {
 
     async function loadDiagramDraftFromSystem(diagram) {
         try {
-            await loadDiagram(diagram, DraftService.getDiagramByIdFromDraft);
+            const isDraftDiagram = true;
+            await loadDiagram(diagram, isDraftDiagram, DraftService.getDiagramByIdFromDraft);
 
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
                 type: NOTIFICATION_TYPE.SUCCESS,
