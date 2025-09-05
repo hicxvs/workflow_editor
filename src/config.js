@@ -27,6 +27,7 @@ const CONFIG = {
 
 export const IS_APP_IN_MODE_DEV = import.meta.env.MODE === 'development';
 export const OVERLAY_CONTAINER_ID = '#app-overlay-container';
+export const GLOBAL_DEBOUNCE_TIME = 300;
 
 export const API_BASE_URL = CONFIG.API_BASE_URL;
 export const API_RESOURCE_DEFINITION_ENDPOINT = CONFIG.API_RESOURCE_DEFINITION_ENDPOINT;

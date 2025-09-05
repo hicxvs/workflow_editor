@@ -19,6 +19,8 @@ import EventBus from '../../eventbus';
 import Card from "../generic/Card.vue";
 import TextInput from "../generic/TextInput.vue";
 import Checkbox from "../generic/Checkbox.vue";
+import { GLOBAL_DEBOUNCE_TIME } from '../../config';
+import { debounce } from "../../bpmn-workflow-editor/utils/debounce";
 
 const model = defineModel();
 
@@ -46,6 +48,14 @@ const fieldKeys = {
     isExecutable: 'isExecutable'
 };
 
+const updateProcessDefinition = debounce((propertyKey, propertyValue) => {
+  EventBus.emit(EVENT_TYPE.UPDATE_PROCESS_DEFINITION, {
+    elementId: model.value?.id,
+    elementProperty: propertyKey,
+    elementPropertyValue: propertyValue
+  });
+}, GLOBAL_DEBOUNCE_TIME);
+
 function updateProcessDefinitionId() {
   updateProcessDefinition(fieldKeys.id, processDefinition.value.id);
 }
@@ -56,14 +66,6 @@ function updateProcessDefinitionName() {
 
 function updateProcessDefinitionIsExecutable() {
   updateProcessDefinition(fieldKeys.isExecutable, processDefinition.value.isExecutable);
-}
-
-function updateProcessDefinition(perpertyKey, propertyValue) {
-  EventBus.emit(EVENT_TYPE.UPDATE_PROCESS_DEFINITION, {
-      elementId: model.value?.id,
-      elementProperty: perpertyKey,
-      elementPropertyValue: propertyValue
-  });
 }
 
 watch(

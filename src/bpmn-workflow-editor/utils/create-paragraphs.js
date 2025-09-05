@@ -7,5 +7,3 @@ export function createParagraphs(inputArray) {
     });
     return result.trim();
 }
-
-
