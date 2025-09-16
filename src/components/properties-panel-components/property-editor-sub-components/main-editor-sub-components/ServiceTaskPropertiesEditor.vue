@@ -50,7 +50,6 @@ import TextInput from '../../../generic/TextInput.vue';
 import Button from '../../../generic/Button.vue';
 import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
 import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
-import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
 
 const model = defineModel();
 const isClearable = ref(false);
@@ -265,9 +264,7 @@ watch(
 );
 
 function save() {
-    saveChanges(originalServiceTaskExtentionElements.value.values, serviceTaskExtentionElementsCopy.value.values);
-
-    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, originalServiceTaskExtentionElements.value);
+    EventBus.emit(EVENT_TYPE.SAVE_SERVICE_TASK_FIELD, serviceTaskExtentionElementsCopy.value);
 }
 </script>
 

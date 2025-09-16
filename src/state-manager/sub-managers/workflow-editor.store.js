@@ -721,7 +721,7 @@ export function WorkflowEditorStore() {
     }
 
     function saveServiceTaskFields(serviceTaskToSave) {
-        currentModeler.value.saveElementField(serviceTaskToSave);
+        currentModeler.value.saveElementField(currentWorkingElementProperties.value,serviceTaskToSave);
         EventBus.emit(EVENT_TYPE.GENERATE_XML_DIAGRAM);
     }
     

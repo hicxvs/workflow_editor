@@ -619,18 +619,17 @@ export function createWorkflowEditor(container) {
         };
     }
 
-    function saveElementField(selectedElement) {
+    function saveElementField(element, fields) {
         try{    
-            const parentElement = elementRegistry.get(selectedElement.$parent.id);
+            const parentElement = elementRegistry.get(element.id);
 
             if (!parentElement) {
                 console.error('Element not found');
                 return;
             }
 
-            selectedElement.values = createElementFields(selectedElement, selectedElement.values);
-            modeling.updateProperties(parentElement, {});
-
+            manageExtensionElements(element);
+            element.extensionElements.values = createElementFields(element, fields.values);
         } catch (error) {
             console.error(error);
         }
