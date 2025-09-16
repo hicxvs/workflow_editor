@@ -50,7 +50,6 @@ import TextInput from '../../../generic/TextInput.vue';
 import Button from '../../../generic/Button.vue';
 import SkipExpressionPropertyEditor from './SkipExpressionPropertyEditor.vue';
 import ConfigurationTable from '../../../generic/ConfigurationTable.vue';
-import { saveChanges } from '../../../../bpmn-workflow-editor/utils/save-changes';
 
 const model = defineModel();
 const isClearable = ref(false);
