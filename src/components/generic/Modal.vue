@@ -22,6 +22,7 @@
                     <Button v-if="showDeployButton" :label="buttonLabels.deploy" :buttonColor="buttonColors.deploy" @click="deploy"></Button>                    
                     <Button v-if="showGenerateButton" :label="buttonLabels.generate" :buttonColor="buttonColors.generate" :disabled="isGenerateButtonDisabled" @click="generate"></Button>                    
                     <Button v-if="showAnalyzeButton" :label="buttonLabels.analyze" :buttonColor="buttonColors.analyze" :disabled="isAnalyzeButtonDisabled" @click="analyze"></Button>                    
+                    <Button v-if="showEditOnButton" :label="buttonLabels.editOn" :buttonColor="buttonColors.editOn" :disabled="isEditOnButtonDisabled" @click="editOn"></Button>                    
                     <Button v-if="showDeleteButton" :label="buttonLabels.delete" :buttonColor="buttonColors.delete" @click="remove"></Button>
                     <Button v-if="showCancelButton" :label="buttonLabels.cancel" :buttonColor="buttonColors.cancel" @click="cancelModal"></Button>                    
                     <Button v-if="showCloseButton" :label="buttonLabels.close" :buttonColor="buttonColors.close" @click="closeModal"></Button>
@@ -81,12 +82,22 @@ const props = defineProps({
         required: false,
         default: false
     },
+    showEditOnButton: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     isGenerateButtonDisabled: {
         type: Boolean,
         required: false,
         default: false
     },
     isAnalyzeButtonDisabled: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    isEditOnButtonDisabled: {
         type: Boolean,
         required: false,
         default: false
@@ -115,6 +126,11 @@ const props = defineProps({
         type: Function,
         required: false,
         default: () => { console.warn('analyzeButtonClickHandler is not defined'); }
+    },
+    editOnButtonClickHandler: {
+        type: Function,
+        required: false,
+        default: () => { console.warn('editOnButtonClickHandler is not defined'); }
     }, 
     cancelButtonClickHandler: {
         type: Function,
@@ -131,7 +147,8 @@ const buttonLabels = {
     delete: 'Confirm Delete',
     deploy: 'Confirm Deployment',
     generate: 'Generate',
-    analyze: 'Analyze'
+    analyze: 'Analyze',
+    editOn: 'Edit on Script Central'
 };
 
 const buttonColors = {
@@ -141,7 +158,8 @@ const buttonColors = {
     delete: 'red',
     deploy: 'green',
     generate: 'green',
-    analyze: 'green'
+    analyze: 'green',
+    editOn: 'green'
 };
 
 function closeModal() {
@@ -166,6 +184,10 @@ function generate() {
 
 function analyze() {
     props.analyzeButtonClickHandler();
+}
+
+function editOn() {
+    props.editOnButtonClickHandler();
 }
 
 function cancelModal() {

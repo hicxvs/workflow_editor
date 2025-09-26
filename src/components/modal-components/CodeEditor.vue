@@ -3,8 +3,10 @@
         <Modal
             :showCloseButton = "showButton"
             :showSaveButton = "showSaveButton"
+            :showEditOnButton = "showEditOnButton"
             :showCancelButton = "!showButton"
             :saveButtonClickHandler = "save"
+            :editOnButtonClickHandler = "editOn"
             v-model="showModal"
         >
             <template #title>
@@ -21,6 +23,8 @@
 <script setup>
 import EventBus from '../../eventbus';
 import { EVENT_TYPE } from '../../bpmn-workflow-editor/modeler/eventTypes';
+import { SCRIPT_CENTRAL_BASE_URL } from '../../config';
+import { openInNewTab } from '../../bpmn-workflow-editor/utils/open-in-new-tab';
 import { EditorEngine } from '../../editor-engine';
 import {ref, onMounted, onUnmounted, watch} from 'vue';
 
@@ -35,8 +39,10 @@ const editorCanvas = ref(null);
 const editorInstance = ref(null);
 const editorInstanceCode = ref(null);
 const editorCodeScriptId = ref(null);
+const editorCodeScriptCode = ref(null);
 
 const showSaveButton = ref(false);
+const showEditOnButton = ref(true);
 
 onMounted(() => {
     EventBus.on(EVENT_TYPE.LOAD_CODE_SCRIPT, codeSettings => {
@@ -49,8 +55,10 @@ onMounted(() => {
         };
 
         editorCodeScriptId.value = codeSettings.codeScriptId;
-        modalTitle.value = codeSettings?.codeScriptId ? `Script Content - ${codeSettings.codeScriptId}` : 'Script Content';
+        editorCodeScriptCode.value = codeSettings.codeScriptCode;
+        modalTitle.value = codeSettings.codeScriptCode || 'Script Content';
         showSaveButton.value = !codeSettings.readOnly;
+        showEditOnButton.value = (codeSettings.codeLanguage === 'groovy' && codeSettings.codeScriptId != null);
         showModal.value = true;
     });
     
@@ -111,6 +119,22 @@ function updateServiceTaskScript(editorValue) {
         codeScriptValue: editorValue
     });
 } */
+
+function editOn() {
+    const scriptURL = populateScriptTemplate(SCRIPT_CENTRAL_BASE_URL, editorCodeScriptId.value, editorCodeScriptCode.value);
+    openInNewTab(scriptURL);
+}
+
+function populateScriptTemplate(templateString ,scriptId, scriptCode) {
+    if (typeof templateString !== 'string' || !templateString.trim()) {
+        console.error('A valid templateString must be provided');
+        return;
+    }
+
+    return templateString
+        .replaceAll('{SCRIPT_ID}', scriptId ?? '')
+        .replaceAll('{SCRIPT_CODE}', scriptCode ?? '');
+}
 
 function updateElementProperty(editorValue) {
     EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_PROPERTY, 
