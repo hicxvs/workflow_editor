@@ -59,7 +59,7 @@ const copyOutputParamenters = ref(null);
 
 const callActivityPropertiesLabels = {
     calledElement: 'Called Element',
-    inputParameters: 'Input Paramenters',
+    inputParameters: 'Input Parameters',
     outputParameters: 'Output Parameters'
 };
 
