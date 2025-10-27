@@ -11,10 +11,30 @@ export function SVGUtils() {
                                 .replace(/\\'/g, "'")
                                 .replace(/\\"/g, '"');
     
-        // Optional: strip comments
         svgString = svgString.replace(/<!--[\s\S]*?-->/g, '');
-    
         return svgString.trim();
+    }
+
+    function applyViewboxPadding(svgString, padding = 60) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgString, "image/svg+xml");
+        const svgEl = doc.querySelector("svg");
+    
+        const viewBox = svgEl.getAttribute("viewBox");
+        if (viewBox) {
+          const [x, y, width, height] = viewBox.split(" ").map(Number);
+          const paddedViewBox = [
+            x - padding,
+            y - padding,
+            width + padding * 2,
+            height + padding * 2
+          ];
+          svgEl.setAttribute("viewBox", paddedViewBox.join(" "));
+          svgEl.setAttribute("width", paddedViewBox[2]);
+          svgEl.setAttribute("height", paddedViewBox[3]);
+        }
+    
+        return new XMLSerializer().serializeToString(svgEl);
     }
 
     function getSvgDimensions(svgString) {
@@ -56,13 +76,13 @@ export function SVGUtils() {
     }
       
     async function convertSvgToImage(svgString, format) {
-        const { width, height } = getSvgDimensions(svgString);
-        const { img, url } = await loadImageFromSvg(svgString);
+        const paddedSvg = applyViewboxPadding(svgString);
+        const { width, height } = getSvgDimensions(paddedSvg);
+        const { img, url } = await loadImageFromSvg(paddedSvg);
     
-        const padding = 60;
         const canvas = document.createElement('canvas');
-        canvas.width = width + padding * 2;
-        canvas.height = height + padding * 2;
+        canvas.width = width;
+        canvas.height = height;
     
         const ctx = canvas.getContext('2d');
     
@@ -71,7 +91,7 @@ export function SVGUtils() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     
-        ctx.drawImage(img, padding, padding, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
         URL.revokeObjectURL(url);
     
         const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
@@ -94,7 +114,8 @@ export function SVGUtils() {
         }
 
         try {
-            const dataUrl = await convertSvgToImage(svgString, format);
+            const cleandedSvg = cleanSvg(svgString);
+            const dataUrl = await convertSvgToImage(cleandedSvg, format);
             downloadImage(dataUrl, `${imageName}.${format}`);
         } catch(error) {
             console.error("Error during diagram download:", error);
