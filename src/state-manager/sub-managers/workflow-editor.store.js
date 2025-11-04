@@ -18,6 +18,7 @@ import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 import { isValidDiagramWorkflow } from '../../bpmn-workflow-editor/utils/is-valid-diagram-workflow';
 import { SVGUtils } from '../../bpmn-workflow-editor/utils/svg-utils';
+import { XMLUtils } from '../../bpmn-workflow-editor/utils/xml-utils';
 import { IMAGE_TYPE } from '../../bpmn-workflow-editor/modeler/imageTypes';
 
 export const WorkflowEditorStoreIdentifier = 'workflow-editor-store';
@@ -31,6 +32,7 @@ const ScriptService = DiagramScripts();
 const AIDiagramService = AIDiagrams();
 const ManagerService = DiagramManager();
 const svgUtils = SVGUtils();
+const xmlUtils = XMLUtils();
 
 export function WorkflowEditorStore() {
 
@@ -599,7 +601,8 @@ export function WorkflowEditorStore() {
     async function saveDiagram(saveFunction) {
         const {xmlContent} = await getDiagramData();
         const {xml} = xmlContent;
-        await saveFunction(currentApiKey.value, xml);
+        const cleanXML = xmlUtils.removeActivitiPropertyFieldType(xml);
+        await saveFunction(currentApiKey.value, cleanXML);
     }
 
     async function saveDiagramToSystem() {         
