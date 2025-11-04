@@ -226,6 +226,11 @@ export function WorkflowEditorStore() {
         );
         currentWorkingDiagramManagerId.value = managerId;
         EventBus.emit(EVENT_TYPE.GET_ALL_MANAGER_DIAGRAMS, ManagerService.getAllDiagrams()); 
+
+        EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+            type: NOTIFICATION_TYPE.SUCCESS,
+            text: 'Workflow loaded from the local system successfully.'
+        });
     }
 
     async function loadAllDiagramsFromSystem() {
@@ -280,6 +285,11 @@ export function WorkflowEditorStore() {
         try {
             const isDraftDiagram = false;
             await loadDiagram(diagram, isDraftDiagram, SystemService.getDiagramByIdFromSystem);
+
+            EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                type: NOTIFICATION_TYPE.SUCCESS,
+                text: 'The BPMN has been successfully loaded from the system.'
+            });
         }
         catch {
             EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
@@ -679,6 +689,11 @@ export function WorkflowEditorStore() {
     async function downloadDiagram() {
         const {id, xmlContent} = await getDiagramData();
         downloadWorkflowDiagram(id, xmlContent);
+
+        EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+            type: NOTIFICATION_TYPE.SUCCESS,
+            text: 'Workflow downloaded to the local system successfully.'
+        });
     }
 
     async function generateXMLDiagram() {
