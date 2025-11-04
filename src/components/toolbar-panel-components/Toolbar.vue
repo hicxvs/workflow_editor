@@ -35,6 +35,7 @@ import { CONFIRMATION_TYPE } from '../../bpmn-workflow-editor/modeler/confirmati
 import { PROMPTER_TYPE } from '../../bpmn-workflow-editor/modeler/prompterTypes';
 import { KeyboardShortCuts } from '../../bpmn-workflow-editor/keyboard/keyboard-shortcuts';
 import { KEYBOARD_SHORTCUT_TYPE } from '../../bpmn-workflow-editor/keyboard/keyboard-shortcut-types';
+import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
 
 import MenuButtonList from '../generic/MenuButtonList.vue';
 
@@ -264,7 +265,13 @@ function addSaveAsIfSupported(itemsCollection, buttonLabel) {
 
                     await writable.write(xml);
                     await writable.close();
-                    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
+
+                    EventBus.emit(EVENT_TYPE.SHOW_NOTIFICATION, {
+                        type: NOTIFICATION_TYPE.SUCCESS,
+                        text: `Workflow has been saved as ${fileHandle?.name} to the local system successfully`
+                    });
+
+                    EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);                    
 
                     } catch (error) {
                         EventBus.off(EVENT_TYPE.DIAGRAM_DATA_READY);
