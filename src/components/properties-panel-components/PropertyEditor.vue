@@ -7,7 +7,7 @@
               <GeneralEditor v-model="model"/>
               <MainEditor v-model="model" />
               <DocumentationEditor v-model="model" />
-              <FormEditor v-model="model" />
+              <FormEditor v-if="showFormPanel" v-model="model" />
               <ListenersEditor v-model="model" />
               <MultiInstanceEditor v-model="model" />
               <OutputPanel v-model="model" />              
@@ -34,6 +34,7 @@ import OutputPanel from "./property-editor-sub-components/OutputPanel.vue";
 const model = defineModel();
 const panel = ref(null);
 const activePanel = ref(null);
+const showFormPanel = ref(false);
 
 const cardProps = {
     title: "Property Editor",
@@ -74,6 +75,8 @@ watch(
     if(!model.value) {
       return;
     }
+
+    showFormPanel.value = (model.value?.$type === TASK_TYPES.USER_TASK);
 
     if(model.value?.$type && ( activePanel.value !== model.value?.$type)) {
       toggleRequestedPanel(model.value?.$type);
