@@ -338,7 +338,6 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
-        EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);        

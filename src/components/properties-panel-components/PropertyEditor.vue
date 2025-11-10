@@ -5,11 +5,11 @@
           <div class="property-editor-content" data-testid="property-editor-content">
             <v-expansion-panels v-model="panel">
               <GeneralEditor v-model="model"/>
-              <MainEditor v-model="model" />
+              <MainEditor v-if="showMainConfig" v-model="model" />
               <DocumentationEditor v-model="model" />
               <FormEditor v-if="showFormPanel" v-model="model" />
               <ListenersEditor v-model="model" />
-              <MultiInstanceEditor v-model="model" />
+              <MultiInstanceEditor v-if="showMultiInstancePanel" v-model="model" />
               <OutputPanel v-model="model" />              
             </v-expansion-panels>
           </div>
@@ -21,7 +21,10 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
+import { EVENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/eventTypes';
+import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { ACTIVITY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/activityTypes';
+import { FLOW_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
 import Card from "../generic/Card.vue";
 import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
 import MainEditor from "./property-editor-sub-components/MainEditor.vue";
@@ -34,7 +37,10 @@ import OutputPanel from "./property-editor-sub-components/OutputPanel.vue";
 const model = defineModel();
 const panel = ref(null);
 const activePanel = ref(null);
+
 const showFormPanel = ref(false);
+const showMultiInstancePanel = ref(false);
+const showMainConfig = ref(false);
 
 const cardProps = {
     title: "Property Editor",
@@ -42,7 +48,7 @@ const cardProps = {
     text: "The Properties Panel provides detailed configuration options for BPMN elements. The panel updates automatically when you select an element in the diagram."
 };
 
-function toggleRequestedPanel(elementType) {
+function expandSelectedElementDefaultPanel(elementType) {
 
   const elementAndPanelIndexMapping = {
     [TASK_TYPES.SERVICE_TASK]: {
@@ -69,6 +75,25 @@ function toggleRequestedPanel(elementType) {
   panel.value = selected.panelIndex;
 }
 
+function togglePanelsVisibility(selectedType) {
+  const formPanelIncludedTypes = [TASK_TYPES.USER_TASK, EVENT_TYPES.START_EVENT];
+
+  const multiInstanceExcludedTypes = [
+    EVENT_TYPES.START_EVENT,
+    EVENT_TYPES.END_EVENT,
+    GATEWAY_TYPES.EXCLUSIVE_GATEWAY,
+    GATEWAY_TYPES.INCLUSIVE_GATEWAY,
+    GATEWAY_TYPES.PARALLEL_GATEWAY,
+    FLOW_TYPES.SEQUENCE_FLOW,
+  ];
+
+  const mainConfigExcludedTypes = multiInstanceExcludedTypes;
+
+  showFormPanel.value = formPanelIncludedTypes.includes(selectedType);
+  showMultiInstancePanel.value = !multiInstanceExcludedTypes.includes(selectedType);
+  showMainConfig.value = !mainConfigExcludedTypes.includes(selectedType);
+}
+
 watch(
   () => model, 
   () => {
@@ -76,10 +101,10 @@ watch(
       return;
     }
 
-    showFormPanel.value = (model.value?.$type === TASK_TYPES.USER_TASK);
-
+    togglePanelsVisibility(model.value?.$type);
+    
     if(model.value?.$type && ( activePanel.value !== model.value?.$type)) {
-      toggleRequestedPanel(model.value?.$type);
+      expandSelectedElementDefaultPanel(model.value?.$type);
     }
   },
   { immediate: true, deep: true }
