@@ -8,8 +8,8 @@
                 <h4 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h4>
                 <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
                 <TextInput :label="inputLabel.name" v-model="generalProperties.name" @input="updateElementName" :clearHandler="updateElementName"/>
-                <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
-                <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
+                <Checkbox v-if="showAsynchronousOption" :label="inputLabel.asynchronous" v-model="generalProperties.async" />
+                <Checkbox v-if="showExclusiveOption" :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
                 <Select v-if="isGatewayType(generalType)" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
             </div>          
         </v-expansion-panel-text>
@@ -21,6 +21,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { GATEWAY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import EventBus from "../../../eventbus";
 import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
+import { FLOW_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
 
 import TextInput from "../../generic/TextInput.vue";
 import Checkbox from "../../generic/Checkbox.vue";
@@ -117,6 +118,15 @@ function isGatewayType(generalType) {
     return Object.values(GATEWAY_TYPES).includes(generalType);
 }
 
+function toggleFieldVisibility(selectedType) {
+
+    const asynchronousOptionExcludedTypes = [FLOW_TYPES.SEQUENCE_FLOW];
+    const exclusiveOptionExcludedTypes = asynchronousOptionExcludedTypes;
+
+    showAsynchronousOption.value = !asynchronousOptionExcludedTypes.includes(selectedType);
+    showExclusiveOption.value = !exclusiveOptionExcludedTypes.includes(selectedType);
+}
+
 onMounted(() => {
     EventBus.on(EVENT_TYPE.GATEWAY_TYPES_READY, (types) => {
         processTypes(types, gatewayTypes);
@@ -132,6 +142,7 @@ watch(
   () => {
     generalProperties.value = model.value;
     generalType.value = model.value?.$type || '';
+    toggleFieldVisibility(generalType.value);
     setSelectedType(generalProperties.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
   { immediate:true, deep: true }

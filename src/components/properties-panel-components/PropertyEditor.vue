@@ -25,6 +25,7 @@ import { EVENT_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/eve
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { ACTIVITY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/activityTypes';
 import { FLOW_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
+import { PROCESS_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/processTypes';
 import Card from "../generic/Card.vue";
 import GeneralEditor from "./property-editor-sub-components/GeneralEditor.vue";
 import MainEditor from "./property-editor-sub-components/MainEditor.vue";
@@ -78,16 +79,16 @@ function expandSelectedElementDefaultPanel(elementType) {
 function togglePanelsVisibility(selectedType) {
   const formPanelIncludedTypes = [TASK_TYPES.USER_TASK, EVENT_TYPES.START_EVENT];
 
-  const multiInstanceExcludedTypes = [
+  const sharedExcludedTypes = [
     EVENT_TYPES.START_EVENT,
     EVENT_TYPES.END_EVENT,
     GATEWAY_TYPES.EXCLUSIVE_GATEWAY,
     GATEWAY_TYPES.INCLUSIVE_GATEWAY,
     GATEWAY_TYPES.PARALLEL_GATEWAY,
-    FLOW_TYPES.SEQUENCE_FLOW,
   ];
 
-  const mainConfigExcludedTypes = multiInstanceExcludedTypes;
+  const multiInstanceExcludedTypes = [...sharedExcludedTypes, FLOW_TYPES.SEQUENCE_FLOW];
+  const mainConfigExcludedTypes = [...sharedExcludedTypes, PROCESS_TYPES.SUB_PROCESS];
 
   showFormPanel.value = formPanelIncludedTypes.includes(selectedType);
   showMultiInstancePanel.value = !multiInstanceExcludedTypes.includes(selectedType);

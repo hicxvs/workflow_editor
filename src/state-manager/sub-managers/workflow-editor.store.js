@@ -12,7 +12,6 @@ import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scri
 import { DiagramManager } from '../../bpmn-workflow-editor/diagrams/diagrams-manager';
 import { AIDiagrams } from '../../bpmn-workflow-editor/diagrams/ai-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
-import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
