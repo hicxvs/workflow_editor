@@ -12,7 +12,6 @@ import { DiagramScripts } from '../../bpmn-workflow-editor/diagrams/diagram-scri
 import { DiagramManager } from '../../bpmn-workflow-editor/diagrams/diagrams-manager';
 import { AIDiagrams } from '../../bpmn-workflow-editor/diagrams/ai-diagrams';
 import { ClassListing } from '../../bpmn-workflow-editor/class-listing';
-import { TASK_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import { IS_APP_IN_MODE_DEV } from '../../config';
 import { NOTIFICATION_TYPE } from '../../bpmn-workflow-editor/modeler/notificationTypes';
@@ -338,7 +337,6 @@ export function WorkflowEditorStore() {
         getDiagramMessages();
         getDiagramErrorMessages();
         currentModeler.value.fitCanvasToDiagram();
-        EventBus.emit(EVENT_TYPE.TASK_TYPES_READY, TASK_TYPES);
         EventBus.emit(EVENT_TYPE.GATEWAY_TYPES_READY, GATEWAY_TYPES);
         EventBus.emit(EVENT_TYPE.LOAD_WORKFLOW_JAVA_CLASSES);
         EventBus.emit(EVENT_TYPE.SHOW_PROPERTIES_PANEL);        

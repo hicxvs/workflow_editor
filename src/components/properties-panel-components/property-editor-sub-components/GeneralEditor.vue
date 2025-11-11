@@ -8,9 +8,8 @@
                 <h4 class="properties-label">{{ propertiesLabel }} {{ generalType }}</h4>
                 <TextInput :label="inputLabel.id" v-model="generalProperties.id" />
                 <TextInput :label="inputLabel.name" v-model="generalProperties.name" @input="updateElementName" :clearHandler="updateElementName"/>
-                <Checkbox :label="inputLabel.asynchronous" v-model="generalProperties.async" />
-                <Checkbox :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
-                <Select v-if="generalType === TASK_TYPES.SERVICE_TASK" :label="inputLabel.taskType" v-model="selectedTaskType" :selectOptionItems="taskTypes" :selectItemClickHandler="updateTaskType" />
+                <Checkbox v-if="showAsynchronousOption" :label="inputLabel.asynchronous" v-model="generalProperties.async" />
+                <Checkbox v-if="showExclusiveOption" :label="inputLabel.exclusive" v-model="generalProperties.$parent.exclusive" />
                 <Select v-if="isGatewayType(generalType)" :label="inputLabel.gatewayType" v-model="selectedGatewayType" :selectOptionItems="gatewayTypes" :selectItemClickHandler="updateGatewayType"/>
             </div>          
         </v-expansion-panel-text>
@@ -19,10 +18,10 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { TASK_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/taskTypes';
 import { GATEWAY_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/gatewayTypes';
 import EventBus from "../../../eventbus";
 import { EVENT_TYPE } from "../../../bpmn-workflow-editor/modeler/eventTypes";
+import { FLOW_TYPES } from '../../../bpmn-workflow-editor/modeler/modelerTypes/flowTypes';
 
 import TextInput from "../../generic/TextInput.vue";
 import Checkbox from "../../generic/Checkbox.vue";
@@ -31,10 +30,11 @@ import Select from "../../generic/Select.vue";
 const model = defineModel();
 const generalType = ref(null);
 const generalProperties = ref(null);
-const taskTypes = ref(null);
 const gatewayTypes = ref(null);
-const selectedTaskType = ref(null);
 const selectedGatewayType = ref(null);
+
+const showAsynchronousOption = ref(false);
+const showExclusiveOption = ref(false);
 
 const panelTitle = 'General';
 const propertiesLabel = 'Properties: ';
@@ -44,7 +44,6 @@ const inputLabel = {
     name: "Name",
     asynchronous: "Asynchronous",
     exclusive: "Exclusive",
-    taskType: "Task Type",
     gatewayType: 'Gateway Type'
 };
 
@@ -101,20 +100,6 @@ function transformLabel(key, customTransform = null) {
     return label;
 }
 
-function updateTaskType() {
-    if(!selectedTaskType.value) {
-        return;
-    }
-
-    const taskType = taskTypes.value.find(task => task.label === selectedTaskType.value).value;
-
-    EventBus.emit(EVENT_TYPE.UPDATE_ELEMENT_TYPE, {
-        elementId: generalProperties.value.id,
-        elementType: taskType,
-        elementField: fieldKeys.type
-    });
-}
-
 function updateGatewayType() {
     if(!selectedGatewayType.value) {
         return;
@@ -133,22 +118,22 @@ function isGatewayType(generalType) {
     return Object.values(GATEWAY_TYPES).includes(generalType);
 }
 
-onMounted(() => {
-    EventBus.on(EVENT_TYPE.TASK_TYPES_READY, (types) => {
-        processTypes(types, taskTypes, (label) =>
-            label
-                .replace("Business rule task", "Business Rule Task")
-                .replace("User task", "User Task")
-        );
+function toggleFieldVisibility(selectedType) {
 
-    });
+    const asynchronousOptionExcludedTypes = [FLOW_TYPES.SEQUENCE_FLOW];
+    const exclusiveOptionExcludedTypes = asynchronousOptionExcludedTypes;
+
+    showAsynchronousOption.value = !asynchronousOptionExcludedTypes.includes(selectedType);
+    showExclusiveOption.value = !exclusiveOptionExcludedTypes.includes(selectedType);
+}
+
+onMounted(() => {
     EventBus.on(EVENT_TYPE.GATEWAY_TYPES_READY, (types) => {
         processTypes(types, gatewayTypes);
     });
 });
 
 onUnmounted(() => {
-    EventBus.off(EVENT_TYPE.TASK_TYPES_READY);
     EventBus.off(EVENT_TYPE.GATEWAY_TYPES_READY);
 });
 
@@ -157,7 +142,7 @@ watch(
   () => {
     generalProperties.value = model.value;
     generalType.value = model.value?.$type || '';
-    setSelectedType(generalProperties.value, taskTypes, selectedTaskType, 'task');
+    toggleFieldVisibility(generalType.value);
     setSelectedType(generalProperties.value, gatewayTypes, selectedGatewayType, 'gateway');
   },
   { immediate:true, deep: true }
